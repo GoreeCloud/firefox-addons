@@ -97,9 +97,14 @@ assert "collectTreeBranchTabs" in tree_core
 assert "createTreeBranchActions" in tree_branch_actions
 assert "tree-branch-changed" in tree_branch_actions and "tree-branch-not-discardable" in tree_branch_actions
 assert "browser.tabs.remove" in tree_branch_actions and "browser.tabs.discard" in tree_branch_actions
-assert "atm:close-tree-branch" in background and "atm:discard-tree-branch" in background
-assert "close-tree-branch" in open_tabs_view and "discard-tree-branch" in open_tabs_view
+assert "moveTreeBranchToNewWindow" in tree_branch_actions and "browser.windows.create" in tree_branch_actions and "browser.tabs.move" in tree_branch_actions
+assert "tree-branch-not-movable" in tree_branch_actions and "tree-branch-move-rollback" in tree_branch_actions
+assert "atm:close-tree-branch" in background and "atm:discard-tree-branch" in background and "atm:move-tree-branch-new-window" in background
+assert "close-tree-branch" in open_tabs_view and "discard-tree-branch" in open_tabs_view and "move-tree-branch-new-window" in open_tabs_view
 assert "branchTabs.every((tab) => visibleIds.has(tab.id))" in open_tabs_view
+assert "tab.groupId === TAB_GROUP_ID_NONE" in open_tabs_view, "branch move UI must fail closed for native-group members"
+assert "atm:move-tree-branch-new-window" in sidebar, "sidebar must route guarded branch move"
+assert "guarded tree branch moved to a new Firefox window" in runtime_smoke, "real-Firefox smoke must exercise branch move"
 assert "createRuleManager" in background
 assert "atm:get-rule-state" in background and "atm:set-rule-engine-enabled" in background
 assert "atm:upsert-rule" in background and "atm:delete-rule" in background and "atm:preview-rule-evaluation" in background
