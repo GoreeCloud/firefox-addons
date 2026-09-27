@@ -62,7 +62,7 @@ assert "glaze_consumer_qualification.py" in target_workflow
 assert "actions/upload-artifact@v4" in target_workflow
 assert "AMO_JWT_" not in target_workflow and "web-ext" not in target_workflow
 
-assert "Human target acceptance: **Pending**" in record
+assert "**Human target acceptance: Pending**" in record
 assert "complete machine-readable target record remains local" in record.lower()
 assert "does not establish human acceptance" in record.lower()
 assert "GLAZE UI V1.6 / 1.6.0" in record
