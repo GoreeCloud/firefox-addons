@@ -14,6 +14,7 @@ export function normalizeTab(tab, logicalId = null, treeParentLogicalId = null) 
     audible: Boolean(tab.audible),
     muted: Boolean(tab.mutedInfo?.muted),
     discarded: Boolean(tab.discarded),
+    autoDiscardable: tab.autoDiscardable !== false,
     hidden: Boolean(tab.hidden),
     incognito: Boolean(tab.incognito),
     title: tab.title || "Untitled tab",
@@ -52,6 +53,20 @@ export function buildSnapshot({ windows, groups, logicalIds = new Map(), treePar
 
 export function flattenTabs(snapshot) {
   return snapshot.windows.flatMap((window) => window.tabs);
+}
+
+export function summarizeTabResidency(snapshot) {
+  const eligibleTabs = flattenTabs(snapshot).filter((tab) => !tab.incognito);
+  const residentTabs = eligibleTabs.filter((tab) => !tab.discarded).length;
+  const discardedTabs = eligibleTabs.filter((tab) => tab.discarded).length;
+  const protectedTabs = eligibleTabs.filter((tab) => tab.autoDiscardable === false).length;
+  return {
+    eligibleTabs: eligibleTabs.length,
+    residentTabs,
+    discardedTabs,
+    protectedTabs,
+    fullyProtected: eligibleTabs.length === protectedTabs
+  };
 }
 
 export function countExactUrlDuplicates(snapshot) {
