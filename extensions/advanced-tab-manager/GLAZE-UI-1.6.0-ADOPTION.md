@@ -27,6 +27,7 @@ Current machine evidence deliberately reports `status: adoption-required`. It ma
 
 The current 0.1.12 source maps the following applicable V1.6 principles:
 
+- a shared repository-local `src/shared/glaze.css` surface/token layer consumed by the sidebar, popup, and Manager so material hierarchy, geometry, focus treatment, and product lockup presentation remain consistent without a remote runtime dependency;
 - semantic system colors and protected state meaning;
 - presentation-only authority with no inferred permission, privacy, security, or release truth;
 - a single visually dominant primary action where appropriate and subordinate secondary actions;
@@ -72,6 +73,8 @@ Expected evidence state before downstream acceptance:
 `TARGET-ACCEPTANCE-0.1.12.md` and `scripts/target_acceptance.py` define a closed, privacy-minimized human-review evidence contract. The manual **Advanced Tab Manager Target Review Candidate** workflow can package one exact source revision twice, prove deterministic bytes, rerun repository/runtime/security/Glaze-source checks, and retain the exact unsigned XPI for human review. The complete human record remains local unless a later governed release step explicitly binds to a privacy-safe provenance digest.
 
 This infrastructure is preparatory evidence governance only. It does not establish keyboard, assistive-technology, alternate-appearance, or large-text acceptance.
+
+September 27 owner-rendered screenshots of the then-current 0.1.12 candidate were reviewed as remediation evidence. They confirmed that runtime surfaces were functional but still lacked the visual refinement expected for current V1.6 consumer acceptance, especially in Manager material hierarchy and cross-surface cohesion. The resulting shared-token/visual-polish source change therefore requires fresh post-change rendered review and does not inherit the earlier normal-light acceptance record.
 
 ## Remaining product acceptance
 

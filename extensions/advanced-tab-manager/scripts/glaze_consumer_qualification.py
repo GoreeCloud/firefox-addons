@@ -39,6 +39,7 @@ def main() -> int:
     manifest = json.loads(read("manifest.json"))
     require(manifest.get("version") == EXPECTED_VERSION, f"Glaze consumer qualification is not bound to {EXPECTED_VERSION}")
 
+    shared_css = read("src/shared/glaze.css")
     sidebar_css = read("src/sidebar/sidebar.css")
     palette_css = read("src/sidebar/command-palette.css")
     rules_css = read("src/sidebar/rules.css")
@@ -51,7 +52,7 @@ def main() -> int:
     manager_js = read("src/manager/manager.js")
     manager_model = read("src/core/manager-model.js")
     rule_state = read("src/core/rule-state.js")
-    all_css = "\n".join((sidebar_css, palette_css, rules_css, popup_css, manager_css))
+    all_css = "\n".join((shared_css, sidebar_css, palette_css, rules_css, popup_css, manager_css))
 
     # Current V1.6 source-mapping invariants applicable to constrained Firefox surfaces.
     for token in ("Canvas", "CanvasText", "AccentColor", "AccentColorText"):
@@ -66,6 +67,10 @@ def main() -> int:
     require("forced-colors: active" in manager_css, "Manager lacks Forced Colors handling")
     require(":focus-visible" in all_css or ":focus-within" in all_css, "keyboard focus indication is missing")
     require("@media (max-width:" in sidebar_css and "@media (max-width:" in manager_css, "responsive constrained-window rules are missing")
+    require("../shared/glaze.css" in sidebar_html and "../shared/glaze.css" in popup_html and "../shared/glaze.css" in manager_html,
+            "all primary surfaces must consume the shared Glaze token layer")
+    require("glz-mark" in sidebar_html and "glz-mark" in popup_html and "glz-mark" in manager_html,
+            "shared product lockup treatment is incomplete")
     require("aria-live" in sidebar_html and "aria-live" in popup_html and "aria-live" in manager_html, "live state semantics are incomplete")
     require("aria-label" in sidebar_html and "aria-label" in manager_html, "accessible labeling is incomplete")
     require("aria-modal" in palette_js and 'role=\"listbox\"' in palette_js, "command palette dialog/list semantics are missing")
