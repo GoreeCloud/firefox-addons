@@ -63,3 +63,54 @@ test("background cleanup fails closed when review selection is stale", async () 
   assert.equal(result.reason, "selected-keeper-not-in-current-set");
   assert.equal(removeCalled, false);
 });
+
+
+test("background normalized cleanup rechecks the current normalized set before closing", async () => {
+  const removed = [];
+  const reasons = [];
+  const browser = { tabs: { remove: async (ids) => removed.push(...ids) } };
+  const cleanup = createDuplicateCleanup({
+    browser,
+    readLiveSnapshot: async () => snapshot([
+      tab(1, { url: "https://example.com/article?id=7&utm_source=mail" }),
+      tab(2, { url: "https://example.com/article?id=7&fbclid=abc" }),
+      tab(3, { url: "https://example.com/article?id=7&msclkid=def", pinned: true }),
+      tab(4, { url: "https://example.com/article?id=8&utm_source=mail" })
+    ]),
+    broadcastChange: (reason) => reasons.push(reason)
+  });
+
+  const result = await cleanup.cleanupDuplicates({
+    mode: "tracking-normalized",
+    matchKey: "https://example.com/article?id=7",
+    keepTabId: 1
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.closed, 1);
+  assert.deepEqual(removed, [2]);
+  assert.deepEqual(result.blocked, [{ tabId: 3, reasons: ["pinned"] }]);
+  assert.deepEqual(reasons, ["duplicate-cleanup"]);
+});
+
+test("background normalized cleanup fails closed when the normalized set changed", async () => {
+  let removeCalled = false;
+  const cleanup = createDuplicateCleanup({
+    browser: { tabs: { remove: async () => { removeCalled = true; } } },
+    readLiveSnapshot: async () => snapshot([
+      tab(1, { url: "https://example.com/article?id=7&utm_source=mail" }),
+      tab(2, { url: "https://example.com/article?id=8&fbclid=abc" })
+    ]),
+    broadcastChange: () => {}
+  });
+
+  const result = await cleanup.cleanupDuplicates({
+    mode: "tracking-normalized",
+    matchKey: "https://example.com/article?id=7",
+    keepTabId: 1
+  });
+
+  assert.equal(result.ok, false);
+  assert.equal(result.reason, "duplicate-set-no-longer-current");
+  assert.equal(removeCalled, false);
+});
