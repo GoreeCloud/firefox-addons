@@ -29,6 +29,7 @@ The current 0.1.12 source maps the following applicable V1.6 principles:
 
 - a shared repository-local `src/shared/glaze.css` surface/token layer consumed by the sidebar, popup, and Manager so material hierarchy, geometry, focus treatment, and product lockup presentation remain consistent without a remote runtime dependency;
 - semantic system colors and protected state meaning;
+- visible live-tab residency semantics that distinguish Firefox automatic-unload protection from current resident/discarded state without using color alone or manufacturing foreground-execution claims;
 - presentation-only authority with no inferred permission, privacy, security, or release truth;
 - a single visually dominant primary action where appropriate and subordinate secondary actions;
 - local-first presentation with no remote Glaze dependency;
@@ -90,3 +91,10 @@ Before Advanced Tab Manager 0.1.12 can claim current Glaze consumer acceptance o
 - a separate governed product Stable promotion.
 
 The source-adoption record is therefore a migration/control record, not a Stable or production acceptance record.
+
+
+## Residency visibility refinement
+
+The 0.1.12 Development candidate now preserves Firefox's `autoDiscardable` state in the privacy-minimized live snapshot so the sidebar, popup, and Manager can make the default residency policy visible. The presentation distinguishes automatic-discard protection from current resident/discarded state and keeps explicit manual Discard available.
+
+This refinement changes rendered sidebar, popup, and Manager presentation after the post-PR #110 normal-light screenshot review. That earlier review remains bounded evidence for its exact revision and observed conditions; it is not silently inherited as rendered acceptance for the residency-visibility candidate. Fresh representative rendered review remains required after integration, alongside the already-pending accessibility and alternate-environment gates.
