@@ -36,7 +36,7 @@ The 0.1.12 candidate:
 - removes stale embedded `In Development · source-candidate` text from the Manager model so runtime UI does not manufacture canonical release lifecycle truth;
 - fixes the Manager so retained session-snapshot count is actually rendered instead of remaining an em dash;
 - strengthens interactive tab-row semantics with explicit button/current-page semantics;
-- moves a fully visible unpinned/ungrouped tree branch to a new Firefox window through the existing `tabs`/window authority, with two-snapshot drift rejection, destination verification, and rollback attempts on partial failure;
+- moves a fully visible unpinned/ungrouped/non-Split-View tree branch to a new Firefox window through the existing `tabs`/window authority, with two-snapshot drift rejection, destination verification, and rollback attempts on partial failure;
 - keeps every eligible non-private open tab non-auto-discardable by default, including background tabs, by applying Firefox `autoDiscardable=false` at background startup and when tabs are created; explicit manual/rule-driven Discard remains available as a deliberate override;
 - makes that residency policy visible instead of implicit: normalized live tab state preserves Firefox's `autoDiscardable` flag, the sidebar shows an `auto-protected` count, the popup reports automatic-unload protection status, and the Manager explains protected/eligible, resident, and explicitly discarded counts without exposing browsing content;
 - adds guarded Tree-view branch bulk actions: close a fully visible branch or discard a fully visible eligible branch after confirmation, with two-snapshot branch-drift rejection and active/pinned/audible discard guards; drag-and-drop and branch move remain future ATM-004A work;
