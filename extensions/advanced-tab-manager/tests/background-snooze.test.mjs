@@ -208,3 +208,41 @@ test("failed reschedule restores the prior deadline and prior alarm", async () =
   assert.equal(h.storageData.get(SNOOZE_STATE_KEY).items[0].wakeAt, firstWakeAt);
   assert.equal(h.alarms.get(alarmNameForSnooze("snooze-1")).scheduledTime, firstWakeAt);
 });
+
+
+test("cancelling a snooze removes recovery and alarm without reopening the tab", async () => {
+  const h = makeHarness();
+  const wakeAt = Date.now() + 60_000;
+  assert.equal((await h.manager.snoozeTab(2, wakeAt)).ok, true);
+
+  const result = await h.manager.cancelSnoozedItem("snooze-1");
+  assert.equal(result.ok, true);
+  assert.equal(h.storageData.get(SNOOZE_STATE_KEY).items.length, 0);
+  assert.equal(h.alarms.has(alarmNameForSnooze("snooze-1")), false);
+  assert.equal(h.windows[0].tabs.some((tab) => tab.url === "https://example.com/child"), false);
+  assert.equal(h.broadcasts.at(-1), "snoozed-item-cancelled");
+});
+
+test("failed alarm cleanup rolls cancellation back to the prior recovery record and alarm", async () => {
+  const h = makeHarness();
+  const wakeAt = Date.now() + 60_000;
+  assert.equal((await h.manager.snoozeTab(2, wakeAt)).ok, true);
+
+  const realClear = h.browser.alarms.clear;
+  let failNextClear = true;
+  h.browser.alarms.clear = async (name) => {
+    if (failNextClear) {
+      failNextClear = false;
+      throw new Error("simulated alarm cleanup failure");
+    }
+    return realClear(name);
+  };
+
+  const result = await h.manager.cancelSnoozedItem("snooze-1");
+  assert.equal(result.ok, false);
+  assert.equal(result.reason, "alarm-clear-failed");
+  assert.equal(result.rolledBack, true);
+  assert.equal(result.previousAlarmRestored, true);
+  assert.equal(h.storageData.get(SNOOZE_STATE_KEY).items.length, 1);
+  assert.equal(h.alarms.has(alarmNameForSnooze("snooze-1")), true);
+});
