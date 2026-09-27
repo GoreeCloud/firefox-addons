@@ -14,6 +14,7 @@ function tab(id, logicalId, index, treeParentLogicalId = null, overrides = {}) {
     audible: false,
     discarded: false,
     groupId: -1,
+    splitViewId: -1,
     incognito: false,
     ...overrides
   };
@@ -144,7 +145,7 @@ test("move tree branch opens a new window and preserves the verified branch", as
   assert.deepEqual(reasons, ["tree-branch-moved"]);
 });
 
-test("move tree branch rejects pinned or native-group members before Firefox mutation", async () => {
+test("move tree branch rejects pinned native-group or Split View members before Firefox mutation", async () => {
   let createCalled = false;
   const manager = createTreeBranchActions({
     browser: {
@@ -154,7 +155,8 @@ test("move tree branch rejects pinned or native-group members before Firefox mut
     readLiveSnapshot: async () => snapshot([
       tab(1,"root",0),
       tab(2,"child",1,"root",{ pinned: true }),
-      tab(3,"leaf",2,"child",{ groupId: 5 })
+      tab(3,"leaf",2,"child",{ groupId: 5 }),
+      tab(4,"split",3,"root",{ splitViewId: 8 })
     ]),
     broadcastChange: () => {}
   });
@@ -162,9 +164,10 @@ test("move tree branch rejects pinned or native-group members before Firefox mut
   const result = await manager.moveTreeBranchToNewWindow(1);
   assert.equal(result.ok, false);
   assert.equal(result.reason, "tree-branch-not-movable");
-  assert.equal(result.blockedCount, 2);
+  assert.equal(result.blockedCount, 3);
   assert.equal(result.pinnedCount, 1);
   assert.equal(result.groupedCount, 1);
+  assert.equal(result.splitViewCount, 1);
   assert.equal(createCalled, false);
 });
 
