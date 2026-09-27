@@ -331,6 +331,31 @@ content.addEventListener("click", async (event) => {
     }
 
     const tabId = Number(button.dataset.tabId);
+    if (button.dataset.action === "close-tree-branch" || button.dataset.action === "discard-tree-branch") {
+      const branchSize = Number(button.dataset.branchSize);
+      const closeBranch = button.dataset.action === "close-tree-branch";
+      const confirmation = closeBranch
+        ? `Close this tree branch of ${branchSize} tabs? The selected tab and all current descendants will close.`
+        : `Discard this tree branch of ${branchSize} tabs? The tabs stay open and reload when activated.`;
+      if (!window.confirm(confirmation)) return;
+      const result = await browser.runtime.sendMessage({
+        type: closeBranch ? "atm:close-tree-branch" : "atm:discard-tree-branch",
+        tabId
+      });
+      if (!result?.ok) {
+        const detail = result?.reason === "tree-branch-not-discardable"
+          ? ` ${result.blockedCount} tab${result.blockedCount === 1 ? " is" : "s are"} active, pinned, or audible.`
+          : "";
+        summary.textContent = `Tree branch action did not run (${result?.reason || "unknown error"}).${detail}`;
+      } else {
+        const count = closeBranch ? result.closed : result.discarded;
+        summary.textContent = closeBranch
+          ? `${count} tabs in the tree branch closed.`
+          : `${count} loaded tabs in the tree branch discarded.`;
+      }
+      await load();
+      return;
+    }
     if (button.dataset.action === "indent" || button.dataset.action === "outdent") {
       await handleTreeAction(button);
       return;
