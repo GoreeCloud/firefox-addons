@@ -5,6 +5,7 @@
 - Default live-tab residency: on background startup and for newly created tabs, Advanced Tab Manager sets Firefox `autoDiscardable=false` for every eligible non-private open tab so Firefox does not automatically unload background tabs. Explicit manual/rule-driven Discard remains available as a user action.
 - Residency visibility: live snapshot normalization preserves Firefox's `autoDiscardable` state so the sidebar can show an `auto-protected` count, the popup can report protection health, and the Manager can explain eligible/protected/resident/explicitly-discarded counts without exposing tab titles, URLs, or page content.
 - The residency default does not claim foreground-equivalent scheduling. Firefox remains authoritative for background timer/rendering throttling and operating-system process/resource constraints; the extension does not inspect or alter page content to bypass those browser policies.
+- Snooze scheduling now covers +1 hour, tomorrow morning, Next week at the local morning default, and arbitrary future local date/time selection. Snoozed items can be reopened early, rescheduled, or explicitly cancelled without reopening; cancellation removes the recovery record and alarm through a rollback-aware path.
 
 - Redesigned popup command surface with glanceable open-tab, Tab Set, snoozed, and exact-duplicate counts.
 - Redesigned sidebar chrome, search/view composition, compact state chips, active-tab treatment, responsive density, and clearer primary/secondary actions.
@@ -48,4 +49,4 @@
 
 ## Planned / not yet implemented
 
-Tree drag-and-drop and branch bulk actions, normalized duplicate matching, durable protected-tab rules, richer arbitrary-date/recurring snoozing, event-driven automatic rule application, richer rule editing, optional user-enabled automatic discard policy, richer command actions, broader manager/settings workflows, Webspaces integration, optional hidden-tab Focus Mode, additional representative rendered Firefox large-session/performance coverage, and future feature expansion remain planned. Stable 0.1.11 release qualification itself is complete.
+Tree drag-and-drop and branch bulk actions, normalized duplicate matching, durable protected-tab rules, recurring snoozing after a separate repeat-policy/UX design, event-driven automatic rule application, richer rule editing, optional user-enabled automatic discard policy, richer command actions, broader manager/settings workflows, Webspaces integration, optional hidden-tab Focus Mode, additional representative rendered Firefox large-session/performance coverage, and future feature expansion remain planned. Stable 0.1.11 release qualification itself is complete.

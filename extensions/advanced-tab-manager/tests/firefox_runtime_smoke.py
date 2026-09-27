@@ -457,6 +457,53 @@ def main() -> int:
             )
             require(restored_snooze.get("ok") is True, "custom-snoozed tab restored", repr(restored_snooze))
 
+            next_week_url = f"{base}/snooze-next-week"
+            next_week_source = create_tab(driver, next_week_url)
+            navigate_extension(driver, "src/sidebar/sidebar.html")
+            next_week_button = WebDriverWait(driver, 15).until(
+                lambda d: d.find_element("css selector", f'button[data-action="snooze"][data-tab-id="{next_week_source}"]')
+            )
+            next_week_button.click()
+            WebDriverWait(driver, 5).until(
+                lambda d: d.find_element("id", "snooze-dialog").get_attribute("open") is not None
+            )
+            driver.find_element("css selector", 'button[data-snooze-preset="next-week"]').click()
+            preset_value = driver.find_element("id", "snooze-deadline").get_attribute("value")
+            preset_timestamp = driver.execute_script(
+                "return new Date(arguments[0]).getTime();",
+                preset_value,
+            )
+            now_ms = int(time.time() * 1000)
+            require(
+                now_ms + 6 * 24 * 60 * 60 * 1000 < preset_timestamp < now_ms + 8 * 24 * 60 * 60 * 1000,
+                "next-week snooze preset resolves roughly seven days ahead",
+                str(preset_timestamp),
+            )
+            driver.find_element("id", "snooze-submit").click()
+            WebDriverWait(driver, 10).until(
+                lambda d: d.find_element("id", "snooze-dialog").get_attribute("open") is None
+            )
+            next_week_state = extension_message(driver, {"type": "atm:get-snooze-state"})
+            next_week_items = [item for item in next_week_state.get("state", {}).get("items", []) if item.get("url") == next_week_url]
+            require(len(next_week_items) == 1, "next-week snooze persisted", repr(next_week_state))
+            cancelled = extension_message(
+                driver,
+                {"type": "atm:cancel-snoozed-item", "snoozedItemId": next_week_items[0]["id"]},
+            )
+            require(cancelled.get("ok") is True, "next-week snooze cancellation succeeded", repr(cancelled))
+            after_cancel = extension_message(driver, {"type": "atm:get-snooze-state"})
+            require(
+                all(item.get("url") != next_week_url for item in after_cancel.get("state", {}).get("items", [])),
+                "cancelled snooze recovery record removed",
+                repr(after_cancel),
+            )
+            cancel_snapshot = extension_message(driver, {"type": "atm:get-snapshot"})
+            require(
+                all(tab.get("url") != next_week_url for tab in flatten(cancel_snapshot)),
+                "cancelling a snooze does not reopen the tab",
+            )
+            passes.append("snooze-next-week-cancel")
+
             route_source = create_tab(driver, f"{base}/snooze-route")
             routed = extension_message(
                 driver,
@@ -546,7 +593,7 @@ def main() -> int:
             server.shutdown()
             server.server_close()
 
-    require(len(passes) == 14, "all release-critical unsigned runtime checks passed", str(passes))
+    require(len(passes) == 15, "all release-critical unsigned runtime checks passed", str(passes))
     print("Advanced Tab Manager unsigned real-Firefox runtime acceptance passed.")
     return 0
 

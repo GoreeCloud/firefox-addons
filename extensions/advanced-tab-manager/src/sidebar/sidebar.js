@@ -1,6 +1,7 @@
 import { flattenTabs, summarizeTabResidency } from "../core/state.js";
 import {
   defaultSnoozeWakeAt,
+  nextWeekWakeAt,
   parseLocalSnoozeTime,
   toLocalDateTimeValue,
   tomorrowMorningWakeAt
@@ -190,6 +191,23 @@ async function handleSnoozedAction(button) {
     return;
   }
 
+  if (button.dataset.action === "cancel-snoozed-item") {
+    const item = snoozeState?.items.find((candidate) => candidate.id === snoozedItemId);
+    if (!item) {
+      summary.textContent = "That snoozed tab is no longer available. Refresh and try again.";
+      return;
+    }
+    if (!window.confirm(`Cancel the snooze for "${item.title}" without reopening the tab? The stored recovery record will be deleted.`)) return;
+    const cancelled = await browser.runtime.sendMessage({ type: "atm:cancel-snoozed-item", snoozedItemId });
+    if (!cancelled?.ok) {
+      summary.textContent = `Snooze was not cancelled (${cancelled?.reason || "unknown error"}).`;
+    } else {
+      summary.textContent = "Snooze cancelled. The tab was not reopened.";
+    }
+    await load();
+    return;
+  }
+
   const result = await browser.runtime.sendMessage({ type: "atm:restore-snoozed-item", snoozedItemId });
   if (!result?.ok) {
     summary.textContent = `Snoozed tab could not be opened (${result?.reason || "unknown error"}).`;
@@ -340,7 +358,9 @@ snoozeDialog.addEventListener("click", (event) => {
   if (!preset) return;
   const wakeAt = preset.dataset.snoozePreset === "tomorrow"
     ? tomorrowMorningWakeAt()
-    : defaultSnoozeWakeAt();
+    : preset.dataset.snoozePreset === "next-week"
+      ? nextWeekWakeAt()
+      : defaultSnoozeWakeAt();
   snoozeDeadline.value = toLocalDateTimeValue(wakeAt);
   snoozeDialogError.textContent = "";
   snoozeDeadline.focus();

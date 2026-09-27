@@ -49,7 +49,7 @@ This is a material presentation and behavior change. The current shared target i
 
 Stashing uses **persist recovery state → verify persistence → close source tab**.
 
-Snoozing uses **persist snooze recovery state → verify persistence → create and verify a one-shot Firefox alarm → close source tab**. Persisted deadlines are authoritative because Firefox alarms do not survive browser restarts. Startup reconstructs alarms from local storage; failed due restoration retains recovery state and schedules a bounded retry.
+Snoozing uses **persist snooze recovery state → verify persistence → create and verify a one-shot Firefox alarm → close source tab**. Persisted deadlines are authoritative because Firefox alarms do not survive browser restarts. Startup reconstructs alarms from local storage; failed due restoration retains recovery state and schedules a bounded retry. The 0.1.12 sidebar supports +1 hour, tomorrow morning, Next week, and arbitrary future local date/time selection; snoozed items can be opened early, rescheduled, or explicitly cancelled without reopening. Recurring schedules remain outside this slice until their repeat semantics receive separate policy/UX design.
 
 ### Rule and command boundaries
 

@@ -186,6 +186,48 @@ export function createSnoozeManager({ browser, readLiveSnapshot, setTreeParent, 
     return serialize(() => restoreSnoozedItemInternal(snoozedItemId));
   }
 
+  async function cancelSnoozedItem(snoozedItemId) {
+    return serialize(async () => {
+      let item;
+      let committed;
+      try {
+        const record = await readSnoozeStateRecord(browser.storage.local);
+        item = record.state.items.find((candidate) => candidate.id === snoozedItemId);
+        if (!item) return { ok: false, reason: "snoozed-item-not-found" };
+
+        committed = await commitSnoozeMutation({
+          storage: browser.storage.local,
+          mutate(state) {
+            state.items = state.items.filter((candidate) => candidate.id !== snoozedItemId);
+            return state;
+          }
+        });
+        if (!committed.ok) {
+          return { ok: false, reason: "storage-verification-failed", rolledBack: committed.rolledBack };
+        }
+
+        await clearAlarm(snoozedItemId);
+        broadcastChange("snoozed-item-cancelled");
+        return { ok: true, snoozedItemId };
+      } catch (error) {
+        let rolledBack = false;
+        let previousAlarmRestored = false;
+        if (committed?.ok) {
+          const rollback = await restoreSnoozeRecord(browser.storage.local, committed.previousRecord);
+          rolledBack = Boolean(rollback.ok);
+          if (rolledBack && item) {
+            try {
+              previousAlarmRestored = await scheduleVerified(item, nextSnoozeAlarmTime(item.wakeAt));
+            } catch {
+              previousAlarmRestored = false;
+            }
+          }
+        }
+        return { ok: false, reason: "alarm-clear-failed", rolledBack, previousAlarmRestored };
+      }
+    });
+  }
+
   async function rescheduleSnoozedItem(snoozedItemId, wakeAt) {
     return serialize(async () => {
       if (!Number.isInteger(wakeAt) || wakeAt <= Date.now()) return { ok: false, reason: "deadline-not-in-future" };
@@ -281,6 +323,7 @@ export function createSnoozeManager({ browser, readLiveSnapshot, setTreeParent, 
   }
 
   return {
+    cancelSnoozedItem,
     handleAlarm,
     readSnoozeState,
     reconcileSnoozeAlarms,
