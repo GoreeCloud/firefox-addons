@@ -61,6 +61,9 @@ tree_core = (ROOT / "src/core/tree.js").read_text(encoding="utf-8")
 manager_background = (ROOT / "src/background/manager.js").read_text(encoding="utf-8")
 manager_model = (ROOT / "src/core/manager-model.js").read_text(encoding="utf-8")
 state_core = (ROOT / "src/core/state.js").read_text(encoding="utf-8")
+duplicates_core = (ROOT / "src/core/duplicates.js").read_text(encoding="utf-8")
+duplicates_background = (ROOT / "src/background/duplicate-cleanup.js").read_text(encoding="utf-8")
+duplicates_view = (ROOT / "src/sidebar/duplicates-view.js").read_text(encoding="utf-8")
 manager_page = (ROOT / "src/manager/manager.js").read_text(encoding="utf-8")
 manager_html = (ROOT / "src/manager/manager.html").read_text(encoding="utf-8")
 manager_css = (ROOT / "src/manager/manager.css").read_text(encoding="utf-8")
@@ -91,6 +94,19 @@ assert "createTabResidencyPolicy" in background
 assert "protectAllOpenTabs" in background and "protectTab(tab)" in background
 assert "autoDiscardable: false" in tab_residency
 assert "autoDiscardable" in state_core and "summarizeTabResidency" in state_core
+assert 'TRACKING_NORMALIZED: "tracking-normalized"' in duplicates_core
+assert 'normalized.startsWith("utm_")' in duplicates_core
+for tracking_key in ("gclid", "dclid", "fbclid", "msclkid", "mc_cid", "mc_eid"):
+    assert f'"{tracking_key}"' in duplicates_core, f"missing conservative tracking key: {tracking_key}"
+assert 'parsed.hash' not in duplicates_core, "tracking-normalized mode must preserve fragments rather than stripping hash state"
+assert "buildExactDuplicateReview" in duplicates_core and "buildTrackingNormalizedDuplicateReview" in duplicates_core
+assert "planDuplicateCleanup" in duplicates_core and "reviewRequired: true" in duplicates_core
+assert "cleanupDuplicates" in duplicates_background and "cleanupExactDuplicates" in duplicates_background
+assert "browser.tabs.remove" in duplicates_background
+assert "Ignore tracking parameters" in duplicates_view and "Matching is exact by default" in duplicates_view
+assert "never runs cleanup automatically" in duplicates_view
+assert "window.confirm(confirmation)" in sidebar, "normalized duplicate cleanup must remain explicitly confirmed"
+assert '"atm:cleanup-duplicates"' in background and '"atm:cleanup-exact-duplicates"' in background
 assert "splitViewId" in state_core, "normalized live state must retain Firefox Split View membership for move safety"
 assert "browser.tabs.query({})" in tab_residency and "browser.tabs.update" in tab_residency
 assert "browser.tabs.reload" not in tab_residency, "default residency must not silently reload a user-discarded tab"
@@ -192,7 +208,7 @@ assert "gBrowser.addTrustedTab" in runtime_smoke and "--allow-system-access" in 
 assert "temporary=True" in runtime_smoke, "unsigned runtime gate must not masquerade as persistent signed acceptance"
 for route in (
     "atm:get-manager-state", "atm:set-tree-parent", "atm:save-focused-window-tab-set",
-    "atm:stash-tab", "atm:snooze-tab", "atm:cleanup-exact-duplicates",
+    "atm:stash-tab", "atm:snooze-tab", "atm:cleanup-exact-duplicates", "atm:cleanup-duplicates",
     "atm:get-rule-state", "atm:create-session-snapshot", "atm:restore-session-snapshot",
     "atm:export-backup", "atm:preview-import"
 ):
@@ -204,6 +220,7 @@ assert "browser-actions/setup-geckodriver@latest" in runtime_workflow
 assert "firefox_runtime_smoke.py" in runtime_workflow
 assert "advanced-tab-manager-firefox-runtime.json" in runtime_workflow
 assert "wait_for_snapshot_url_count" in runtime_smoke, "Firefox duplicate acceptance must wait for reconciled live state"
+assert "duplicate-tracking-normalized-cleanup" in runtime_smoke, "Firefox runtime must exercise opt-in tracking-normalized cleanup"
 assert "github.event.pull_request.head.sha || github.sha" in runtime_workflow
 assert "ATM_SOURCE_REVISION" in runtime_workflow
 assert '"sourceRevision": source_revision' in runtime_smoke
