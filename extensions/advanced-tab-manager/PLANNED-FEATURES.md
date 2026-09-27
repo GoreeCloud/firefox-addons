@@ -1,4 +1,6 @@
-# GoreeCloud Advanced Tab Manager — Feature Roadmap
+# GoreeCloud Advanced Tab Manager — Planned Features
+
+> **Authority:** Component-scoped repository-native planned-feature record under `extensions/advanced-tab-manager/`. The former Drive roadmap is retired after verified migration.
 
 **Lifecycle:** Development 0.1.12 · Accepted Stable: 0.1.11  
 **Authoritative project record:** `GoreeCloud/Project Specifications/Project Specification — Advanced Tab Manager.docx`
