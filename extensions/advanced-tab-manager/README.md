@@ -118,6 +118,8 @@ Stable 0.1.11 retains its historical GLAZE UI V1.5.1 consumer acceptance. The cu
 
 ```bash
 python extensions/advanced-tab-manager/scripts/validate.py
+python extensions/advanced-tab-manager/scripts/validate_target_acceptance_source.py
+python extensions/advanced-tab-manager/scripts/test_target_acceptance.py
 node --test extensions/advanced-tab-manager/tests/*.test.mjs
 node extensions/advanced-tab-manager/scripts/large-session-qualification.mjs
 python shared/scripts/validate_repository.py
@@ -126,5 +128,7 @@ python -m py_compile extensions/advanced-tab-manager/tests/firefox_runtime_smoke
 ```
 
 The permanent **Advanced Tab Manager Firefox Runtime** workflow packages the exact candidate and exercises release-critical paths in a clean real Firefox profile against controlled local fixtures. That workflow is an unsigned temporary-install gate; it does not substitute for Mozilla signing, persistent signed installation, full Firefox restart acceptance, current-Stable Glaze UI consumer acceptance, or Stable qualification.
+
+The manual **Advanced Tab Manager Target Review Candidate** workflow prepares an exact-source, deterministic unsigned 0.1.12 XPI plus security, Glaze-source-mapping, real-Firefox runtime, and scale evidence for governed human keyboard/assistive-technology/appearance review. `TARGET-ACCEPTANCE-0.1.12.md` and `scripts/target_acceptance.py` define the fail-closed privacy-minimized record contract. This infrastructure does not itself establish human acceptance.
 
 Packaging produces a deterministic unsigned XPI under `dist/`. `RELEASE-ACCEPTANCE-0.1.11.md` and `STABLE-SECURITY-REVIEW-0.1.11.md` remain the historical accepted Stable evidence; `GLAZE-UI-1.5.1-ADOPTION.md` remains historical Stable 0.1.11 provenance; `GLAZE-UI-1.6.0-ADOPTION.md` records the current 0.1.12 V1.6 adoption boundary, and `RENDERED-ACCEPTANCE-0.1.12.md` records the scoped owner-rendered normal-light evidence that still requires current-target reconciliation before consumer acceptance.
