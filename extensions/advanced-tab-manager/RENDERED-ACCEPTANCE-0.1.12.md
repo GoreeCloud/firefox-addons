@@ -105,6 +105,14 @@ Observed remediation needs included:
 
 This September 27 review is **remediation evidence, not acceptance evidence**. The earlier normal-light observations remain bounded historical evidence for their exact reviewed revision and conditions. A fresh post-refinement rendered review is required before current-target V1.6 rendered acceptance can be claimed.
 
+### Post-PR #109 owner review
+
+A second owner-supplied normal-light screenshot set was reviewed after PR #109 merged as `46dc24f9607ebead51a7c8730a65cc27b9027b16`. The screenshots show Firefox 156.0.1 on Linux with the temporary 0.1.12 XPI loaded, the background script running, the refreshed sidebar, toolbar popup, and Manager rendering live data.
+
+The second-stage Glaze direction is visibly improved: the product lockup is coherent across surfaces, the popup has a clear primary action and compact metric hierarchy, the sidebar active-row treatment is readable, and the Manager has a stronger hero plus differentiated overview/recovery/portability regions. The same evidence also exposed two remaining normal-light polish issues: secondary sidebar tab actions are too faint at rest, and the Manager lower diagnostic region remains visually heavier than its secondary importance. The follow-up source pass therefore raises sidebar action legibility, gives the command palette trigger a readable text label, removes non-semantic metric-circle decoration, moves status into the Manager hero, and collapses technical diagnostics behind a native disclosure.
+
+This second screenshot set remains **remediation evidence** because it precedes the follow-up source change. Fresh post-change screenshots are still required before normal-light V1.6 rendered acceptance is updated for the current head.
+
 ## Remaining gates
 
 Before 0.1.12 can replace Stable 0.1.11, remaining applicable work includes representative keyboard/assistive-technology acceptance, Forced Colors, Reduced Transparency, dark-appearance and other required environmental rendered review, any corrections and fresh exact-head requalification, Mozilla signing, signed-artifact parity/integrity, persistent signed installation, full Firefox restart acceptance, and separate governed Stable promotion.

@@ -18,7 +18,7 @@ openButton.type = "button";
 openButton.setAttribute("aria-label", "Open command palette");
 openButton.setAttribute("aria-keyshortcuts", "Control+K Meta+K");
 openButton.title = "Commands (Ctrl/⌘ K)";
-openButton.textContent = "⌨";
+openButton.textContent = "Commands";
 topbarActions?.prepend(openButton);
 
 const palette = document.createElement("section");

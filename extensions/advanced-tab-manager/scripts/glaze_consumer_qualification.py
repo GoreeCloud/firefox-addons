@@ -77,6 +77,10 @@ def main() -> int:
     require("animation:" not in all_css and "transition:" not in all_css, "unqualified motion is not permitted in the source candidate")
     require("primary" in popup_html.lower() or "primary" in popup_css.lower(), "V1.6 action hierarchy needs an explicit primary-action treatment")
     require("empty" in manager_html.lower() or "empty" in manager_js.lower(), "V1.6 resilience mapping requires an explicit empty-state path")
+    require('class="technical-disclosure"' in manager_html and "<details" in manager_html,
+            "secondary Manager diagnostics must remain visually subordinate through native disclosure semantics")
+    require('openButton.textContent = "Commands"' in palette_js,
+            "sidebar command palette trigger must retain a readable visible label")
 
     # Authority, privacy, and fallback obligations.
     require("browser.permissions.request" not in "\n".join((manager_js, palette_js)), "presentation layer must not request permissions")

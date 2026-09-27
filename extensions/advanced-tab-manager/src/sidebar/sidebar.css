@@ -61,11 +61,11 @@ h1 {
   white-space: nowrap;
 }
 .command-button {
-  flex: 0 0 31px;
-  width: 31px;
-  padding-inline: 0;
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
+  flex: 0 0 auto;
+  width: auto;
+  padding-inline: 9px;
+  font-size: 10px;
+  letter-spacing: .01em;
 }
 #open-manager, #refresh { flex: 0 1 auto; }
 #save-window { flex: 0 0 auto; }
@@ -119,7 +119,7 @@ select:focus-visible,
   min-height: 23px;
   margin-top: 8px;
   color: var(--muted);
-  font-size: 9.5px;
+  font-size: 10px;
 }
 .summary-chip {
   display: inline-flex;
@@ -132,7 +132,7 @@ select:focus-visible,
 }
 .summary-chip strong {
   color: CanvasText;
-  font-size: 10.5px;
+  font-size: 11px;
   font-variant-numeric: tabular-nums;
 }
 .content { padding: 11px 9px 20px; }
@@ -169,7 +169,7 @@ select:focus-visible,
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 7px;
   align-items: center;
-  min-height: 55px;
+  min-height: 58px;
   padding: 8px 8px 8px 11px;
   border-top: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
   cursor: pointer;
@@ -205,11 +205,11 @@ select:focus-visible,
   white-space: nowrap;
 }
 .tab-title, .saved-title, .duplicate-url {
-  font-size: 11.5px;
-  font-weight: 740;
+  font-size: 12px;
+  font-weight: 750;
   letter-spacing: -.004em;
 }
-.tab-url, .saved-meta { margin-top: 2px; color: var(--muted); font-size: 9.5px; }
+.tab-url, .saved-meta { margin-top: 2px; color: var(--muted); font-size: 10px; line-height: 1.35; }
 .badges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
 .badge {
   padding: 2px 6px;
@@ -228,11 +228,12 @@ select:focus-visible,
   max-width: 72px;
 }
 .row-action {
-  min-width: 27px;
-  height: 27px;
+  min-width: 28px;
+  height: 28px;
   padding: 0 5px;
-  color: var(--muted);
+  color: color-mix(in srgb, CanvasText 72%, transparent);
   font-size: 13px;
+  font-weight: 780;
 }
 .row-action[data-action="close"] { color: color-mix(in srgb, CanvasText 70%, transparent); }
 .saved-view, .duplicate-view { display: grid; gap: 9px; }
@@ -295,7 +296,7 @@ select:focus-visible,
   .controls { grid-template-columns: minmax(0, 1fr) 128px; }
 }
 @media (hover: hover) and (pointer: fine) {
-  .tab-row .actions { opacity: .28; }
+  .tab-row .actions { opacity: .56; }
   .tab-row[data-active="true"] .actions,
   .tab-row:hover .actions,
   .tab-row:focus-within .actions { opacity: 1; }
