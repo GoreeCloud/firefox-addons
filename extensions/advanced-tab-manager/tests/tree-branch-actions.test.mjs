@@ -13,13 +13,22 @@ function tab(id, logicalId, index, treeParentLogicalId = null, overrides = {}) {
     pinned: false,
     audible: false,
     discarded: false,
+    groupId: -1,
+    splitViewId: -1,
     incognito: false,
     ...overrides
   };
 }
 
 function snapshot(tabs) {
-  return { schemaVersion: 2, capturedAt: 1, groups: [], windows: [{ id: 1, focused: true, incognito: false, tabs }] };
+  const windowsById = new Map();
+  for (const item of tabs) {
+    if (!windowsById.has(item.windowId)) {
+      windowsById.set(item.windowId, { id: item.windowId, focused: item.windowId === 1, incognito: false, tabs: [] });
+    }
+    windowsById.get(item.windowId).tabs.push(item);
+  }
+  return { schemaVersion: 2, capturedAt: 1, groups: [], windows: [...windowsById.values()] };
 }
 
 test("close tree branch rechecks branch identity before closing every current descendant", async () => {
@@ -88,4 +97,114 @@ test("discard tree branch sends only currently loaded eligible members to Firefo
   assert.deepEqual(result, { ok: true, discarded: 2 });
   assert.deepEqual(discarded, [1,3]);
   assert.deepEqual(reasons, ["tree-branch-discarded"]);
+});
+
+
+test("move tree branch opens a new window and preserves the verified branch", async () => {
+  const reasons = [];
+  const moves = [];
+  const created = [];
+  let readCount = 0;
+  const source = [
+    tab(1,"root",0),
+    tab(2,"child",1,"root"),
+    tab(3,"leaf",2,"child"),
+    tab(4,"other",3)
+  ];
+  const moved = [
+    tab(1,"root",0,null,{ windowId: 9 }),
+    tab(2,"child",1,"root",{ windowId: 9 }),
+    tab(3,"leaf",2,"child",{ windowId: 9 }),
+    tab(4,"other",0,null,{ windowId: 1 })
+  ];
+  const manager = createTreeBranchActions({
+    browser: {
+      windows: {
+        create: async (details) => { created.push(details); return { id: 9 }; },
+        remove: async () => {}
+      },
+      tabs: {
+        remove: async () => {},
+        discard: async () => {},
+        move: async (ids, details) => moves.push({ ids, details }),
+        get: async () => { throw new Error("rollback should not run"); },
+        query: async () => []
+      }
+    },
+    readLiveSnapshot: async () => {
+      readCount += 1;
+      return readCount <= 2 ? snapshot(source) : snapshot(moved);
+    },
+    broadcastChange: (reason) => reasons.push(reason)
+  });
+
+  const result = await manager.moveTreeBranchToNewWindow(1);
+  assert.deepEqual(result, { ok: true, moved: 3, windowId: 9 });
+  assert.deepEqual(created, [{ tabId: 1, focused: true }]);
+  assert.deepEqual(moves, [{ ids: [2,3], details: { windowId: 9, index: -1 } }]);
+  assert.deepEqual(reasons, ["tree-branch-moved"]);
+});
+
+test("move tree branch rejects pinned native-group or Split View members before Firefox mutation", async () => {
+  let createCalled = false;
+  const manager = createTreeBranchActions({
+    browser: {
+      windows: { create: async () => { createCalled = true; return { id: 9 }; }, remove: async () => {} },
+      tabs: { remove: async () => {}, discard: async () => {}, move: async () => {}, get: async () => ({}), query: async () => [] }
+    },
+    readLiveSnapshot: async () => snapshot([
+      tab(1,"root",0),
+      tab(2,"child",1,"root",{ pinned: true }),
+      tab(3,"leaf",2,"child",{ groupId: 5 }),
+      tab(4,"split",3,"root",{ splitViewId: 8 })
+    ]),
+    broadcastChange: () => {}
+  });
+
+  const result = await manager.moveTreeBranchToNewWindow(1);
+  assert.equal(result.ok, false);
+  assert.equal(result.reason, "tree-branch-not-movable");
+  assert.equal(result.blockedCount, 3);
+  assert.equal(result.pinnedCount, 1);
+  assert.equal(result.groupedCount, 1);
+  assert.equal(result.splitViewCount, 1);
+  assert.equal(createCalled, false);
+});
+
+test("move tree branch rolls the root back when descendant movement fails", async () => {
+  const reasons = [];
+  const rollbackMoves = [];
+  const manager = createTreeBranchActions({
+    browser: {
+      windows: {
+        create: async () => ({ id: 9 }),
+        remove: async () => {}
+      },
+      tabs: {
+        remove: async () => {},
+        discard: async () => {},
+        move: async (ids, details) => {
+          if (Array.isArray(ids)) throw new Error("simulated descendant move failure");
+          rollbackMoves.push({ id: ids, details });
+        },
+        get: async (id) => id === 1
+          ? { id: 1, windowId: 9, index: 0 }
+          : { id, windowId: 1, index: id - 1 },
+        query: async () => []
+      }
+    },
+    readLiveSnapshot: async () => snapshot([
+      tab(1,"root",0),
+      tab(2,"child",1,"root"),
+      tab(3,"leaf",2,"child")
+    ]),
+    broadcastChange: (reason) => reasons.push(reason)
+  });
+
+  const result = await manager.moveTreeBranchToNewWindow(1);
+  assert.equal(result.ok, false);
+  assert.equal(result.reason, "browser-move-failed");
+  assert.equal(result.rollbackFailed, false);
+  assert.deepEqual(rollbackMoves, [{ id: 1, details: { windowId: 1, index: 0 } }]);
+  assert.deepEqual(reasons, ["tree-branch-move-rollback"]);
 });

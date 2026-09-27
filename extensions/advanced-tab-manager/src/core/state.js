@@ -8,6 +8,7 @@ export function normalizeTab(tab, logicalId = null, treeParentLogicalId = null) 
     windowId: tab.windowId,
     index: tab.index,
     groupId: Number.isInteger(tab.groupId) ? tab.groupId : TAB_GROUP_ID_NONE,
+    splitViewId: Number.isInteger(tab.splitViewId) ? tab.splitViewId : -1,
     active: Boolean(tab.active),
     highlighted: Boolean(tab.highlighted),
     pinned: Boolean(tab.pinned),

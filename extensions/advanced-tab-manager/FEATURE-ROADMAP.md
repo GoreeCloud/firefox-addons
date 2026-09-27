@@ -9,7 +9,7 @@
 | ATM-002 | Reconstruct authoritative live Firefox tab/window/native-group state after background cold starts. | High | Implemented and source-verified |
 | ATM-003 | Provide accessible sidebar and popup foundations with safe tab actions. | High | Implemented and source-verified |
 | ATM-004 | Add durable tree relationships and restoration behavior. | High | Accepted in Stable 0.1.11 |
-| ATM-004A | Add tree drag-and-drop, branch move/close/discard operations, and richer manual reparenting UX. | Medium | Branch close/discard implemented in 0.1.12 Development with whole-branch visibility, explicit confirmation, two-snapshot drift rejection, and conservative discard guards. Drag-and-drop, branch move, and richer reparenting remain planned. |
+| ATM-004A | Add tree drag-and-drop, branch move/close/discard operations, and richer manual reparenting UX. | Medium | Branch close/discard plus guarded Move branch to new window are implemented in 0.1.12 Development. All branch actions require the whole branch to be visible and use two-snapshot drift rejection; discard has active/pinned/audible guards, while move is limited to non-private, unpinned, ungrouped branches with post-move verification and rollback attempts. Drag-and-drop and richer reparenting remain planned. |
 | ATM-005 | Add persistent Tab Sets and transactional stashing. | High | Accepted in Stable 0.1.11 |
 | ATM-006 | Add duplicate review and policy-controlled cleanup. | Medium | Accepted in Stable 0.1.11 with exact-URL review and guarded cleanup |
 | ATM-006A | Add optional conservative normalized-URL matching and durable protected-tab cleanup exclusions. | Medium | Planned |

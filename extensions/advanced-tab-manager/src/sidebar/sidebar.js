@@ -331,6 +331,24 @@ content.addEventListener("click", async (event) => {
     }
 
     const tabId = Number(button.dataset.tabId);
+    if (button.dataset.action === "move-tree-branch-new-window") {
+      const branchSize = Number(button.dataset.branchSize);
+      if (!window.confirm(`Move this tree branch of ${branchSize} tabs to a new Firefox window? The tabs stay open and their tree relationships are preserved.`)) return;
+      const result = await browser.runtime.sendMessage({ type: "atm:move-tree-branch-new-window", tabId });
+      if (!result?.ok) {
+        const detail = result?.reason === "tree-branch-not-movable"
+          ? ` ${result.blockedCount} tab${result.blockedCount === 1 ? " is" : "s are"} pinned, in a native group, or in Firefox Split View.`
+          : result?.rollbackFailed
+            ? " Automatic rollback was incomplete; refresh and review the affected windows."
+            : "";
+        summary.textContent = `Tree branch move did not run (${result?.reason || "unknown error"}).${detail}`;
+      } else {
+        summary.textContent = `${result.moved} tabs moved to a new Firefox window with tree relationships preserved.`;
+      }
+      await load();
+      return;
+    }
+
     if (button.dataset.action === "close-tree-branch" || button.dataset.action === "discard-tree-branch") {
       const branchSize = Number(button.dataset.branchSize);
       const closeBranch = button.dataset.action === "close-tree-branch";

@@ -406,6 +406,42 @@ def main() -> int:
             require(bool(by_id[child_id].get("treeParentLogicalId")), "tree relationship reconstructs from live Firefox state")
             passes.append("tree")
 
+            move_root_url = f"{base}/tree-move-root"
+            move_child_url = f"{base}/tree-move-child"
+            move_leaf_url = f"{base}/tree-move-leaf"
+            move_root = create_tab(driver, move_root_url)
+            move_child = create_tab(driver, move_child_url)
+            move_leaf = create_tab(driver, move_leaf_url)
+            require(
+                extension_message(driver, {"type": "atm:set-tree-parent", "tabId": move_child, "parentTabId": move_root}).get("ok") is True,
+                "tree move child relationship persisted",
+            )
+            require(
+                extension_message(driver, {"type": "atm:set-tree-parent", "tabId": move_leaf, "parentTabId": move_child}).get("ok") is True,
+                "tree move leaf relationship persisted",
+            )
+            branch_move = extension_message(driver, {"type": "atm:move-tree-branch-new-window", "tabId": move_root})
+            require(
+                branch_move.get("ok") is True and branch_move.get("moved") == 3 and isinstance(branch_move.get("windowId"), int),
+                "guarded tree branch moved to a new Firefox window",
+                repr(branch_move),
+            )
+            moved_snapshot = extension_message(driver, {"type": "atm:get-snapshot"})
+            moved_tabs = [tab for tab in flatten(moved_snapshot) if tab.get("url") in {move_root_url, move_child_url, move_leaf_url}]
+            require(
+                len(moved_tabs) == 3 and {tab.get("windowId") for tab in moved_tabs} == {branch_move["windowId"]},
+                "tree branch move keeps every controlled member in one destination window",
+                repr(moved_tabs),
+            )
+            moved_by_url = {tab.get("url"): tab for tab in moved_tabs}
+            require(
+                moved_by_url[move_child_url].get("treeParentLogicalId") == moved_by_url[move_root_url].get("logicalId")
+                and moved_by_url[move_leaf_url].get("treeParentLogicalId") == moved_by_url[move_child_url].get("logicalId"),
+                "tree branch move preserves durable parent-child relationships",
+                repr(moved_tabs),
+            )
+            remove_windows(driver, [branch_move["windowId"]])
+
             branch_root_url = f"{base}/tree-branch-root"
             branch_child_url = f"{base}/tree-branch-child"
             branch_leaf_url = f"{base}/tree-branch-leaf"

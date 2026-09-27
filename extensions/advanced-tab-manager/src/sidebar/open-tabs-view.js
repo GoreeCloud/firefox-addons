@@ -63,6 +63,9 @@ function createTabRow(tab, { depth = 0, treeStatus = "root", groupsById, window,
     actions.append(actionButton("▣", "Stash tab locally and close it after persistence is verified", "stash", tab.id));
   }
   if (branchInfo?.size > 1) {
+    if (branchInfo.movable) {
+      actions.append(actionButton(`↗${branchInfo.size}`, `Move this tree branch to a new window (${branchInfo.size} tabs)`, "move-tree-branch-new-window", tab.id, { branchSize: branchInfo.size }));
+    }
     if (branchInfo.discardable) {
       actions.append(actionButton(`◌${branchInfo.size}`, `Discard this tree branch (${branchInfo.size} tabs)`, "discard-tree-branch", tab.id, { branchSize: branchInfo.size }));
     }
@@ -113,6 +116,7 @@ function renderTreeView(window, visibleIds, groupsById) {
     const wholeBranchVisible = branchTabs.length > 1 && branchTabs.every((tab) => visibleIds.has(tab.id));
     const branchInfo = wholeBranchVisible ? {
       size: branchTabs.length,
+      movable: branchTabs.every((tab) => !tab.pinned && tab.groupId === TAB_GROUP_ID_NONE && tab.splitViewId === -1),
       discardable: branchTabs.some((tab) => !tab.discarded)
         && branchTabs.every((tab) => !tab.active && !tab.pinned && !tab.audible)
     } : null;

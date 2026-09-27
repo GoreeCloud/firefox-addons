@@ -163,4 +163,6 @@ The 0.1.12 Development line now adds compact Tree-view branch close/discard cont
 
 This changes constrained-sidebar row-action presentation after the previously reviewed normal-light screenshots. Those screenshots remain valid historical evidence for their exact revisions and unchanged surfaces, but they do not establish rendered acceptance for the new branch-control state. Fresh exact-candidate sidebar rendering is required before this new Tree-view state can be accepted.
 
-Drag-and-drop, branch move, and richer reparenting are not claimed by this slice. Stable remains `0.1.11`.
+The subsequent ATM-004A branch-move slice adds one more Tree-row branch control for fully visible, unpinned, ungrouped branches. That move operation has automated source/unit/real-Firefox qualification requirements, but the previously supplied screenshots do not show this new control or its post-move window state. Fresh exact-candidate rendering of a branch row with Move/Discard/Close controls is therefore still required before the expanded Tree-view action state is visually accepted.
+
+Drag-and-drop and richer manual reparenting remain outside this slice. Stable remains `0.1.11`.
