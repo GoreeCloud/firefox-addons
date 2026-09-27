@@ -8,7 +8,7 @@
 - Reorganized the full Manager into overview, recovery, portability, and secondary technical-status regions with more deliberate information hierarchy.
 - Removed stale hard-coded `In Development · source-candidate` fields from the runtime Manager model so canonical release records remain authoritative for mutable lifecycle truth.
 - Corrected the Manager so retained session-snapshot count is rendered from the existing privacy-minimized model.
-- Kept current Stable Glaze UI V1.5 / 1.5.1 as the consumer target and preserved Reduced Transparency, Forced Colors, focus, responsive, and semantic system-color fallbacks.
+- Reconciled the 0.1.12 Development line to the current shared GLAZE UI V1.6 / 1.6.0 adoption target while retaining V1.5.1 only as historical Stable 0.1.11 provenance; source mapping does not claim downstream consumer acceptance.
 - Refactored candidate security/Glaze/release-qualification tooling to bind to the exact current manifest version while preserving historical Stable 0.1.11 release/signing evidence.
 - Added default live-tab residency using the existing `tabs` permission: eligible non-private tabs are set to `autoDiscardable=false` at background startup and on tab creation so Firefox does not automatically unload background tabs. Explicit manual/rule-driven discard remains available.
 - Preserved browser authority over background scheduling: the residency policy does not bypass timer/animation throttling, does not inspect page content, and does not silently reload a tab the user explicitly discarded.
