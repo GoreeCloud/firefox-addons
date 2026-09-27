@@ -13,6 +13,7 @@ const createSnapshot = document.querySelector("#create-snapshot");
 const snapshotRetention = document.querySelector("#snapshot-retention");
 const saveRetention = document.querySelector("#save-retention");
 const snapshotList = document.querySelector("#snapshot-list");
+const residencyPanel = document.querySelector("#residency-panel");
 
 let pendingImport = null;
 let pendingPreview = null;
@@ -103,6 +104,20 @@ function render(model) {
   setText("count-tree", model.counts.treeChildren);
   setText("count-pinned", model.counts.pinned);
   setText("count-discarded", model.counts.discarded);
+  const residency = model.residency;
+  if (residency?.eligibleTabs === 0) {
+    setText("residency-status", "No eligible tabs");
+    setText("residency-detail", "No non-private Firefox tabs are currently available for automatic-unload protection.");
+    residencyPanel.dataset.state = "neutral";
+  } else if (residency?.fullyProtected) {
+    setText("residency-status", "On");
+    setText("residency-detail", `${residency.protectedTabs} of ${residency.eligibleTabs} eligible tabs reject Firefox automatic discard. ${residency.residentTabs} currently resident${residency.discardedTabs ? `; ${residency.discardedTabs} explicitly discarded` : ""}. Manual Discard remains available.`);
+    residencyPanel.dataset.state = "protected";
+  } else {
+    setText("residency-status", "Attention");
+    setText("residency-detail", `${residency.protectedTabs} of ${residency.eligibleTabs} eligible tabs currently reject Firefox automatic discard. Refresh or reload the extension if protection remains incomplete.`);
+    residencyPanel.dataset.state = "attention";
+  }
   setText("count-tab-sets", model.counts.tabSets);
   setText("count-stashed", model.counts.stashed);
   setText("count-snoozed", model.counts.snoozed);

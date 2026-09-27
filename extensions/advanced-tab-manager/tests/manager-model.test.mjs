@@ -20,8 +20,8 @@ test("manager model aggregates counts without exposing tab or saved-item content
       snapshot: {
         windows: [{
           tabs: [
-            { title: "Secret title", url: "https://example.test/private", pinned: true, discarded: false, treeParentLogicalId: null },
-            { title: "Another", url: "https://example.test/child", pinned: false, discarded: true, treeParentLogicalId: "logical-parent" }
+            { title: "Secret title", url: "https://example.test/private", pinned: true, discarded: false, autoDiscardable: false, treeParentLogicalId: null },
+            { title: "Another", url: "https://example.test/child", pinned: false, discarded: true, autoDiscardable: false, treeParentLogicalId: "logical-parent" }
           ]
         }],
         groups: [{ id: 1 }]
@@ -68,6 +68,13 @@ test("manager model aggregates counts without exposing tab or saved-item content
     rules: 1,
     sessionSnapshots: 1
   });
+  assert.deepEqual(model.residency, {
+    eligibleTabs: 2,
+    residentTabs: 1,
+    discardedTabs: 1,
+    protectedTabs: 2,
+    fullyProtected: true
+  });
   assert.equal(model.snapshots.retention, 5);
   assert.deepEqual(model.snapshots.items, [{ id: "snapshot-secret", createdAt: 1000, windows: 1, tabs: 1 }]);
   assert.equal(model.stores.rules.enabled, true);
@@ -103,7 +110,7 @@ test("manager model remains usable when extension-owned stores are unavailable",
     manifest,
     dashboard: {
       ok: false,
-      snapshot: { windows: [{ tabs: [{ pinned: false, discarded: false }] }], groups: [] }
+      snapshot: { windows: [{ tabs: [{ pinned: false, discarded: false, autoDiscardable: false }] }], groups: [] }
     },
     snooze: { ok: false },
     rules: { ok: false }

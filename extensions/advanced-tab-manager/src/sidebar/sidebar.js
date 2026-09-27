@@ -1,4 +1,4 @@
-import { flattenTabs } from "../core/state.js";
+import { flattenTabs, summarizeTabResidency } from "../core/state.js";
 import { analyzeTree } from "../core/tree.js";
 import { renderDuplicateView } from "./duplicates-view.js";
 import { renderOpenTabs } from "./open-tabs-view.js";
@@ -21,9 +21,10 @@ let rulePreview = null;
 
 function renderSummaryChips(items) {
   summary.replaceChildren();
-  for (const [value, label] of items) {
+  for (const [value, label, title] of items) {
     const chip = document.createElement("span");
     chip.className = "summary-chip";
+    if (title) chip.title = title;
     const strong = document.createElement("strong");
     strong.textContent = String(value);
     const text = document.createElement("span");
@@ -39,7 +40,8 @@ function render() {
 
   const needle = search.value.trim().toLocaleLowerCase();
   const allTabs = flattenTabs(snapshot);
-  const discarded = allTabs.filter((tab) => tab.discarded).length;
+  const residency = summarizeTabResidency(snapshot);
+  const discarded = residency.discardedTabs;
   const pinned = allTabs.filter((tab) => tab.pinned).length;
   const attached = snapshot.windows.reduce(
     (count, window) => count + [...analyzeTree(window.tabs).statusByLogicalId.values()].filter((status) => status === "attached").length,
@@ -51,6 +53,7 @@ function render() {
   const ruleCount = ruleState?.rules.length ?? 0;
   const summaryItems = [
     [allTabs.length, "tabs"],
+    [residency.protectedTabs, "auto-protected", `${residency.protectedTabs} of ${residency.eligibleTabs} eligible tabs are protected from Firefox automatic unload. Manual Discard remains available.`],
     [snapshot.windows.length, "windows"],
     [savedSetCount, "Tab Sets"],
     [snoozedCount, "snoozed"],

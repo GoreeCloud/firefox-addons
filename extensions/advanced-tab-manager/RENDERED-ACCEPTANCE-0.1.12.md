@@ -132,3 +132,17 @@ This establishes normal-light rendered acceptance for the sidebar, command palet
 The toolbar popup is not shown in this exact post-PR #110 screenshot set, so current-head popup rendered confirmation remains pending.
 
 Stable remains `0.1.11`. All other governed accessibility, alternate-appearance, signing, restart, and Stable-promotion gates remain separate.
+
+
+## Residency-visibility refinement boundary
+
+After the post-PR #110 normal-light review was recorded, the 0.1.12 Development line began a bounded residency-visibility refinement so the product can show the Firefox automatic-discard protection it already enforces.
+
+The candidate carries Firefox `autoDiscardable` state into normalized live tab state and adds:
+- an `auto-protected` sidebar summary chip;
+- a popup automatic-unload protection status line;
+- a Manager Automatic unload protection explanation with protected/eligible, resident, and explicitly discarded counts.
+
+This change does not add permissions, host access, content scripts, telemetry, remote dependencies, private-browsing access, storage schema, or page-content inspection. It also does not change the truthful behavior boundary: automatic-discard protection is not foreground-equivalent scheduling.
+
+Because the refinement changes sidebar, popup, and Manager rendering, the post-PR #110 screenshot evidence remains historical evidence for its exact reviewed source and conditions. Fresh rendered review is required for the residency-visibility candidate before normal-light acceptance is rebound to its exact source revision. Stable remains `0.1.11`.

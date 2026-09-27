@@ -61,6 +61,24 @@ h1 {
   background: var(--accent);
   box-shadow: 0 0 0 3px color-mix(in srgb, AccentColor 12%, transparent);
 }
+.residency-state {
+  margin: -1px 0 11px;
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface-strong) 58%, transparent);
+  color: var(--muted);
+  font-size: 9.5px;
+  line-height: 1.4;
+}
+.residency-state[data-state="protected"] {
+  border-color: color-mix(in srgb, AccentColor 34%, var(--border));
+  color: CanvasText;
+}
+.residency-state[data-state="attention"] {
+  border-color: color-mix(in srgb, Mark 52%, var(--border));
+  color: CanvasText;
+}
 .metrics {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -159,7 +177,7 @@ button:active { transform: translateY(1px); }
 }
 @media (forced-colors: active) {
   body { background: Canvas; }
-  .popup-frame, .metrics > div, button, .version-badge { border: 1px solid ButtonText; box-shadow: none; }
+  .popup-frame, .metrics > div, .residency-state, button, .version-badge { border: 1px solid ButtonText; box-shadow: none; }
   .quiet-action { border-color: ButtonText; }
   .status-line::before, .metrics > div::after { background: Highlight; box-shadow: none; }
 }

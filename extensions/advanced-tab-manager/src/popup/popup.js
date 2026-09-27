@@ -1,6 +1,7 @@
-import { countExactUrlDuplicates, flattenTabs } from "../core/state.js";
+import { countExactUrlDuplicates, flattenTabs, summarizeTabResidency } from "../core/state.js";
 
 const summary = document.querySelector("#summary");
+const residencyStatus = document.querySelector("#residency-status");
 const saveWindow = document.querySelector("#save-window");
 const openSidebar = document.querySelector("#open-sidebar");
 const openManager = document.querySelector("#open-manager");
@@ -22,6 +23,7 @@ async function refresh() {
   const snapshot = dashboard.snapshot;
   const tabs = flattenTabs(snapshot);
   const duplicates = countExactUrlDuplicates(snapshot);
+  const residency = summarizeTabResidency(snapshot);
   const tabSets = dashboard.state.tabSets.length;
   const snoozed = snooze?.ok ? snooze.state.items.length : 0;
 
@@ -33,6 +35,16 @@ async function refresh() {
   const windowLabel = snapshot.windows.length === 1 ? "window" : "windows";
   const groupLabel = snapshot.groups.length === 1 ? "native group" : "native groups";
   summary.textContent = `Ready · ${snapshot.windows.length} ${windowLabel} · ${snapshot.groups.length} ${groupLabel}`;
+  if (residency.eligibleTabs === 0) {
+    residencyStatus.textContent = "No eligible tabs are currently available for automatic-unload protection.";
+    residencyStatus.dataset.state = "neutral";
+  } else if (residency.fullyProtected) {
+    residencyStatus.textContent = `Automatic unload protection on · ${residency.protectedTabs}/${residency.eligibleTabs} protected · ${residency.residentTabs} resident${residency.discardedTabs ? ` · ${residency.discardedTabs} explicitly discarded` : ""}`;
+    residencyStatus.dataset.state = "protected";
+  } else {
+    residencyStatus.textContent = `Protection needs attention · ${residency.protectedTabs}/${residency.eligibleTabs} eligible tabs protected`;
+    residencyStatus.dataset.state = "attention";
+  }
 }
 
 saveWindow.addEventListener("click", async () => {

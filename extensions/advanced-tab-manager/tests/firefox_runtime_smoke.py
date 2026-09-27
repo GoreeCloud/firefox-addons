@@ -290,6 +290,11 @@ def main() -> int:
                 "Manager Saved workspace renders snapshot limit",
             )
             require(
+                driver.find_element("id", "residency-status").text.strip() == "On"
+                and "eligible tabs reject Firefox automatic discard" in driver.find_element("id", "residency-detail").text,
+                "Manager renders default automatic-unload protection truth",
+            )
+            require(
                 driver.find_element("id", "content-scripts").text.strip() == "None",
                 "Manager renders zero content scripts as None",
             )
@@ -352,6 +357,10 @@ def main() -> int:
                 lambda d: d.find_element("id", "metric-tabs").text.strip() not in {"", "—"}
             )
             require(grid_shape(driver, ".metrics > div") == (2, 2), "popup metrics render as 2x2")
+            require(
+                "Automatic unload protection on" in driver.find_element("id", "residency-status").text,
+                "popup exposes default automatic-unload protection",
+            )
             require(driver.find_element("id", "save-window").is_enabled(), "popup primary Save action is interactive")
             passes.append("popup-layout")
 
@@ -361,6 +370,10 @@ def main() -> int:
             require(isinstance(manager, dict) and manager.get("ok") is True, "Manager background model available", repr(manager))
             require(manager["model"]["source"]["version"] == EXPECTED_VERSION, "Manager source version is exact candidate")
             require(manager["model"]["permissions"]["hosts"] == [], "Manager confirms no host permissions")
+            require(
+                manager["model"]["residency"]["fullyProtected"] is True,
+                "Manager model reports all eligible tabs protected from Firefox automatic discard",
+            )
             passes.append("manager-model")
 
             residency = driver.execute_async_script(
