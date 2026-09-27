@@ -27,7 +27,7 @@ assert inventory_entry["accepted_stable_version"] == "0.1.11"
 required = [
     "README.md", "FEATURES.md", "FEATURE-ROADMAP.md", "SPECIFICATIONS.md", "ARCHITECTURE.md",
     "PRIVACY.md", "SECURITY.md", "CHANGELOG.md", "LICENSE",
-    "GLAZE-UI-1.5.1-ADOPTION.md", "RENDERED-ACCEPTANCE-0.1.12.md", "STABLE-SECURITY-REVIEW-0.1.11.md", "RELEASE-ACCEPTANCE-0.1.11.md",
+    "GLAZE-UI-1.5.1-ADOPTION.md", "GLAZE-UI-1.6.0-ADOPTION.md", "RENDERED-ACCEPTANCE-0.1.12.md", "STABLE-SECURITY-REVIEW-0.1.11.md", "RELEASE-ACCEPTANCE-0.1.11.md",
     "src/background/background.js", "src/background/browser-state.js", "src/background/tab-residency.js", "src/background/saved-state.js", "src/background/duplicate-cleanup.js", "src/background/snooze.js", "src/background/rules.js", "src/background/manager.js", "src/background/portability.js",
     "src/core/state.js", "src/core/tree.js", "src/core/tree-session.js", "src/core/duplicates.js",
     "src/core/persistent-state.js", "src/core/tab-sets.js", "src/core/stash-transaction.js",
@@ -187,7 +187,8 @@ assert "new Blob" in manager_page and "JSON.parse" in manager_page and "window.c
 assert "file.size > MAX_IMPORT_BYTES" in manager_page
 assert "sessionSnapshots" in portability_core, "portable organizational state must include snapshot preview accounting"
 assert "prefers-reduced-transparency" in manager_css and "forced-colors" in manager_css
-glaze_adoption = (ROOT / "GLAZE-UI-1.5.1-ADOPTION.md").read_text(encoding="utf-8")
+historical_glaze_adoption = (ROOT / "GLAZE-UI-1.5.1-ADOPTION.md").read_text(encoding="utf-8")
+glaze_adoption = (ROOT / "GLAZE-UI-1.6.0-ADOPTION.md").read_text(encoding="utf-8")
 rendered_acceptance = (ROOT / "RENDERED-ACCEPTANCE-0.1.12.md").read_text(encoding="utf-8")
 security_review = (ROOT / "STABLE-SECURITY-REVIEW-0.1.11.md").read_text(encoding="utf-8")
 release_acceptance_011 = (ROOT / "RELEASE-ACCEPTANCE-0.1.11.md").read_text(encoding="utf-8")
@@ -198,8 +199,9 @@ signing_workflow = (REPOSITORY_ROOT / ".github/workflows/advanced-tab-manager-mo
 signed_restart = (ROOT / "tests/signed_restart_smoke.py").read_text(encoding="utf-8")
 signed_parity = (ROOT / "tests/verify_signed_xpi.py").read_text(encoding="utf-8")
 amo_recovery = (ROOT / "tests/amo_signed_version_recovery.py").read_text(encoding="utf-8")
-assert "GLAZE UI V1.5 / machine version 1.5.1 Stable" in glaze_adoption
-assert "af0d0d3e85aaf46e83a2baa64aab914fd96a7e98" in glaze_adoption
+assert "GLAZE UI V1.6 / machine version 1.6.0" in glaze_adoption
+assert "a7180679ea851389e0f3004515f9a25f420e716d" in glaze_adoption
+assert "1.5.1" in historical_glaze_adoption, "historical Stable 0.1.11 Glaze provenance must remain available"
 assert "35c4d2dd8aa2a3fcd5742f430d8c8388ab85846a" in rendered_acceptance
 assert "normal-light rendered acceptance" in rendered_acceptance.lower(), "rendered acceptance must remain scoped to normal-light observed evidence"
 assert "does not establish the following" in rendered_acceptance.lower(), "rendered acceptance must preserve explicit unverified-condition boundaries"
@@ -214,11 +216,17 @@ assert "35350654198" in release_acceptance_011
 assert "e0f16901529cb8fa76e57d9aa056c98de9fa04e708f2232c151d5b75c1dfdb1d" in release_acceptance_011
 assert '"git"' in security_script and '"log"' in security_script and "--full-history" in security_script
 assert "manifest.json" in security_script and "EXPECTED_VERSION" in security_script
-assert "GLAZE_AUTHORITY_REVISION = \"af0d0d3e85aaf46e83a2baa64aab914fd96a7e98\"" in glaze_script
+assert 'GLAZE_VERSION = "1.6.0"' in glaze_script
+assert 'GLAZE_AUTHORITY_REPOSITORY = "GoreeCloud/glaze-ui"' in glaze_script
+assert 'GLAZE_STABLE_SOURCE = "a7180679ea851389e0f3004515f9a25f420e716d"' in glaze_script
+assert '"status": "adoption-required"' in glaze_script
+assert '"consumerRegistryAccepted": False' in glaze_script
 assert "sharedPerformanceAcceptanceInherited" in glaze_script and "False" in glaze_script
 assert "fetch-depth: 0" in release_workflow
 assert "github.event.pull_request.head.sha || github.sha" in release_workflow
 assert "stable_security_review.py" in release_workflow and "glaze_consumer_qualification.py" in release_workflow
+assert "advanced-tab-manager-glaze-1.6.0-adoption.json" in release_workflow
+assert "GLAZE UI 1.6.0 source adoption state" in release_workflow
 assert "cmp \"$A\" \"$B\"" in release_workflow
 
 assert "ATM_RELEASE_VERSION: '0.1.11'" in signing_workflow
