@@ -150,7 +150,7 @@ Because the refinement changes sidebar, popup, and Manager rendering, the post-P
 
 ## Snooze-control refinement boundary
 
-The 0.1.12 Development line now adds a **Next week 9:00 AM** preset to the native snooze dialog and an explicit **Cancel snooze** action in the Snoozed view. These controls reuse the existing one-shot recovery/alarm model and do not add permissions or storage schema.
+The 0.1.12 Development line now adds **Later today**, **Tomorrow 9:00 AM**, and **Next week 9:00 AM** presets to the native snooze dialog plus an explicit **Cancel snooze** action in the Snoozed view. Later today selects the next bounded same-day afternoon/evening slot with at least 30 minutes of lead time and becomes unavailable late at night rather than crossing into tomorrow. These controls reuse the existing one-shot recovery/alarm model and do not add permissions or storage schema.
 
 Earlier normal-light screenshot evidence remains valid for the unchanged surfaces and conditions it actually showed, but it does not constitute rendered acceptance of these newly added snooze-control states. Fresh representative rendering of the updated snooze dialog and Snoozed-view cancellation control is required before those exact UI states are accepted.
 
