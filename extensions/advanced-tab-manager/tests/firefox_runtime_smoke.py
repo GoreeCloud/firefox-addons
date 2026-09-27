@@ -627,6 +627,43 @@ def main() -> int:
                     "duplicate cleanup retained exactly one controlled tab")
             passes.append("duplicate-cleanup")
 
+            normalized_url_one = f"{base}/duplicate-normalized?id=7&utm_source=mail"
+            normalized_url_two = f"{base}/duplicate-normalized?id=7&fbclid=abc"
+            create_tab(driver, normalized_url_one)
+            create_tab(driver, normalized_url_two)
+            normalized_one = wait_for_snapshot_url_count(driver, normalized_url_one, 1)
+            normalized_two = wait_for_snapshot_url_count(driver, normalized_url_two, 1)
+            require(
+                len(normalized_one) == 1 and len(normalized_two) == 1,
+                "tracking-normalized duplicate fixtures reconcile into live Firefox state",
+            )
+            normalized_cleanup = extension_message(
+                driver,
+                {
+                    "type": "atm:cleanup-duplicates",
+                    "mode": "tracking-normalized",
+                    "matchKey": f"{base}/duplicate-normalized?id=7",
+                    "keepTabId": normalized_two[0]["id"],
+                },
+            )
+            require(
+                isinstance(normalized_cleanup, dict)
+                and normalized_cleanup.get("ok") is True
+                and normalized_cleanup.get("closed") == 1,
+                "tracking-normalized duplicate cleanup completed after fresh-state reconstruction",
+                repr(normalized_cleanup),
+            )
+            normalized_after = extension_message(driver, {"type": "atm:get-snapshot"})
+            require(
+                sum(
+                    1
+                    for tab in flatten(normalized_after)
+                    if tab.get("url") in {normalized_url_one, normalized_url_two}
+                ) == 1,
+                "tracking-normalized cleanup retained exactly one reviewed controlled tab",
+            )
+            passes.append("duplicate-tracking-normalized-cleanup")
+
             rule_state = extension_message(driver, {"type": "atm:get-rule-state"})
             require(rule_state.get("ok") is True and rule_state["state"].get("enabled") is False,
                     "rule engine remains fail-closed disabled by default")
@@ -688,7 +725,7 @@ def main() -> int:
             server.shutdown()
             server.server_close()
 
-    require(len(passes) == 16, "all release-critical unsigned runtime checks passed", str(passes))
+    require(len(passes) == 17, "all release-critical unsigned runtime checks passed", str(passes))
     print("Advanced Tab Manager unsigned real-Firefox runtime acceptance passed.")
     return 0
 
