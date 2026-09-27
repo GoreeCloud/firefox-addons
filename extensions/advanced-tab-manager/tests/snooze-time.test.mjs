@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   DEFAULT_SNOOZE_DELAY_MS,
   defaultSnoozeWakeAt,
+  nextWeekWakeAt,
   parseLocalSnoozeTime,
   toLocalDateTimeValue,
   tomorrowMorningWakeAt
@@ -34,5 +35,16 @@ test("tomorrow morning resolves to the next local calendar day at the requested 
   assert.equal(date.getHours(), 9);
   assert.equal(date.getMinutes(), 0);
   assert.equal(date.getDate(), new Date(2030, 3, 6).getDate());
+  assert.ok(wakeAt > now);
+});
+
+
+test("next week resolves to seven local calendar days later at the requested hour", () => {
+  const now = new Date(2030, 3, 5, 22, 30, 0, 0).getTime();
+  const wakeAt = nextWeekWakeAt(now, 9);
+  const date = new Date(wakeAt);
+  assert.equal(date.getHours(), 9);
+  assert.equal(date.getMinutes(), 0);
+  assert.equal(date.getDate(), new Date(2030, 3, 12).getDate());
   assert.ok(wakeAt > now);
 });
