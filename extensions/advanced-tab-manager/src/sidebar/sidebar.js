@@ -19,6 +19,20 @@ let snoozeState = null;
 let ruleState = null;
 let rulePreview = null;
 
+function renderSummaryChips(items) {
+  summary.replaceChildren();
+  for (const [value, label] of items) {
+    const chip = document.createElement("span");
+    chip.className = "summary-chip";
+    const strong = document.createElement("strong");
+    strong.textContent = String(value);
+    const text = document.createElement("span");
+    text.textContent = label;
+    chip.append(strong, text);
+    summary.append(chip);
+  }
+}
+
 function render() {
   content.replaceChildren();
   if (!snapshot) return;
@@ -35,7 +49,19 @@ function render() {
   const stashCount = organizationalState?.stashedItems.length ?? 0;
   const snoozedCount = snoozeState?.items.length ?? 0;
   const ruleCount = ruleState?.rules.length ?? 0;
-  summary.textContent = `${allTabs.length} tabs · ${snapshot.windows.length} windows · ${snapshot.groups.length} native groups · ${attached} tree children · ${savedSetCount} Tab Sets · ${stashCount} stashed · ${snoozedCount} snoozed · ${ruleCount} rules · ${pinned} pinned · ${discarded} discarded`;
+  const summaryItems = [
+    [allTabs.length, "tabs"],
+    [snapshot.windows.length, "windows"],
+    [savedSetCount, "Tab Sets"],
+    [snoozedCount, "snoozed"],
+    [pinned, "pinned"]
+  ];
+  if (snapshot.groups.length) summaryItems.push([snapshot.groups.length, "groups"]);
+  if (attached) summaryItems.push([attached, "tree"]);
+  if (stashCount) summaryItems.push([stashCount, "stashed"]);
+  if (ruleCount) summaryItems.push([ruleCount, "rules"]);
+  if (discarded) summaryItems.push([discarded, "discarded"]);
+  renderSummaryChips(summaryItems);
 
   if (viewMode.value === "saved") {
     content.append(renderSavedView({ organizationalState, needle }));
@@ -260,8 +286,8 @@ content.addEventListener("click", async (event) => {
     return;
   }
 
-  const row = event.target.closest(".tab-row");
-  if (row) await activate(Number(row.dataset.tabId));
+  const activation = event.target.closest(".tab-activate");
+  if (activation) await activate(Number(activation.dataset.tabId));
 });
 
 content.addEventListener("submit", async (event) => {
@@ -288,13 +314,6 @@ content.addEventListener("submit", async (event) => {
   event.target.reset();
   rulePreview = null;
   await load();
-});
-
-content.addEventListener("keydown", async (event) => {
-  if ((event.key === "Enter" || event.key === " ") && event.target.classList.contains("tab-row")) {
-    event.preventDefault();
-    await activate(Number(event.target.dataset.tabId));
-  }
 });
 
 saveWindow.addEventListener("click", async () => {

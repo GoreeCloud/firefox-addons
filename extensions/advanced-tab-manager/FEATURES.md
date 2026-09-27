@@ -1,5 +1,21 @@
 # GoreeCloud Advanced Tab Manager — Features
 
+## In development — 0.1.12
+
+- Default live-tab residency: on background startup and for newly created tabs, Advanced Tab Manager sets Firefox `autoDiscardable=false` for every eligible non-private open tab so Firefox does not automatically unload background tabs. Explicit manual/rule-driven Discard remains available as a user action.
+- The residency default does not claim foreground-equivalent scheduling. Firefox remains authoritative for background timer/rendering throttling and operating-system process/resource constraints; the extension does not inspect or alter page content to bypass those browser policies.
+
+- Redesigned popup command surface with glanceable open-tab, Tab Set, snoozed, and exact-duplicate counts.
+- Redesigned sidebar chrome, search/view composition, compact state chips, active-tab treatment, responsive density, and clearer primary/secondary actions.
+- Reorganized full Manager around overview, recovery, portability, and secondary technical-status sections.
+- Removed stale embedded lifecycle/source-candidate labels from the runtime Manager model; canonical release records remain authoritative for lifecycle and signing truth.
+- Corrected Manager rendering of retained session-snapshot count.
+- Strengthened sidebar tab-row keyboard and assistive semantics.
+- Preserved existing Firefox permissions, host/content/private-browsing boundaries, storage schemas, recovery semantics, automation boundaries, and local-first behavior.
+- Current Stable Glaze UI target remains V1.5 / 1.5.1. The 0.1.12 material presentation change requires fresh exact-revision consumer qualification and representative rendered/accessibility acceptance.
+- Stable 0.1.11 remains the accepted signed rollback/production baseline until a later release completes all required gates.
+
+
 ## Implemented in Stable 0.1.11
 
 - Firefox Manifest V3 identity, canonical component directory, Firefox 139+ baseline, and deterministic packaging integration.
@@ -31,4 +47,4 @@
 
 ## Planned / not yet implemented
 
-Tree drag-and-drop and branch bulk actions, normalized duplicate matching, durable protected-tab rules, richer arbitrary-date/recurring snoozing, event-driven automatic rule application, richer rule editing, automatic discard policy, richer command actions, broader manager/settings workflows, Webspaces integration, optional hidden-tab Focus Mode, additional representative rendered Firefox large-session/performance coverage, and future feature expansion remain planned. Stable 0.1.11 release qualification itself is complete.
+Tree drag-and-drop and branch bulk actions, normalized duplicate matching, durable protected-tab rules, richer arbitrary-date/recurring snoozing, event-driven automatic rule application, richer rule editing, optional user-enabled automatic discard policy, richer command actions, broader manager/settings workflows, Webspaces integration, optional hidden-tab Focus Mode, additional representative rendered Firefox large-session/performance coverage, and future feature expansion remain planned. Stable 0.1.11 release qualification itself is complete.

@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.1.12 — Development
+
+- Started a new Development/source-candidate line from accepted Stable 0.1.11; Stable 0.1.11 remains the signed rollback/production baseline.
+- Redesigned the toolbar popup as a compact command surface with glanceable live metrics and clearer primary/secondary action hierarchy.
+- Redesigned sidebar chrome, search/view controls, state summary, active-tab treatment, responsive density, and interaction semantics.
+- Reorganized the full Manager into overview, recovery, portability, and secondary technical-status regions with more deliberate information hierarchy.
+- Removed stale hard-coded `In Development · source-candidate` fields from the runtime Manager model so canonical release records remain authoritative for mutable lifecycle truth.
+- Corrected the Manager so retained session-snapshot count is rendered from the existing privacy-minimized model.
+- Kept current Stable Glaze UI V1.5 / 1.5.1 as the consumer target and preserved Reduced Transparency, Forced Colors, focus, responsive, and semantic system-color fallbacks.
+- Refactored candidate security/Glaze/release-qualification tooling to bind to the exact current manifest version while preserving historical Stable 0.1.11 release/signing evidence.
+- Added default live-tab residency using the existing `tabs` permission: eligible non-private tabs are set to `autoDiscardable=false` at background startup and on tab creation so Firefox does not automatically unload background tabs. Explicit manual/rule-driven discard remains available.
+- Preserved browser authority over background scheduling: the residency policy does not bypass timer/animation throttling, does not inspect page content, and does not silently reload a tab the user explicitly discarded.
+- Added no Firefox permission, host permission, content script, telemetry path, remote dependency, private-browsing access, or storage schema; browser mutation authority expands only by the bounded `autoDiscardable=false` residency update.
+- Removed the unsupported Manifest V3 `background.persistent` key after Firefox 156 surfaced it as a temporary-load warning; non-persistent event-page behavior remains the intended MV3 model.
+- Corrected deterministic large-session evidence generation so `sourceVersion` is read from the exact candidate manifest instead of retaining the historical 0.1.11 label.
+- Refined the sidebar toolbar after representative Firefox rendering showed the injected command trigger forcing Refresh onto a second row; the command trigger is now a compact `⌘K` control in the shared toolbar system, and row actions remain quieter than primary content without becoming nearly invisible.
+- Corrected the Manager snapshot-recovery surface after representative rendering showed an empty retention field and missing empty-state copy: retention now renders from the manager model, the no-snapshot state is visible, snapshot retention is included in the saved-workspace metrics, zero content scripts render as `None`, and recovery/portability cards no longer stretch to unnecessary equal height.
+- Replaced nested sidebar tab-row button semantics with a dedicated native tab-activation button beside independent row actions, so keyboard activation is native and assistive technology does not encounter a button containing other buttons.
+- Made the command-palette trigger platform-neutral, balanced the six Saved workspace metrics into a 3×2 grid, and changed popup metrics from a cramped four-column strip to a more readable 2×2 grid.
+- No new product icon or other image asset is introduced in this candidate.
+
+
 ## 0.1.11 — Stable
 
 - Preserved the accepted 0.1.10 functional feature slice with no permission or browser-authority expansion.

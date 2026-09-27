@@ -10,7 +10,7 @@ inventory_entry = next(item for item in inventory["extensions"] if item["slug"] 
 
 assert manifest["manifest_version"] == 3
 assert manifest["name"] == "GoreeCloud Advanced Tab Manager"
-assert manifest["version"] == "0.1.11"
+assert manifest["version"] == "0.1.12"
 assert manifest["browser_specific_settings"]["gecko"]["id"] == "advanced-tab-manager@goreecloud.com"
 assert manifest["browser_specific_settings"]["gecko"]["strict_min_version"] == "139.0"
 assert manifest["incognito"] == "not_allowed"
@@ -18,17 +18,17 @@ assert set(manifest["permissions"]) == {"alarms", "sessions", "storage", "tabGro
 assert not manifest.get("host_permissions"), "Stable source must not request host permissions"
 assert "content_scripts" not in manifest, "Stable source must not inspect page content"
 assert "unlimitedStorage" not in manifest["permissions"], "bounded Stable saved state must not request unlimited storage"
-assert manifest["background"].get("persistent") is False
+assert "persistent" not in manifest["background"], "Manifest V3 background must not declare unsupported persistent"
 assert manifest["background"].get("type") == "module"
-assert inventory_entry["source_version"] == "0.1.11"
-assert inventory_entry["source_state"] == "stable"
+assert inventory_entry["source_version"] == "0.1.12"
+assert inventory_entry["source_state"] == "source-candidate"
 assert inventory_entry["accepted_stable_version"] == "0.1.11"
 
 required = [
     "README.md", "FEATURES.md", "FEATURE-ROADMAP.md", "SPECIFICATIONS.md", "ARCHITECTURE.md",
     "PRIVACY.md", "SECURITY.md", "CHANGELOG.md", "LICENSE",
-    "GLAZE-UI-1.5.1-ADOPTION.md", "STABLE-SECURITY-REVIEW-0.1.11.md", "RELEASE-ACCEPTANCE-0.1.11.md",
-    "src/background/background.js", "src/background/browser-state.js", "src/background/saved-state.js", "src/background/duplicate-cleanup.js", "src/background/snooze.js", "src/background/rules.js", "src/background/manager.js", "src/background/portability.js",
+    "GLAZE-UI-1.5.1-ADOPTION.md", "RENDERED-ACCEPTANCE-0.1.12.md", "STABLE-SECURITY-REVIEW-0.1.11.md", "RELEASE-ACCEPTANCE-0.1.11.md",
+    "src/background/background.js", "src/background/browser-state.js", "src/background/tab-residency.js", "src/background/saved-state.js", "src/background/duplicate-cleanup.js", "src/background/snooze.js", "src/background/rules.js", "src/background/manager.js", "src/background/portability.js",
     "src/core/state.js", "src/core/tree.js", "src/core/tree-session.js", "src/core/duplicates.js",
     "src/core/persistent-state.js", "src/core/tab-sets.js", "src/core/stash-transaction.js",
     "src/core/snooze-store.js", "src/core/snooze.js", "src/core/snooze-transaction.js",
@@ -42,7 +42,7 @@ required = [
     "tests/snooze-store.test.mjs", "tests/snooze.test.mjs", "tests/snooze-transaction.test.mjs", "tests/background-snooze.test.mjs",
     "tests/rule-state.test.mjs", "tests/rules.test.mjs", "tests/background-rules.test.mjs", "tests/commands.test.mjs",
     "tests/manager-model.test.mjs", "tests/background-manager.test.mjs", "tests/portability.test.mjs", "tests/background-portability.test.mjs",
-    "tests/session-snapshots.test.mjs", "tests/background-session-snapshots.test.mjs",
+    "tests/session-snapshots.test.mjs", "tests/background-session-snapshots.test.mjs", "tests/tab-residency.test.mjs",
     "tests/firefox_runtime_smoke.py", "tests/signed_restart_smoke.py", "tests/amo_signed_version_recovery.py", "tests/verify_signed_xpi.py",
     "RELEASE-ACCEPTANCE-0.1.10.md",
     "scripts/large-session-qualification.mjs", "scripts/stable_security_review.py", "scripts/glaze_consumer_qualification.py"
@@ -51,6 +51,7 @@ for relative in required:
     assert (ROOT / relative).is_file(), f"missing required source-candidate file: {relative}"
 
 background = (ROOT / "src/background/background.js").read_text(encoding="utf-8")
+tab_residency = (ROOT / "src/background/tab-residency.js").read_text(encoding="utf-8")
 manager_background = (ROOT / "src/background/manager.js").read_text(encoding="utf-8")
 manager_model = (ROOT / "src/core/manager-model.js").read_text(encoding="utf-8")
 manager_page = (ROOT / "src/manager/manager.js").read_text(encoding="utf-8")
@@ -68,6 +69,7 @@ rule_state = (ROOT / "src/core/rule-state.js").read_text(encoding="utf-8")
 rules_core = (ROOT / "src/core/rules.js").read_text(encoding="utf-8")
 rules_view = (ROOT / "src/sidebar/rules-view.js").read_text(encoding="utf-8")
 sidebar = (ROOT / "src/sidebar/sidebar.js").read_text(encoding="utf-8")
+open_tabs_view = (ROOT / "src/sidebar/open-tabs-view.js").read_text(encoding="utf-8")
 commands_core = (ROOT / "src/core/commands.js").read_text(encoding="utf-8")
 palette = (ROOT / "src/sidebar/command-palette.js").read_text(encoding="utf-8")
 palette_css = (ROOT / "src/sidebar/command-palette.css").read_text(encoding="utf-8")
@@ -76,6 +78,11 @@ manager_link = (ROOT / "src/sidebar/manager-link.js").read_text(encoding="utf-8"
 popup_html = (ROOT / "src/popup/popup.html").read_text(encoding="utf-8")
 popup_js = (ROOT / "src/popup/popup.js").read_text(encoding="utf-8")
 
+assert "createTabResidencyPolicy" in background
+assert "protectAllOpenTabs" in background and "protectTab(tab)" in background
+assert "autoDiscardable: false" in tab_residency
+assert "browser.tabs.query({})" in tab_residency and "browser.tabs.update" in tab_residency
+assert "browser.tabs.reload" not in tab_residency, "default residency must not silently reload a user-discarded tab"
 assert "createRuleManager" in background
 assert "atm:get-rule-state" in background and "atm:set-rule-engine-enabled" in background
 assert "atm:upsert-rule" in background and "atm:delete-rule" in background and "atm:preview-rule-evaluation" in background
@@ -96,6 +103,10 @@ assert "browser.tabs.remove" not in rule_background, "rule actions must not clos
 assert "tabs.create" not in rule_background and "url:" not in rule_background, "rule actions must not navigate or create tabs"
 assert "rule-create-form" in rules_view and "apply-rule-actions" in rules_view
 assert "atm:apply-rule-actions" in sidebar
+assert 'activation.className = "tab-activate"' in open_tabs_view, "tab activation must use a native button"
+assert 'row.setAttribute("role", "button")' not in open_tabs_view, "tab rows must not wrap child buttons in button semantics"
+assert 'event.target.closest(".tab-activate")' in sidebar, "sidebar must route activation through the native tab button"
+assert 'classList.contains("tab-row")' not in sidebar, "sidebar must not require custom keyboard activation for tab rows"
 
 assert "COMMANDS" in commands_core and "searchCommands" in commands_core and "commandById" in commands_core
 for command_id in ("view-tree", "view-groups", "view-duplicates", "view-saved", "view-snoozed", "view-rules", "open-manager", "focus-search", "refresh-state", "save-window"):
@@ -117,7 +128,7 @@ assert "Local backup and portability" in manager_html and 'id="export-backup"' i
 assert 'id="apply-import"' in manager_html and 'id="clear-import"' in manager_html
 assert "prefers-reduced-transparency" in manager_css and "forced-colors" in manager_css
 assert "browser.tabs.create" in manager_link and "src/manager/manager.html" in manager_link
-assert 'id="open-manager"' in popup_html and "0.1.11 · retained session snapshots" in popup_html
+assert 'id="open-manager"' in popup_html and "0.1.12" in popup_html and 'id="metric-tabs"' in popup_html
 assert "source candidate" not in popup_html.lower(), "packaged popup must be lifecycle-neutral for release signing"
 assert "development source only" not in manager_html.lower(), "packaged Manager must be lifecycle-neutral for release signing"
 assert "Stable status" not in manager_html, "packaged Manager must not hard-code Stable lifecycle truth"
@@ -129,13 +140,18 @@ for route in ("atm:create-session-snapshot", "atm:restore-session-snapshot", "at
     assert route in background, f"missing session snapshot route: {route}"
 for control_id in ("create-snapshot", "snapshot-retention", "save-retention", "snapshot-list"):
     assert f'id="{control_id}"' in manager_html, f"missing Manager snapshot control: {control_id}"
+assert 'id="count-snapshot-retention"' in manager_html, "Manager must expose configured snapshot retention"
+assert "renderSnapshotList(model.snapshots)" in manager_page, "Manager must render snapshot retention/list state from the model"
+assert 'model.permissions.contentScripts ? model.permissions.contentScripts : "None"' in manager_page, "zero content scripts should render as human-readable None"
 assert "sessionSnapshots" in manager_model and "snapshotRetention" in manager_model
 assert "snapshot.test" not in manager_model, "manager model must not encode fixture browsing content"
 assert "SIZES = [100, 500, 1000]" in large_session_qualification
+assert "readFileSync(new URL(\"../manifest.json\", import.meta.url)" in large_session_qualification, "large-session evidence must bind to the current manifest version"
+assert 'sourceVersion: "0.1.11"' not in large_session_qualification, "large-session evidence must not retain a stale Stable version"
 assert "representative Firefox rendered/runtime performance remains separate" in large_session_qualification
 
 assert 'EXPECTED_ADDON_ID = "advanced-tab-manager@goreecloud.com"' in runtime_smoke
-assert 'EXPECTED_VERSION = "0.1.11"' in runtime_smoke
+assert 'EXPECTED_VERSION = "0.1.12"' in runtime_smoke
 assert "gBrowser.addTrustedTab" in runtime_smoke and "--allow-system-access" in runtime_smoke
 assert "temporary=True" in runtime_smoke, "unsigned runtime gate must not masquerade as persistent signed acceptance"
 for route in (
@@ -172,6 +188,7 @@ assert "file.size > MAX_IMPORT_BYTES" in manager_page
 assert "sessionSnapshots" in portability_core, "portable organizational state must include snapshot preview accounting"
 assert "prefers-reduced-transparency" in manager_css and "forced-colors" in manager_css
 glaze_adoption = (ROOT / "GLAZE-UI-1.5.1-ADOPTION.md").read_text(encoding="utf-8")
+rendered_acceptance = (ROOT / "RENDERED-ACCEPTANCE-0.1.12.md").read_text(encoding="utf-8")
 security_review = (ROOT / "STABLE-SECURITY-REVIEW-0.1.11.md").read_text(encoding="utf-8")
 release_acceptance_011 = (ROOT / "RELEASE-ACCEPTANCE-0.1.11.md").read_text(encoding="utf-8")
 security_script = (ROOT / "scripts/stable_security_review.py").read_text(encoding="utf-8")
@@ -183,13 +200,20 @@ signed_parity = (ROOT / "tests/verify_signed_xpi.py").read_text(encoding="utf-8"
 amo_recovery = (ROOT / "tests/amo_signed_version_recovery.py").read_text(encoding="utf-8")
 assert "GLAZE UI V1.5 / machine version 1.5.1 Stable" in glaze_adoption
 assert "af0d0d3e85aaf46e83a2baa64aab914fd96a7e98" in glaze_adoption
+assert "35c4d2dd8aa2a3fcd5742f430d8c8388ab85846a" in rendered_acceptance
+assert "normal-light rendered acceptance" in rendered_acceptance.lower(), "rendered acceptance must remain scoped to normal-light observed evidence"
+assert "does not establish the following" in rendered_acceptance.lower(), "rendered acceptance must preserve explicit unverified-condition boundaries"
+assert "forced colors rendered acceptance" in rendered_acceptance.lower()
+assert "reduced transparency rendered acceptance" in rendered_acceptance.lower()
+assert "dark appearance rendered acceptance" in rendered_acceptance.lower()
+assert "stable acceptance implied: no" in rendered_acceptance.lower()
 assert "Security exceptions:** None" in security_review
 assert "full Git history" in security_review
 assert "0.1.11" in release_acceptance_011 and "**Lifecycle:** Stable" in release_acceptance_011
 assert "35350654198" in release_acceptance_011
 assert "e0f16901529cb8fa76e57d9aa056c98de9fa04e708f2232c151d5b75c1dfdb1d" in release_acceptance_011
 assert '"git"' in security_script and '"log"' in security_script and "--full-history" in security_script
-assert "EXPECTED_VERSION = \"0.1.11\"" in security_script
+assert "manifest.json" in security_script and "EXPECTED_VERSION" in security_script
 assert "GLAZE_AUTHORITY_REVISION = \"af0d0d3e85aaf46e83a2baa64aab914fd96a7e98\"" in glaze_script
 assert "sharedPerformanceAcceptanceInherited" in glaze_script and "False" in glaze_script
 assert "fetch-depth: 0" in release_workflow
@@ -226,4 +250,4 @@ assert "NoRedirect" in amo_recovery and "/api/v4/file/" in amo_recovery
 assert '"Authorization": f"JWT {token}"' in amo_recovery
 assert 'mirror_request = Request(location, headers={"User-Agent": USER_AGENT})' in amo_recovery
 
-print("Validated Advanced Tab Manager 0.1.11 Stable source, qualification, signing, and lifecycle contracts.")
+print("Validated Advanced Tab Manager 0.1.12 source candidate while preserving accepted Stable 0.1.11 release evidence.")
