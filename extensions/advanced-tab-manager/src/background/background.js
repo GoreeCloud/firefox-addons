@@ -163,6 +163,8 @@ browser.runtime.onMessage.addListener(async (message) => {
       return snoozeManager.snoozeTab(message.tabId, message.wakeAt);
     case "atm:restore-snoozed-item":
       return snoozeManager.restoreSnoozedItem(message.snoozedItemId);
+    case "atm:cancel-snoozed-item":
+      return snoozeManager.cancelSnoozedItem(message.snoozedItemId);
     case "atm:reschedule-snoozed-item":
       return snoozeManager.rescheduleSnoozedItem(message.snoozedItemId, message.wakeAt);
     case "atm:cleanup-exact-duplicates":
