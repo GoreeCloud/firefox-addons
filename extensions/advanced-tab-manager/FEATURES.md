@@ -14,6 +14,8 @@
 - Removed stale embedded lifecycle/source-candidate labels from the runtime Manager model; canonical release records remain authoritative for lifecycle and signing truth.
 - Corrected Manager rendering of retained session-snapshot count.
 - Strengthened sidebar tab-row keyboard and assistive semantics.
+- Added an opt-in tracking-normalized duplicate review mode while keeping exact URL matching as the default. The normalized mode ignores only `utm_*`, `gclid`, `dclid`, `fbclid`, `msclkid`, `mc_cid`, and `mc_eid`; path, fragment, and every other query parameter remain significant.
+- Normalized cleanup uses the same active/pinned/audible/hidden/private/tree guards, requires a reviewed keeper plus explicit confirmation, and reconstructs the current live set before closing any eligible tab. Durable user-defined protected-tab cleanup exclusions remain planned.
 - Preserved existing Firefox permissions, host/content/private-browsing boundaries, storage schemas, recovery semantics, automation boundaries, and local-first behavior.
 - The current shared Glaze adoption target is GLAZE UI V1.6 / 1.6.0. Version 0.1.12 now requires fresh repository-local V1.6.0 source mapping plus representative rendered/accessibility acceptance before consumer acceptance; historical V1.5.1 evidence remains provenance for Stable 0.1.11 only.
 - Stable 0.1.11 remains the accepted signed rollback/production baseline until a later release completes all required gates.
