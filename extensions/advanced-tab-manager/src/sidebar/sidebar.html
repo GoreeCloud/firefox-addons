@@ -51,6 +51,35 @@
 
     <section id="content" class="content" aria-live="polite"></section>
   </main>
+
+  <dialog id="snooze-dialog" class="snooze-dialog" aria-labelledby="snooze-dialog-title">
+    <form id="snooze-form" class="snooze-form">
+      <header class="snooze-dialog-heading">
+        <div>
+          <p class="eyebrow">Snooze</p>
+          <h2 id="snooze-dialog-title">Choose when to reopen</h2>
+          <p id="snooze-dialog-tab" class="snooze-dialog-tab"></p>
+        </div>
+        <button id="snooze-cancel-x" class="row-action" type="button" aria-label="Cancel snooze scheduling">×</button>
+      </header>
+
+      <div class="snooze-presets" aria-label="Snooze time presets">
+        <button type="button" data-snooze-preset="hour">In 1 hour</button>
+        <button type="button" data-snooze-preset="tomorrow">Tomorrow 9:00 AM</button>
+      </div>
+
+      <label class="snooze-deadline-field" for="snooze-deadline">
+        <span>Date and time</span>
+        <input id="snooze-deadline" name="deadline" type="datetime-local" required>
+      </label>
+      <p id="snooze-dialog-error" class="snooze-dialog-error" aria-live="polite"></p>
+
+      <footer class="snooze-dialog-actions">
+        <button id="snooze-cancel" type="button">Cancel</button>
+        <button id="snooze-submit" class="toolbar-button primary" type="submit">Snooze tab</button>
+      </footer>
+    </form>
+  </dialog>
   <script type="module" src="manager-link.js"></script>
   <script type="module" src="command-palette.js"></script>
   <script type="module" src="sidebar.js"></script>

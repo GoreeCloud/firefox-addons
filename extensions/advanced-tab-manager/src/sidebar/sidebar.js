@@ -1,4 +1,10 @@
 import { flattenTabs, summarizeTabResidency } from "../core/state.js";
+import {
+  defaultSnoozeWakeAt,
+  parseLocalSnoozeTime,
+  toLocalDateTimeValue,
+  tomorrowMorningWakeAt
+} from "../core/snooze-time.js";
 import { analyzeTree } from "../core/tree.js";
 import { renderDuplicateView } from "./duplicates-view.js";
 import { renderOpenTabs } from "./open-tabs-view.js";
@@ -12,12 +18,21 @@ const content = document.querySelector("#content");
 const refresh = document.querySelector("#refresh");
 const saveWindow = document.querySelector("#save-window");
 const viewMode = document.querySelector("#view-mode");
+const snoozeDialog = document.querySelector("#snooze-dialog");
+const snoozeForm = document.querySelector("#snooze-form");
+const snoozeDialogTab = document.querySelector("#snooze-dialog-tab");
+const snoozeDeadline = document.querySelector("#snooze-deadline");
+const snoozeDialogError = document.querySelector("#snooze-dialog-error");
+const snoozeSubmit = document.querySelector("#snooze-submit");
+const snoozeCancel = document.querySelector("#snooze-cancel");
+const snoozeCancelX = document.querySelector("#snooze-cancel-x");
 
 let snapshot = null;
 let organizationalState = null;
 let snoozeState = null;
 let ruleState = null;
 let rulePreview = null;
+let snoozeContext = null;
 
 function renderSummaryChips(items) {
   summary.replaceChildren();
@@ -113,6 +128,25 @@ async function activate(tabId) {
   await browser.runtime.sendMessage({ type: "atm:activate-tab", tabId });
 }
 
+function openSnoozeDialog(context) {
+  snoozeContext = context;
+  snoozeDialogError.textContent = "";
+  snoozeDialogTab.textContent = context.title || "Untitled tab";
+  const wakeAt = context.wakeAt || defaultSnoozeWakeAt();
+  snoozeDeadline.min = toLocalDateTimeValue(Date.now() + 60_000);
+  snoozeDeadline.value = toLocalDateTimeValue(wakeAt);
+  snoozeSubmit.textContent = context.mode === "reschedule" ? "Save wake time" : "Snooze tab";
+  snoozeDialog.showModal();
+  snoozeDeadline.focus();
+}
+
+function closeSnoozeDialog() {
+  if (snoozeDialog.open) snoozeDialog.close();
+  snoozeContext = null;
+  snoozeDialogError.textContent = "";
+}
+
+
 async function handleTreeAction(button) {
   const tabId = Number(button.dataset.tabId);
   const parentTabId = button.dataset.action === "indent" ? Number(button.dataset.parentTabId) : null;
@@ -141,14 +175,24 @@ async function handleSavedAction(button) {
 
 async function handleSnoozedAction(button) {
   const snoozedItemId = button.dataset.snoozeId;
-  const message = button.dataset.action === "reschedule-snoozed-item"
-    ? { type: "atm:reschedule-snoozed-item", snoozedItemId, wakeAt: Date.now() + 60 * 60 * 1000 }
-    : { type: "atm:restore-snoozed-item", snoozedItemId };
-  const result = await browser.runtime.sendMessage(message);
+  if (button.dataset.action === "reschedule-snoozed-item") {
+    const item = snoozeState?.items.find((candidate) => candidate.id === snoozedItemId);
+    if (!item) {
+      summary.textContent = "That snoozed tab is no longer available. Refresh and try again.";
+      return;
+    }
+    openSnoozeDialog({
+      mode: "reschedule",
+      snoozedItemId,
+      title: item.title,
+      wakeAt: item.wakeAt
+    });
+    return;
+  }
+
+  const result = await browser.runtime.sendMessage({ type: "atm:restore-snoozed-item", snoozedItemId });
   if (!result?.ok) {
-    summary.textContent = button.dataset.action === "reschedule-snoozed-item"
-      ? `Snoozed tab could not be rescheduled (${result?.reason || "unknown error"}).`
-      : `Snoozed tab could not be opened (${result?.reason || "unknown error"}).`;
+    summary.textContent = `Snoozed tab could not be opened (${result?.reason || "unknown error"}).`;
   }
   await load();
 }
@@ -267,14 +311,12 @@ content.addEventListener("click", async (event) => {
       return;
     }
     if (button.dataset.action === "snooze") {
-      const wakeAt = Date.now() + 60 * 60 * 1000;
-      const result = await browser.runtime.sendMessage({ type: "atm:snooze-tab", tabId, wakeAt });
-      if (!result?.ok) summary.textContent = `Tab was not snoozed (${result?.reason || "unknown error"}).`;
-      else {
-        viewMode.value = "snoozed";
-        summary.textContent = `${result.title} snoozed until ${new Date(result.wakeAt).toLocaleString()}.`;
+      const tab = flattenTabs(snapshot).find((candidate) => candidate.id === tabId);
+      if (!tab) {
+        summary.textContent = "That tab is no longer available. Refresh and try again.";
+        return;
       }
-      await load();
+      openSnoozeDialog({ mode: "new", tabId, title: tab.title });
       return;
     }
     if (button.dataset.action === "stash") {
@@ -291,6 +333,56 @@ content.addEventListener("click", async (event) => {
 
   const activation = event.target.closest(".tab-activate");
   if (activation) await activate(Number(activation.dataset.tabId));
+});
+
+snoozeDialog.addEventListener("click", (event) => {
+  const preset = event.target.closest("button[data-snooze-preset]");
+  if (!preset) return;
+  const wakeAt = preset.dataset.snoozePreset === "tomorrow"
+    ? tomorrowMorningWakeAt()
+    : defaultSnoozeWakeAt();
+  snoozeDeadline.value = toLocalDateTimeValue(wakeAt);
+  snoozeDialogError.textContent = "";
+  snoozeDeadline.focus();
+});
+
+snoozeCancel.addEventListener("click", closeSnoozeDialog);
+snoozeCancelX.addEventListener("click", closeSnoozeDialog);
+snoozeDialog.addEventListener("cancel", (event) => {
+  event.preventDefault();
+  closeSnoozeDialog();
+});
+
+snoozeForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!snoozeContext) return;
+
+  const parsed = parseLocalSnoozeTime(snoozeDeadline.value);
+  if (!parsed.ok) {
+    snoozeDialogError.textContent = parsed.reason === "deadline-not-in-future"
+      ? "Choose a future date and time."
+      : "Choose a valid date and time.";
+    snoozeDeadline.focus();
+    return;
+  }
+
+  snoozeSubmit.disabled = true;
+  const message = snoozeContext.mode === "reschedule"
+    ? { type: "atm:reschedule-snoozed-item", snoozedItemId: snoozeContext.snoozedItemId, wakeAt: parsed.wakeAt }
+    : { type: "atm:snooze-tab", tabId: snoozeContext.tabId, wakeAt: parsed.wakeAt };
+  const result = await browser.runtime.sendMessage(message);
+  snoozeSubmit.disabled = false;
+
+  if (!result?.ok) {
+    snoozeDialogError.textContent = snoozeContext.mode === "reschedule"
+      ? `Wake time was not changed (${result?.reason || "unknown error"}).`
+      : `Tab was not snoozed (${result?.reason || "unknown error"}).`;
+    return;
+  }
+
+  closeSnoozeDialog();
+  viewMode.value = "snoozed";
+  await load();
 });
 
 content.addEventListener("submit", async (event) => {

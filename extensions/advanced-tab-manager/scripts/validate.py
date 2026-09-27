@@ -32,7 +32,7 @@ required = [
     "src/background/background.js", "src/background/browser-state.js", "src/background/tab-residency.js", "src/background/saved-state.js", "src/background/duplicate-cleanup.js", "src/background/snooze.js", "src/background/rules.js", "src/background/manager.js", "src/background/portability.js",
     "src/core/state.js", "src/core/tree.js", "src/core/tree-session.js", "src/core/duplicates.js",
     "src/core/persistent-state.js", "src/core/tab-sets.js", "src/core/stash-transaction.js",
-    "src/core/snooze-store.js", "src/core/snooze.js", "src/core/snooze-transaction.js",
+    "src/core/snooze-store.js", "src/core/snooze.js", "src/core/snooze-time.js", "src/core/snooze-transaction.js",
     "src/core/rule-state.js", "src/core/rules.js", "src/core/commands.js", "src/core/manager-model.js", "src/core/portability.js", "src/core/session-snapshots.js",
     "src/shared/glaze.css",
     "src/sidebar/sidebar.html", "src/sidebar/sidebar.js", "src/sidebar/open-tabs-view.js", "src/sidebar/saved-view.js", "src/sidebar/duplicates-view.js", "src/sidebar/snoozed-view.js", "src/sidebar/rules-view.js", "src/sidebar/command-palette.js", "src/sidebar/command-palette.css", "src/sidebar/manager-link.js", "src/sidebar/rules.css", "src/sidebar/ui.js", "src/sidebar/sidebar.css",
@@ -41,7 +41,7 @@ required = [
     "tests/state.test.mjs", "tests/tree.test.mjs", "tests/tree-session.test.mjs",
     "tests/persistent-state.test.mjs", "tests/tab-sets.test.mjs", "tests/stash-transaction.test.mjs", "tests/background-storage.test.mjs",
     "tests/duplicates.test.mjs", "tests/duplicate-cleanup.test.mjs",
-    "tests/snooze-store.test.mjs", "tests/snooze.test.mjs", "tests/snooze-transaction.test.mjs", "tests/background-snooze.test.mjs",
+    "tests/snooze-store.test.mjs", "tests/snooze.test.mjs", "tests/snooze-time.test.mjs", "tests/snooze-transaction.test.mjs", "tests/background-snooze.test.mjs",
     "tests/rule-state.test.mjs", "tests/rules.test.mjs", "tests/background-rules.test.mjs", "tests/commands.test.mjs",
     "tests/manager-model.test.mjs", "tests/background-manager.test.mjs", "tests/portability.test.mjs", "tests/background-portability.test.mjs",
     "tests/session-snapshots.test.mjs", "tests/background-session-snapshots.test.mjs", "tests/tab-residency.test.mjs",
@@ -78,6 +78,7 @@ open_tabs_view = (ROOT / "src/sidebar/open-tabs-view.js").read_text(encoding="ut
 commands_core = (ROOT / "src/core/commands.js").read_text(encoding="utf-8")
 palette = (ROOT / "src/sidebar/command-palette.js").read_text(encoding="utf-8")
 palette_css = (ROOT / "src/sidebar/command-palette.css").read_text(encoding="utf-8")
+snooze_time = (ROOT / "src/core/snooze-time.js").read_text(encoding="utf-8")
 sidebar_html = (ROOT / "src/sidebar/sidebar.html").read_text(encoding="utf-8")
 manager_link = (ROOT / "src/sidebar/manager-link.js").read_text(encoding="utf-8")
 popup_html = (ROOT / "src/popup/popup.html").read_text(encoding="utf-8")
@@ -122,6 +123,10 @@ assert "browser." not in palette, "command palette must route through establishe
 assert "Control+K Meta+K" in palette and "aria-modal" in palette and "role=\"listbox\"" in palette
 assert 'href="command-palette.css"' in sidebar_html and 'src="command-palette.js"' in sidebar_html
 assert 'id="open-manager"' in sidebar_html and 'src="manager-link.js"' in sidebar_html
+assert 'id="snooze-dialog"' in sidebar_html and 'id="snooze-deadline"' in sidebar_html and 'type="datetime-local"' in sidebar_html
+assert "parseLocalSnoozeTime" in snooze_time and "tomorrowMorningWakeAt" in snooze_time
+assert "parseLocalSnoozeTime" in sidebar and "atm:reschedule-snoozed-item" in sidebar and "showModal()" in sidebar
+assert "snooze-custom-time-restore" in runtime_smoke, "real-Firefox smoke must exercise arbitrary snooze scheduling through the sidebar"
 assert "prefers-reduced-transparency" in palette_css and "forced-colors" in palette_css
 
 assert "createManagerState" in background and 'atm:get-manager-state' in background

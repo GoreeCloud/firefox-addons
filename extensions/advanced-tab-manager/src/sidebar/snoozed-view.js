@@ -41,7 +41,7 @@ export function renderSnoozedView({ snoozeState, needle }) {
     const openNow = savedAction("↗", `Open snoozed tab ${item.title} now`, "restore-snoozed-item", item.id);
     openNow.dataset.snoozeId = item.id;
     openNow.removeAttribute("data-saved-id");
-    const delayHour = savedAction("+1h", `Delay ${item.title} for one hour from now`, "reschedule-snoozed-item", item.id);
+    const delayHour = savedAction("◷", `Choose a new wake time for ${item.title}`, "reschedule-snoozed-item", item.id);
     delayHour.dataset.snoozeId = item.id;
     delayHour.removeAttribute("data-saved-id");
     actions.append(openNow, delayHour);

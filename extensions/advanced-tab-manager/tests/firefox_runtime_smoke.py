@@ -421,20 +421,54 @@ def main() -> int:
             require(isinstance(restored_stash, dict) and restored_stash.get("ok") is True, "stashed tab restored", repr(restored_stash))
             passes.append("stash-restore")
 
-            snooze_source = create_tab(driver, f"{base}/snooze")
-            snoozed = extension_message(
-                driver,
-                {"type": "atm:snooze-tab", "tabId": snooze_source, "wakeAt": int(time.time() * 1000) + 600_000},
+            snooze_url = f"{base}/snooze"
+            snooze_source = create_tab(driver, snooze_url)
+            navigate_extension(driver, "src/sidebar/sidebar.html")
+            snooze_button = WebDriverWait(driver, 15).until(
+                lambda d: d.find_element("css selector", f'button[data-action="snooze"][data-tab-id="{snooze_source}"]')
             )
-            require(isinstance(snoozed, dict) and snoozed.get("ok") is True, "snooze persist/alarm/close completed", repr(snoozed))
+            snooze_button.click()
+            WebDriverWait(driver, 5).until(
+                lambda d: d.find_element("id", "snooze-dialog").get_attribute("open") is not None
+            )
+            driver.execute_script(
+                """
+                const input = document.querySelector("#snooze-deadline");
+                const target = new Date(Date.now() + 10 * 60 * 1000);
+                const local = new Date(target.getTime() - target.getTimezoneOffset() * 60_000);
+                input.value = local.toISOString().slice(0, 16);
+                """
+            )
+            driver.find_element("id", "snooze-submit").click()
+            WebDriverWait(driver, 10).until(
+                lambda d: d.find_element("id", "snooze-dialog").get_attribute("open") is None
+            )
             snooze_state = extension_message(driver, {"type": "atm:get-snooze-state"})
-            require(snooze_state.get("ok") is True and len(snooze_state["state"]["items"]) >= 1, "snooze recovery state readable")
+            snoozed_items = [item for item in snooze_state.get("state", {}).get("items", []) if item.get("url") == snooze_url]
+            require(
+                snooze_state.get("ok") is True and len(snoozed_items) == 1
+                and snoozed_items[0].get("wakeAt", 0) > int(time.time() * 1000),
+                "arbitrary local date/time snooze persisted and scheduled through the sidebar",
+                repr(snooze_state),
+            )
             restored_snooze = extension_message(
                 driver,
-                {"type": "atm:restore-snoozed-item", "snoozedItemId": snoozed["snoozedItemId"]},
+                {"type": "atm:restore-snoozed-item", "snoozedItemId": snoozed_items[0]["id"]},
             )
-            require(restored_snooze.get("ok") is True, "snoozed tab restored", repr(restored_snooze))
-            passes.append("snooze-restore")
+            require(restored_snooze.get("ok") is True, "custom-snoozed tab restored", repr(restored_snooze))
+
+            route_source = create_tab(driver, f"{base}/snooze-route")
+            routed = extension_message(
+                driver,
+                {"type": "atm:snooze-tab", "tabId": route_source, "wakeAt": int(time.time() * 1000) + 600_000},
+            )
+            require(isinstance(routed, dict) and routed.get("ok") is True, "direct snooze route remains functional", repr(routed))
+            routed_restore = extension_message(
+                driver,
+                {"type": "atm:restore-snoozed-item", "snoozedItemId": routed["snoozedItemId"]},
+            )
+            require(routed_restore.get("ok") is True, "direct-route snoozed tab restored", repr(routed_restore))
+            passes.append("snooze-custom-time-restore")
 
             duplicate_url = f"{base}/duplicate"
             create_tab(driver, duplicate_url)
