@@ -268,6 +268,64 @@ select:focus-visible,
 .duplicate-tools { display: grid; gap: 8px; padding: 10px 11px; border-top: 1px solid var(--border); }
 .duplicate-cleanup { justify-self: end; min-height: 32px; }
 .row-action:disabled { cursor: not-allowed; opacity: .5; }
+
+.snooze-dialog {
+  width: min(calc(100% - 18px), 380px);
+  max-width: none;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 10% 0%, color-mix(in srgb, AccentColor 10%, transparent), transparent 15rem),
+    color-mix(in srgb, var(--glz-glaze) 96%, Canvas 8%);
+  color: CanvasText;
+  box-shadow: var(--glz-shadow-2);
+  backdrop-filter: blur(24px) saturate(1.15);
+}
+.snooze-dialog::backdrop {
+  background: color-mix(in srgb, CanvasText 28%, transparent);
+  backdrop-filter: blur(8px);
+}
+.snooze-form { display: grid; gap: 12px; padding: 14px; }
+.snooze-dialog-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.snooze-dialog-heading h2 { margin: 0; font-size: 15px; letter-spacing: -.012em; }
+.snooze-dialog-tab {
+  margin: 4px 0 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.snooze-presets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+.snooze-presets button,
+.snooze-dialog-actions button,
+.snooze-deadline-field input {
+  min-height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  color: inherit;
+}
+.snooze-presets button,
+.snooze-dialog-actions button { padding: 7px 9px; cursor: pointer; }
+.snooze-presets button:hover,
+.snooze-dialog-actions button:hover { border-color: var(--border-strong); background: var(--surface-raised); }
+.snooze-deadline-field { display: grid; gap: 5px; color: var(--muted); font-size: 10px; }
+.snooze-deadline-field input { width: 100%; padding: 7px 9px; }
+.snooze-dialog-error { min-height: 1.35em; margin: -3px 0 0; color: Mark; font-size: 9.5px; line-height: 1.35; }
+.snooze-dialog-actions { display: flex; justify-content: flex-end; gap: 7px; }
+.snooze-dialog-actions .primary { color: var(--accent-text); background: var(--accent); border-color: var(--accent); }
 .empty {
   margin: 16px 2px;
   padding: 28px 16px;
@@ -310,11 +368,13 @@ select:focus-visible,
 @media (prefers-reduced-transparency: reduce) {
   body { background: Canvas; }
   .sidebar-chrome { background: Canvas; backdrop-filter: none; box-shadow: none; }
-  .group, .tree, .saved-card, .duplicate-card { background: Canvas; box-shadow: none; }
+  .group, .tree, .saved-card, .duplicate-card, .snooze-dialog { background: Canvas; box-shadow: none; backdrop-filter: none; }
+  .snooze-dialog::backdrop { background: Canvas; backdrop-filter: none; }
 }
 @media (forced-colors: active) {
   body, .sidebar-chrome { background: Canvas; }
   .group, .tree, .saved-card, .duplicate-card, .toolbar-button, .row-action,
-  .search-field input, .view-field select, .summary-chip, .empty { border: 1px solid ButtonText; }
+  .search-field input, .view-field select, .summary-chip, .snooze-dialog, .snooze-presets button,
+  .snooze-dialog-actions button, .snooze-deadline-field input, .empty { border: 1px solid ButtonText; }
   .tab-row[data-active="true"] { outline: 2px solid Highlight; outline-offset: -2px; box-shadow: none; }
 }
