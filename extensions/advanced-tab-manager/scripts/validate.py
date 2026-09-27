@@ -91,6 +91,7 @@ assert "createTabResidencyPolicy" in background
 assert "protectAllOpenTabs" in background and "protectTab(tab)" in background
 assert "autoDiscardable: false" in tab_residency
 assert "autoDiscardable" in state_core and "summarizeTabResidency" in state_core
+assert "splitViewId" in state_core, "normalized live state must retain Firefox Split View membership for move safety"
 assert "browser.tabs.query({})" in tab_residency and "browser.tabs.update" in tab_residency
 assert "browser.tabs.reload" not in tab_residency, "default residency must not silently reload a user-discarded tab"
 assert "collectTreeBranchTabs" in tree_core
@@ -99,10 +100,12 @@ assert "tree-branch-changed" in tree_branch_actions and "tree-branch-not-discard
 assert "browser.tabs.remove" in tree_branch_actions and "browser.tabs.discard" in tree_branch_actions
 assert "moveTreeBranchToNewWindow" in tree_branch_actions and "browser.windows.create" in tree_branch_actions and "browser.tabs.move" in tree_branch_actions
 assert "tree-branch-not-movable" in tree_branch_actions and "tree-branch-move-rollback" in tree_branch_actions
+assert "splitViewId" in tree_branch_actions, "branch move must guard Firefox Split View side effects"
 assert "atm:close-tree-branch" in background and "atm:discard-tree-branch" in background and "atm:move-tree-branch-new-window" in background
 assert "close-tree-branch" in open_tabs_view and "discard-tree-branch" in open_tabs_view and "move-tree-branch-new-window" in open_tabs_view
 assert "branchTabs.every((tab) => visibleIds.has(tab.id))" in open_tabs_view
 assert "tab.groupId === TAB_GROUP_ID_NONE" in open_tabs_view, "branch move UI must fail closed for native-group members"
+assert "tab.splitViewId === -1" in open_tabs_view, "branch move UI must fail closed for Firefox Split View members"
 assert "atm:move-tree-branch-new-window" in sidebar, "sidebar must route guarded branch move"
 assert "guarded tree branch moved to a new Firefox window" in runtime_smoke, "real-Firefox smoke must exercise branch move"
 assert "createRuleManager" in background
