@@ -124,9 +124,11 @@ assert "Control+K Meta+K" in palette and "aria-modal" in palette and "role=\"lis
 assert 'href="command-palette.css"' in sidebar_html and 'src="command-palette.js"' in sidebar_html
 assert 'id="open-manager"' in sidebar_html and 'src="manager-link.js"' in sidebar_html
 assert 'id="snooze-dialog"' in sidebar_html and 'id="snooze-deadline"' in sidebar_html and 'type="datetime-local"' in sidebar_html
-assert "parseLocalSnoozeTime" in snooze_time and "tomorrowMorningWakeAt" in snooze_time
-assert "parseLocalSnoozeTime" in sidebar and "atm:reschedule-snoozed-item" in sidebar and "showModal()" in sidebar
+assert "parseLocalSnoozeTime" in snooze_time and "tomorrowMorningWakeAt" in snooze_time and "nextWeekWakeAt" in snooze_time
+assert "parseLocalSnoozeTime" in sidebar and "atm:reschedule-snoozed-item" in sidebar and "atm:cancel-snoozed-item" in sidebar and "showModal()" in sidebar
 assert "snooze-custom-time-restore" in runtime_smoke, "real-Firefox smoke must exercise arbitrary snooze scheduling through the sidebar"
+assert "snooze-next-week-cancel" in runtime_smoke, "real-Firefox smoke must exercise next-week snooze and cancellation"
+assert 'data-snooze-preset="next-week"' in sidebar_html, "sidebar must expose a Next week snooze preset"
 assert "prefers-reduced-transparency" in palette_css and "forced-colors" in palette_css
 
 assert "createManagerState" in background and 'atm:get-manager-state' in background
