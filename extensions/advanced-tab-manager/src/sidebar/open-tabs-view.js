@@ -116,7 +116,7 @@ function renderTreeView(window, visibleIds, groupsById) {
     const wholeBranchVisible = branchTabs.length > 1 && branchTabs.every((tab) => visibleIds.has(tab.id));
     const branchInfo = wholeBranchVisible ? {
       size: branchTabs.length,
-      movable: branchTabs.every((tab) => !tab.pinned && tab.groupId === TAB_GROUP_ID_NONE),
+      movable: branchTabs.every((tab) => !tab.pinned && tab.groupId === TAB_GROUP_ID_NONE && tab.splitViewId === -1),
       discardable: branchTabs.some((tab) => !tab.discarded)
         && branchTabs.every((tab) => !tab.active && !tab.pinned && !tab.audible)
     } : null;
