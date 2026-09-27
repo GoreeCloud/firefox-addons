@@ -100,6 +100,39 @@ export function buildTreeRows(tabs) {
   return rows;
 }
 
+export function collectTreeBranchTabs(tabs, rootTabId) {
+  const orderedTabs = [...tabs].sort((a, b) => a.index - b.index || a.id - b.id);
+  const root = orderedTabs.find((tab) => tab.id === rootTabId);
+  if (!root || !validLogicalId(root.logicalId)) return [];
+
+  const { byLogicalId, parentByChild } = analyzeTree(orderedTabs);
+  const childrenByParent = new Map();
+  for (const [childLogicalId, parentLogicalId] of parentByChild) {
+    if (!childrenByParent.has(parentLogicalId)) childrenByParent.set(parentLogicalId, []);
+    childrenByParent.get(parentLogicalId).push(childLogicalId);
+  }
+  for (const childIds of childrenByParent.values()) {
+    childIds.sort((leftId, rightId) => {
+      const left = byLogicalId.get(leftId);
+      const right = byLogicalId.get(rightId);
+      return left.index - right.index || left.id - right.id;
+    });
+  }
+
+  const branch = [];
+  const emitted = new Set();
+  const emit = (logicalId) => {
+    if (!validLogicalId(logicalId) || emitted.has(logicalId)) return;
+    const tab = byLogicalId.get(logicalId);
+    if (!tab) return;
+    emitted.add(logicalId);
+    branch.push(tab);
+    for (const childLogicalId of childrenByParent.get(logicalId) || []) emit(childLogicalId);
+  };
+  emit(root.logicalId);
+  return branch;
+}
+
 export function wouldCreateCycle(tabs, childLogicalId, proposedParentLogicalId) {
   if (!validLogicalId(childLogicalId) || !validLogicalId(proposedParentLogicalId)) return false;
   if (childLogicalId === proposedParentLogicalId) return true;
