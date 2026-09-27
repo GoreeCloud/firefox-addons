@@ -12,7 +12,7 @@
 - Corrected Manager rendering of retained session-snapshot count.
 - Strengthened sidebar tab-row keyboard and assistive semantics.
 - Preserved existing Firefox permissions, host/content/private-browsing boundaries, storage schemas, recovery semantics, automation boundaries, and local-first behavior.
-- Current Stable Glaze UI target remains V1.5 / 1.5.1. The 0.1.12 material presentation change requires fresh exact-revision consumer qualification and representative rendered/accessibility acceptance.
+- The current shared Glaze adoption target is GLAZE UI V1.6 / 1.6.0. Version 0.1.12 now requires fresh repository-local V1.6.0 source mapping plus representative rendered/accessibility acceptance before consumer acceptance; historical V1.5.1 evidence remains provenance for Stable 0.1.11 only.
 - Stable 0.1.11 remains the accepted signed rollback/production baseline until a later release completes all required gates.
 
 
