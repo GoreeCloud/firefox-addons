@@ -456,6 +456,18 @@ def main() -> int:
                 {"type": "atm:restore-snoozed-item", "snoozedItemId": snoozed_items[0]["id"]},
             )
             require(restored_snooze.get("ok") is True, "custom-snoozed tab restored", repr(restored_snooze))
+
+            route_source = create_tab(driver, f"{base}/snooze-route")
+            routed = extension_message(
+                driver,
+                {"type": "atm:snooze-tab", "tabId": route_source, "wakeAt": int(time.time() * 1000) + 600_000},
+            )
+            require(isinstance(routed, dict) and routed.get("ok") is True, "direct snooze route remains functional", repr(routed))
+            routed_restore = extension_message(
+                driver,
+                {"type": "atm:restore-snoozed-item", "snoozedItemId": routed["snoozedItemId"]},
+            )
+            require(routed_restore.get("ok") is True, "direct-route snoozed tab restored", repr(routed_restore))
             passes.append("snooze-custom-time-restore")
 
             duplicate_url = f"{base}/duplicate"
