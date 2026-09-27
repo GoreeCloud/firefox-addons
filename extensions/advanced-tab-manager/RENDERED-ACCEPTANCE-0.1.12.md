@@ -146,3 +146,12 @@ The candidate carries Firefox `autoDiscardable` state into normalized live tab s
 This change does not add permissions, host access, content scripts, telemetry, remote dependencies, private-browsing access, storage schema, or page-content inspection. It also does not change the truthful behavior boundary: automatic-discard protection is not foreground-equivalent scheduling.
 
 Because the refinement changes sidebar, popup, and Manager rendering, the post-PR #110 screenshot evidence remains historical evidence for its exact reviewed source and conditions. Fresh rendered review is required for the residency-visibility candidate before normal-light acceptance is rebound to its exact source revision. Stable remains `0.1.11`.
+
+
+## Snooze-control refinement boundary
+
+The 0.1.12 Development line now adds a **Next week 9:00 AM** preset to the native snooze dialog and an explicit **Cancel snooze** action in the Snoozed view. These controls reuse the existing one-shot recovery/alarm model and do not add permissions or storage schema.
+
+Earlier normal-light screenshot evidence remains valid for the unchanged surfaces and conditions it actually showed, but it does not constitute rendered acceptance of these newly added snooze-control states. Fresh representative rendering of the updated snooze dialog and Snoozed-view cancellation control is required before those exact UI states are accepted.
+
+Recurring snooze behavior remains outside this change pending a separate repeat-policy/UX definition.
