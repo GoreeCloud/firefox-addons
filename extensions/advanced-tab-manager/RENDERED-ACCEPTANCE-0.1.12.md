@@ -116,3 +116,19 @@ This second screenshot set remains **remediation evidence** because it precedes 
 ## Remaining gates
 
 Before 0.1.12 can replace Stable 0.1.11, remaining applicable work includes representative keyboard/assistive-technology acceptance, Forced Colors, Reduced Transparency, dark-appearance and other required environmental rendered review, any corrections and fresh exact-head requalification, Mozilla signing, signed-artifact parity/integrity, persistent signed installation, full Firefox restart acceptance, and separate governed Stable promotion.
+
+
+## Post-PR #110 normal-light review — 2026-09-27
+
+Owner-supplied Firefox 156.0.1/Linux screenshots were reviewed against current main `c59264cb15ac26f5f9eb1f1192fa00eaefb1e56d`.
+
+Observed acceptance for this exact current-head screenshot set:
+- sidebar layout and tab-row controls render cleanly at the supplied constrained width;
+- the Commands palette opens and remains readable without observed clipping;
+- the Manager renders cleanly with the new hero status treatment and collapsed Diagnostics and boundaries section.
+
+This establishes normal-light rendered acceptance for the sidebar, command palette, and Manager under the observed conditions only.
+
+The toolbar popup is not shown in this exact post-PR #110 screenshot set, so current-head popup rendered confirmation remains pending.
+
+Stable remains `0.1.11`. All other governed accessibility, alternate-appearance, signing, restart, and Stable-promotion gates remain separate.
