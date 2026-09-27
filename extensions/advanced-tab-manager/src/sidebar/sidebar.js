@@ -337,7 +337,7 @@ content.addEventListener("click", async (event) => {
       const result = await browser.runtime.sendMessage({ type: "atm:move-tree-branch-new-window", tabId });
       if (!result?.ok) {
         const detail = result?.reason === "tree-branch-not-movable"
-          ? ` ${result.blockedCount} tab${result.blockedCount === 1 ? " is" : "s are"} pinned or in a native group.`
+          ? ` ${result.blockedCount} tab${result.blockedCount === 1 ? " is" : "s are"} pinned, in a native group, or in Firefox Split View.`
           : result?.rollbackFailed
             ? " Automatic rollback was incomplete; refresh and review the affected windows."
             : "";
