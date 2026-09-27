@@ -38,6 +38,7 @@ The 0.1.12 candidate:
 - strengthens interactive tab-row semantics with explicit button/current-page semantics;
 - keeps every eligible non-private open tab non-auto-discardable by default, including background tabs, by applying Firefox `autoDiscardable=false` at background startup and when tabs are created; explicit manual/rule-driven Discard remains available as a deliberate override;
 - makes that residency policy visible instead of implicit: normalized live tab state preserves Firefox's `autoDiscardable` flag, the sidebar shows an `auto-protected` count, the popup reports automatic-unload protection status, and the Manager explains protected/eligible, resident, and explicitly discarded counts without exposing browsing content;
+- adds guarded Tree-view branch bulk actions: close a fully visible branch or discard a fully visible eligible branch after confirmation, with two-snapshot branch-drift rejection and active/pinned/audible discard guards; drag-and-drop and branch move remain future ATM-004A work;
 - preserves the existing permission, privacy, storage, and recovery boundaries with no new Firefox permission, host permission, content script, telemetry path, remote dependency, or private-browsing access. The bounded residency update uses the already-declared `tabs` permission.
 
 The default residency policy prevents Firefox's automatic tab discard, but it does not override browser-owned background timer/animation throttling or operating-system process/resource limits, and it does not silently reload a tab the user has explicitly discarded.
