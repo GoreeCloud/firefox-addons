@@ -6,6 +6,7 @@ import { createRuleManager } from "./rules.js";
 import { createSavedState } from "./saved-state.js";
 import { createSnoozeManager } from "./snooze.js";
 import { createTabResidencyPolicy } from "./tab-residency.js";
+import { createTreeBranchActions } from "./tree-branch-actions.js";
 
 const CHANGE_MESSAGE = "atm:state-changed";
 
@@ -32,6 +33,11 @@ const savedState = createSavedState({
   idFactory: newId
 });
 const duplicateCleanup = createDuplicateCleanup({
+  browser,
+  readLiveSnapshot: browserState.readLiveSnapshot,
+  broadcastChange
+});
+const treeBranchActions = createTreeBranchActions({
   browser,
   readLiveSnapshot: browserState.readLiveSnapshot,
   broadcastChange
@@ -169,6 +175,10 @@ browser.runtime.onMessage.addListener(async (message) => {
       return snoozeManager.rescheduleSnoozedItem(message.snoozedItemId, message.wakeAt);
     case "atm:cleanup-exact-duplicates":
       return duplicateCleanup.cleanupExactDuplicates({ url: message.url, keepTabId: message.keepTabId });
+    case "atm:close-tree-branch":
+      return treeBranchActions.closeTreeBranch(message.tabId);
+    case "atm:discard-tree-branch":
+      return treeBranchActions.discardTreeBranch(message.tabId);
     case "atm:activate-tab": {
       const tab = await browser.tabs.get(message.tabId);
       await browser.windows.update(tab.windowId, { focused: true });
