@@ -1,6 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildExactDuplicateReview, planExactDuplicateCleanup } from "../src/core/duplicates.js";
+import {
+  buildExactDuplicateReview,
+  buildTrackingNormalizedDuplicateReview,
+  normalizeTrackingUrl,
+  planDuplicateCleanup,
+  planExactDuplicateCleanup
+} from "../src/core/duplicates.js";
 
 function snapshot(tabs) {
   return { schemaVersion: 2, capturedAt: 1, groups: [], windows: [{ id: 1, focused: true, incognito: false, tabs }] };
@@ -103,4 +109,58 @@ test("cleanup plan fails closed when the selected keeper is stale", () => {
     ok: false,
     reason: "selected-keeper-not-in-current-set"
   });
+});
+
+
+test("tracking normalization removes only recognized tracking query parameters", () => {
+  assert.deepEqual(
+    normalizeTrackingUrl("https://Example.com/path?item=7&utm_source=newsletter&fbclid=abc#section"),
+    {
+      key: "https://example.com/path?item=7#section",
+      removedTrackingParameters: 2
+    }
+  );
+  assert.deepEqual(
+    normalizeTrackingUrl("https://example.com/path?item=7&ref=home#section"),
+    {
+      key: "https://example.com/path?item=7&ref=home#section",
+      removedTrackingParameters: 0
+    }
+  );
+  assert.equal(normalizeTrackingUrl("about:blank"), null);
+  assert.equal(normalizeTrackingUrl("https://user:secret@example.com/path?utm_source=x"), null);
+});
+
+test("tracking-normalized review groups only URLs that differ by recognized tracking parameters", () => {
+  const review = buildTrackingNormalizedDuplicateReview(snapshot([
+    tab(1, "https://example.com/article?id=7&utm_source=mail#comments"),
+    tab(2, "https://example.com/article?id=7&fbclid=abc#comments"),
+    tab(3, "https://example.com/article?id=8&utm_source=mail#comments"),
+    tab(4, "https://example.com/article?id=7&utm_source=mail#top")
+  ]));
+
+  assert.equal(review.mode, "tracking-normalized");
+  assert.equal(review.duplicateSets, 1);
+  assert.equal(review.duplicateTabs, 1);
+  assert.equal(review.sets[0].matchKey, "https://example.com/article?id=7#comments");
+  assert.deepEqual(review.sets[0].members.map((item) => item.id), [1, 2]);
+  assert.deepEqual(review.sets[0].originalUrls, [
+    "https://example.com/article?id=7&utm_source=mail#comments",
+    "https://example.com/article?id=7&fbclid=abc#comments"
+  ]);
+});
+
+test("tracking-normalized cleanup preserves the same conservative guards", () => {
+  const set = buildTrackingNormalizedDuplicateReview(snapshot([
+    tab(1, "https://example.com/a?utm_source=one"),
+    tab(2, "https://example.com/a?fbclid=two", { pinned: true }),
+    tab(3, "https://example.com/a?msclkid=three")
+  ])).sets[0];
+
+  const plan = planDuplicateCleanup(set, { keepTabId: 3 });
+  assert.equal(plan.ok, true);
+  assert.equal(plan.mode, "tracking-normalized");
+  assert.equal(plan.matchKey, "https://example.com/a");
+  assert.deepEqual(plan.closeTabIds, [1]);
+  assert.deepEqual(plan.blocked, [{ tabId: 2, reasons: ["pinned"] }]);
 });
