@@ -58,6 +58,7 @@ background = (ROOT / "src/background/background.js").read_text(encoding="utf-8")
 tab_residency = (ROOT / "src/background/tab-residency.js").read_text(encoding="utf-8")
 manager_background = (ROOT / "src/background/manager.js").read_text(encoding="utf-8")
 manager_model = (ROOT / "src/core/manager-model.js").read_text(encoding="utf-8")
+state_core = (ROOT / "src/core/state.js").read_text(encoding="utf-8")
 manager_page = (ROOT / "src/manager/manager.js").read_text(encoding="utf-8")
 manager_html = (ROOT / "src/manager/manager.html").read_text(encoding="utf-8")
 manager_css = (ROOT / "src/manager/manager.css").read_text(encoding="utf-8")
@@ -85,6 +86,7 @@ popup_js = (ROOT / "src/popup/popup.js").read_text(encoding="utf-8")
 assert "createTabResidencyPolicy" in background
 assert "protectAllOpenTabs" in background and "protectTab(tab)" in background
 assert "autoDiscardable: false" in tab_residency
+assert "autoDiscardable" in state_core and "summarizeTabResidency" in state_core
 assert "browser.tabs.query({})" in tab_residency and "browser.tabs.update" in tab_residency
 assert "browser.tabs.reload" not in tab_residency, "default residency must not silently reload a user-discarded tab"
 assert "createRuleManager" in background
@@ -133,6 +135,7 @@ assert 'id="apply-import"' in manager_html and 'id="clear-import"' in manager_ht
 assert "prefers-reduced-transparency" in manager_css and "forced-colors" in manager_css
 assert "browser.tabs.create" in manager_link and "src/manager/manager.html" in manager_link
 assert 'id="open-manager"' in popup_html and "0.1.12" in popup_html and 'id="metric-tabs"' in popup_html
+assert 'id="residency-status"' in popup_html and "summarizeTabResidency" in popup_js
 assert "source candidate" not in popup_html.lower(), "packaged popup must be lifecycle-neutral for release signing"
 assert "development source only" not in manager_html.lower(), "packaged Manager must be lifecycle-neutral for release signing"
 assert "Stable status" not in manager_html, "packaged Manager must not hard-code Stable lifecycle truth"
@@ -148,6 +151,8 @@ assert 'id="count-snapshot-retention"' in manager_html, "Manager must expose con
 assert "renderSnapshotList(model.snapshots)" in manager_page, "Manager must render snapshot retention/list state from the model"
 assert 'model.permissions.contentScripts ? model.permissions.contentScripts : "None"' in manager_page, "zero content scripts should render as human-readable None"
 assert "sessionSnapshots" in manager_model and "snapshotRetention" in manager_model
+assert "summarizeTabResidency" in manager_model and 'id="residency-panel"' in manager_html and 'id="residency-status"' in manager_html
+assert "eligible tabs reject Firefox automatic discard" in manager_page
 assert "snapshot.test" not in manager_model, "manager model must not encode fixture browsing content"
 assert "SIZES = [100, 500, 1000]" in large_session_qualification
 assert "readFileSync(new URL(\"../manifest.json\", import.meta.url)" in large_session_qualification, "large-session evidence must bind to the current manifest version"
