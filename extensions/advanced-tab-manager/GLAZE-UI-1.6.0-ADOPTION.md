@@ -67,6 +67,12 @@ Expected evidence state before downstream acceptance:
 - `productStableStatusImplied: false`;
 - `productionEligibilityImplied: false`.
 
+## Governed target-review infrastructure
+
+`TARGET-ACCEPTANCE-0.1.12.md` and `scripts/target_acceptance.py` define a closed, privacy-minimized human-review evidence contract. The manual **Advanced Tab Manager Target Review Candidate** workflow can package one exact source revision twice, prove deterministic bytes, rerun repository/runtime/security/Glaze-source checks, and retain the exact unsigned XPI for human review. The complete human record remains local unless a later governed release step explicitly binds to a privacy-safe provenance digest.
+
+This infrastructure is preparatory evidence governance only. It does not establish keyboard, assistive-technology, alternate-appearance, or large-text acceptance.
+
 ## Remaining product acceptance
 
 Before Advanced Tab Manager 0.1.12 can claim current Glaze consumer acceptance or replace Stable 0.1.11, it still requires the applicable product-specific evidence, including:

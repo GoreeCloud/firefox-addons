@@ -1,0 +1,108 @@
+name: Advanced Tab Manager Target Review Candidate
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_revision:
+        description: Exact 40-character Advanced Tab Manager source revision to package for human target review
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: advanced-tab-manager-target-review-${{ inputs.source_revision }}
+  cancel-in-progress: false
+
+jobs:
+  build-review-candidate:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_SOURCE_REVISION: ${{ inputs.source_revision }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_revision }}
+          fetch-depth: 0
+      - name: Verify exact checkout provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$TARGET_SOURCE_REVISION"
+          test "$(printf '%s' "$actual" | wc -c)" -eq 40
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: latest
+      - uses: browser-actions/setup-geckodriver@latest
+      - name: Install Selenium
+        run: python -m pip install --disable-pip-version-check selenium
+      - name: Validate source and target-review contracts
+        run: |
+          python shared/scripts/validate_repository.py
+          python extensions/advanced-tab-manager/scripts/validate.py
+          python extensions/advanced-tab-manager/scripts/validate_target_acceptance_source.py
+          python extensions/advanced-tab-manager/scripts/test_target_acceptance.py
+          node --test extensions/advanced-tab-manager/tests/*.test.mjs
+          node extensions/advanced-tab-manager/scripts/large-session-qualification.mjs
+          python -m py_compile \
+            extensions/advanced-tab-manager/scripts/target_acceptance.py \
+            extensions/advanced-tab-manager/tests/firefox_runtime_smoke.py
+      - name: Build deterministic review candidate twice
+        run: |
+          python shared/scripts/package_extension.py advanced-tab-manager --output-dir dist/target-a
+          python shared/scripts/package_extension.py advanced-tab-manager --output-dir dist/target-b
+      - name: Prove deterministic bytes and prepare review artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          A="$(find dist/target-a -maxdepth 1 -type f -name 'goreecloud-advanced-tab-manager-*.xpi' -print -quit)"
+          B="$(find dist/target-b -maxdepth 1 -type f -name 'goreecloud-advanced-tab-manager-*.xpi' -print -quit)"
+          test -n "$A"
+          test -n "$B"
+          cmp "$A" "$B"
+          unzip -t "$A"
+          version="$(python -c "import json; print(json.load(open('extensions/advanced-tab-manager/manifest.json', encoding='utf-8'))['version'])")"
+          test "$version" = "0.1.12"
+          mkdir -p dist/target-review
+          cp "$A" "dist/target-review/goreecloud-advanced-tab-manager-${version}.xpi"
+          echo "ATM_TARGET_XPI=dist/target-review/goreecloud-advanced-tab-manager-${version}.xpi" >> "$GITHUB_ENV"
+          sha256sum "dist/target-review/goreecloud-advanced-tab-manager-${version}.xpi" | tee dist/target-review/candidate-sha256.txt
+          printf '%s\n' "$TARGET_SOURCE_REVISION" | tee dist/target-review/source-revision.txt
+      - name: Qualify Stable security blockers
+        run: |
+          python extensions/advanced-tab-manager/scripts/stable_security_review.py \
+            --xpi "$ATM_TARGET_XPI" \
+            --source-revision "$TARGET_SOURCE_REVISION" \
+            --output dist/target-review/advanced-tab-manager-stable-security-review.json
+      - name: Record GLAZE UI V1.6.0 source adoption state
+        run: |
+          python extensions/advanced-tab-manager/scripts/glaze_consumer_qualification.py \
+            --source-revision "$TARGET_SOURCE_REVISION" \
+            --output dist/target-review/advanced-tab-manager-glaze-1.6.0-adoption.json
+      - name: Exercise release-critical real-Firefox paths
+        env:
+          ATM_SOURCE_REVISION: ${{ inputs.source_revision }}
+        run: python extensions/advanced-tab-manager/tests/firefox_runtime_smoke.py "$ATM_TARGET_XPI"
+      - name: Retain exact human-review candidate
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: goreecloud-advanced-tab-manager-target-review-${{ inputs.source_revision }}
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            dist/target-review/goreecloud-advanced-tab-manager-*.xpi
+            dist/target-review/candidate-sha256.txt
+            dist/target-review/source-revision.txt
+            dist/target-review/advanced-tab-manager-stable-security-review.json
+            dist/target-review/advanced-tab-manager-glaze-1.6.0-adoption.json
+            dist/advanced-tab-manager-firefox-runtime.json
+            dist/advanced-tab-manager-large-session-qualification.json

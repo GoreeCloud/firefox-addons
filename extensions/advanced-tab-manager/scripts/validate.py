@@ -45,7 +45,9 @@ required = [
     "tests/session-snapshots.test.mjs", "tests/background-session-snapshots.test.mjs", "tests/tab-residency.test.mjs",
     "tests/firefox_runtime_smoke.py", "tests/signed_restart_smoke.py", "tests/amo_signed_version_recovery.py", "tests/verify_signed_xpi.py",
     "RELEASE-ACCEPTANCE-0.1.10.md",
-    "scripts/large-session-qualification.mjs", "scripts/stable_security_review.py", "scripts/glaze_consumer_qualification.py"
+    "scripts/large-session-qualification.mjs", "scripts/stable_security_review.py", "scripts/glaze_consumer_qualification.py",
+    "scripts/target_acceptance.py", "scripts/test_target_acceptance.py", "scripts/validate_target_acceptance_source.py",
+    "TARGET-ACCEPTANCE-0.1.12.md"
 ]
 for relative in required:
     assert (ROOT / relative).is_file(), f"missing required source-candidate file: {relative}"

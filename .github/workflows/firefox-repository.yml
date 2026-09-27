@@ -30,6 +30,10 @@ jobs:
         run: python shared/scripts/validate_repository.py
       - name: Validate Advanced Tab Manager source contract
         run: python extensions/advanced-tab-manager/scripts/validate.py
+      - name: Validate Advanced Tab Manager target acceptance source contract
+        run: python extensions/advanced-tab-manager/scripts/validate_target_acceptance_source.py
+      - name: Test Advanced Tab Manager target acceptance evidence contract
+        run: python extensions/advanced-tab-manager/scripts/test_target_acceptance.py
       - name: Test Advanced Tab Manager state core
         run: node --test extensions/advanced-tab-manager/tests/*.test.mjs
       - name: Qualify Advanced Tab Manager deterministic large-session core
