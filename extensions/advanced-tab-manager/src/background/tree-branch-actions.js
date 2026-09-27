@@ -46,7 +46,9 @@ export function createTreeBranchActions({ browser, readLiveSnapshot, broadcastCh
     const first = branchPlan(await readLiveSnapshot(), rootTabId);
     if (!first.ok) return first;
     const second = branchPlan(await readLiveSnapshot(), rootTabId);
-    if (!second.ok) return second;
+    if (!second.ok) {
+      return { ok: false, reason: "tree-branch-changed", detailReason: second.reason };
+    }
     if (first.rootLogicalId !== second.rootLogicalId || planSignature(first) !== planSignature(second)) {
       return { ok: false, reason: "tree-branch-changed" };
     }
