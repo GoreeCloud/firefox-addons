@@ -90,6 +90,21 @@ For the exact reviewed revision `35c4d2dd8aa2a3fcd5742f430d8c8388ab85846a`:
 - Glaze UI target: V1.5 / machine version 1.5.1.
 - Glaze source/machine evidence reports `status: accepted-v1` and does not imply Stable or production eligibility.
 
+## September 27, 2026 current-target visual review
+
+Additional owner-supplied Firefox 156.0.1/Linux screenshots were reviewed for the distributed 0.1.12 current-main candidate. They show the extension loading successfully, its background script running, the sidebar populated, the toolbar popup functioning, and the Manager rendering live state. They also show that the visual system was not yet sufficiently polished for current GLAZE UI V1.6 consumer acceptance.
+
+Observed remediation needs included:
+
+- stronger cross-surface product identity and a shared material/geometry system;
+- less cramped and less visually noisy sidebar chrome/tab-row actions;
+- a popup treatment that feels like a deliberate Glaze command surface rather than a conventional flat extension popup;
+- a substantially stronger Manager hierarchy so overview, recovery, portability, and technical status do not read as a uniform gray-card grid;
+- improved material depth, optical spacing, accent restraint, and lower-level diagnostic hierarchy;
+- fresh dark/alternate-appearance and accessibility/environment evidence after the visual corrections.
+
+This September 27 review is **remediation evidence, not acceptance evidence**. The earlier normal-light observations remain bounded historical evidence for their exact reviewed revision and conditions. A fresh post-refinement rendered review is required before current-target V1.6 rendered acceptance can be claimed.
+
 ## Remaining gates
 
 Before 0.1.12 can replace Stable 0.1.11, remaining applicable work includes representative keyboard/assistive-technology acceptance, Forced Colors, Reduced Transparency, dark-appearance and other required environmental rendered review, any corrections and fresh exact-head requalification, Mozilla signing, signed-artifact parity/integrity, persistent signed installation, full Firefox restart acceptance, and separate governed Stable promotion.

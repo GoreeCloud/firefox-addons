@@ -3,6 +3,9 @@
 ## 0.1.12 — Development
 
 - Started a new Development/source-candidate line from accepted Stable 0.1.11; Stable 0.1.11 remains the signed rollback/production baseline.
+- Added a shared repository-local Glaze surface/token layer consumed by the sidebar, popup, and Manager so spacing, material depth, borders, focus behavior, and product lockup treatment use one coherent visual grammar.
+- Applied a second-stage GLAZE UI V1.6 visual polish pass after September 27 owner screenshots showed the functional 0.1.12 surfaces still looked too flat and prototype-like: the sidebar gains a stronger lockup and quieter density, the popup becomes a framed Glaze command surface, and the Manager gains a distinct hero/material hierarchy with less uniform diagnostic-card treatment.
+- The September 27 screenshots are retained as remediation evidence rather than acceptance; keyboard/assistive-technology, Forced Colors, Reduced Transparency, dark appearance, Reduced Motion, high-zoom/large-text, and fresh post-refinement rendered acceptance remain pending.
 - Redesigned the toolbar popup as a compact command surface with glanceable live metrics and clearer primary/secondary action hierarchy.
 - Redesigned sidebar chrome, search/view controls, state summary, active-tab treatment, responsive density, and interaction semantics.
 - Reorganized the full Manager into overview, recovery, portability, and secondary technical-status regions with more deliberate information hierarchy.

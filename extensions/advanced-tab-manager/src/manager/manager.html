@@ -4,15 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>GoreeCloud Advanced Tab Manager — Manager</title>
+  <link rel="stylesheet" href="../shared/glaze.css">
   <link rel="stylesheet" href="manager.css">
 </head>
 <body>
   <main class="manager-shell">
     <header class="manager-topbar">
-      <div class="title-block">
-        <p class="eyebrow">GoreeCloud Advanced Tab Manager</p>
-        <h1>Manager</h1>
-        <p class="lede">A local-first workspace for session recovery, tab organization, portability, and browser-state diagnostics.</p>
+      <div class="title-block glz-lockup">
+        <span class="glz-mark" aria-hidden="true"></span>
+        <div class="glz-lockup-copy">
+          <p class="eyebrow">GoreeCloud Advanced Tab Manager</p>
+          <h1>Manager</h1>
+          <p class="lede">A local-first workspace for session recovery, tab organization, portability, and browser-state diagnostics.</p>
+        </div>
       </div>
       <div class="topbar-actions">
         <button id="open-sidebar" type="button">Open sidebar</button>
@@ -23,7 +27,7 @@
     <p id="status" class="status" aria-live="polite">Reading current state…</p>
 
     <section class="overview-grid" aria-label="Advanced Tab Manager overview">
-      <article class="panel overview-panel">
+      <article class="panel overview-panel live-panel">
         <div class="section-heading"><div><p class="section-kicker">Current Firefox profile</p><h2>Live browser</h2></div></div>
         <dl class="metrics">
           <div><dt>Tabs</dt><dd id="count-tabs">—</dd></div>
@@ -35,7 +39,7 @@
         </dl>
       </article>
 
-      <article class="panel overview-panel">
+      <article class="panel overview-panel saved-panel">
         <div class="section-heading"><div><p class="section-kicker">Extension-owned organization</p><h2>Saved workspace</h2></div></div>
         <dl class="metrics saved-metrics">
           <div><dt>Tab Sets</dt><dd id="count-tab-sets">—</dd></div>
@@ -87,12 +91,12 @@
     </section>
 
     <section class="detail-grid" aria-label="Technical status">
-      <article class="panel">
+      <article class="panel store-panel">
         <div class="section-heading"><div><p class="section-kicker">Local state</p><h2>Store health</h2></div></div>
         <div id="store-health" class="store-health"></div>
       </article>
 
-      <article class="panel">
+      <article class="panel authority-panel">
         <div class="section-heading"><div><p class="section-kicker">Browser authority</p><h2>Permission boundary</h2></div></div>
         <dl class="detail-list">
           <div><dt>Extension permissions</dt><dd id="extension-permissions">—</dd></div>
@@ -102,7 +106,7 @@
         </dl>
       </article>
 
-      <article class="panel">
+      <article class="panel identity-panel">
         <div class="section-heading"><div><p class="section-kicker">Build identity</p><h2>Extension</h2></div></div>
         <dl class="detail-list">
           <div><dt>Version</dt><dd id="source-version">—</dd></div>

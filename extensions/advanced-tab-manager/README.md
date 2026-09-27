@@ -28,6 +28,8 @@ Version 0.1.12 starts a new Development/source-candidate line from the accepted 
 
 The 0.1.12 candidate:
 
+- uses a shared repository-local Glaze surface/token layer across the sidebar, popup, and Manager to keep material hierarchy, geometry, focus treatment, and product identity consistent;
+- applies a second-stage V1.6 visual polish pass based on September 27 owner-rendered feedback, strengthening the sidebar lockup and density, framing the popup as a concise Glaze command surface, and giving the Manager a clearer hero/overview/feature/technical hierarchy rather than a uniform gray-card grid;
 - redesigns the toolbar popup into a compact command surface with glanceable live metrics, one clear primary action, quieter navigation actions, and lifecycle-neutral runtime copy;
 - restructures the sidebar into a stronger Firefox-native/GoreeCloud workspace with clearer product hierarchy, sticky search/view controls, compact state chips, stronger active-tab treatment, and reduced visual noise;
 - reorganizes the full Manager around live-browser overview, saved workspace, recovery, portability, and secondary technical status instead of giving every diagnostic card equal visual weight;
@@ -39,7 +41,7 @@ The 0.1.12 candidate:
 
 The default residency policy prevents Firefox's automatic tab discard, but it does not override browser-owned background timer/animation throttling or operating-system process/resource limits, and it does not silently reload a tab the user has explicitly discarded.
 
-This is a material presentation and behavior change. The current shared target is GLAZE UI V1.6 / 1.6.0; fresh exact-revision repository-local V1.6 source mapping, real-Firefox runtime acceptance, rendered visual/accessibility review, packaging, signing, and Stable promotion are separate gates. Historical V1.5.1 acceptance remains provenance for Stable 0.1.11 only. Representative Firefox 156/Linux normal-light rendering has now been accepted for the observed popup/sidebar/Manager conditions in `RENDERED-ACCEPTANCE-0.1.12.md`; keyboard/assistive-technology and alternate appearance/environment rendering remain pending. The candidate must not inherit 0.1.11 Stable status.
+This is a material presentation and behavior change. The current shared target is GLAZE UI V1.6 / 1.6.0; fresh exact-revision repository-local V1.6 source mapping, real-Firefox runtime acceptance, rendered visual/accessibility review, packaging, signing, and Stable promotion are separate gates. Historical V1.5.1 acceptance remains provenance for Stable 0.1.11 only. The earlier Firefox 156/Linux normal-light review remains bounded historical evidence for its exact revision and conditions. September 27 owner-rendered feedback on the current 0.1.12 candidate identified additional visual-quality gaps and triggered the second-stage V1.6 refinement, so fresh post-refinement rendered acceptance is still required. Keyboard/assistive-technology and alternate appearance/environment rendering remain pending. The candidate must not inherit 0.1.11 Stable status.
 
 
 ### Source-preserving operations

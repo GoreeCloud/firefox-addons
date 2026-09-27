@@ -6,33 +6,49 @@
   display: grid;
   align-items: start;
   justify-items: center;
-  padding: min(14vh, 96px) 12px 12px;
-  background: color-mix(in srgb, Canvas 28%, transparent);
-  backdrop-filter: blur(10px);
+  padding: min(13vh, 88px) 12px 12px;
+  background: color-mix(in srgb, CanvasText 28%, transparent);
+  backdrop-filter: blur(14px) saturate(1.08);
 }
 .command-palette-card {
   width: min(100%, 560px);
-  max-height: min(72vh, 640px);
+  max-height: min(74vh, 650px);
   overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: color-mix(in srgb, Canvas 92%, transparent);
-  box-shadow: 0 18px 56px color-mix(in srgb, CanvasText 24%, transparent);
+  border: 1px solid var(--border-strong);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 10% 0%, color-mix(in srgb, AccentColor 12%, transparent), transparent 18rem),
+    color-mix(in srgb, var(--glz-glaze) 96%, Canvas 10%);
+  box-shadow: var(--glz-shadow-2);
+  backdrop-filter: blur(24px) saturate(1.18);
 }
 .command-palette-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 12px;
+  padding: 14px 14px 10px;
 }
-.command-palette-heading h2 { margin: 0; font-size: 15px; }
-.command-query { display: block; padding: 0 12px 10px; }
+.command-palette-heading .eyebrow { margin: 0 0 3px; }
+.command-palette-heading h2 { margin: 0; font-size: 16px; letter-spacing: -.015em; }
+.icon-button {
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+}
+.command-query { display: block; padding: 0 14px 12px; }
 .command-query input {
   width: 100%;
+  min-height: 42px;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--surface);
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
   color: inherit;
   padding: 10px 12px;
   outline: none;
@@ -50,27 +66,31 @@
 }
 .command-result {
   display: grid;
-  gap: 2px;
+  gap: 3px;
   width: 100%;
-  padding: 9px 12px;
+  padding: 10px 14px;
   border: 0;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
   background: transparent;
   color: inherit;
   text-align: left;
   cursor: pointer;
 }
 .command-result:first-child { border-top: 0; }
-.command-result[data-active="true"] { background: var(--surface-strong); }
-.command-title { font-size: 13px; font-weight: 700; }
-.command-description { color: var(--muted); font-size: 11px; line-height: 1.35; }
-.command-empty { margin: 0; padding: 20px 12px; color: var(--muted); text-align: center; }
-.command-hint { margin: 0; padding: 9px 12px; color: var(--muted); font-size: 10px; }
+.command-result[data-active="true"] {
+  background: linear-gradient(90deg, color-mix(in srgb, AccentColor 15%, transparent), color-mix(in srgb, var(--surface-strong) 84%, transparent));
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.command-title { font-size: 12.5px; font-weight: 750; }
+.command-description { color: var(--muted); font-size: 10.5px; line-height: 1.4; }
+.command-empty { margin: 0; padding: 24px 14px; color: var(--muted); text-align: center; }
+.command-hint { margin: 0; padding: 10px 14px; color: var(--muted); font-size: 9.5px; }
 @media (prefers-reduced-transparency: reduce) {
   .command-palette { background: Canvas; backdrop-filter: none; }
-  .command-palette-card { background: Canvas; }
+  .command-palette-card { background: Canvas; backdrop-filter: none; box-shadow: none; }
 }
 @media (forced-colors: active) {
   .command-palette, .command-palette-card, .command-query input, .command-result { forced-color-adjust: auto; }
-  .command-palette-card, .command-query input { border-color: ButtonText; }
+  .command-palette-card, .command-query input, .icon-button { border-color: ButtonText; }
+  .command-result[data-active="true"] { outline: 2px solid Highlight; outline-offset: -2px; box-shadow: none; }
 }

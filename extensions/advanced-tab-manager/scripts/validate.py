@@ -11,6 +11,7 @@ inventory_entry = next(item for item in inventory["extensions"] if item["slug"] 
 assert manifest["manifest_version"] == 3
 assert manifest["name"] == "GoreeCloud Advanced Tab Manager"
 assert manifest["version"] == "0.1.12"
+assert manifest["homepage_url"] == "https://github.com/GoreeCloud/firefox-addons"
 assert manifest["browser_specific_settings"]["gecko"]["id"] == "advanced-tab-manager@goreecloud.com"
 assert manifest["browser_specific_settings"]["gecko"]["strict_min_version"] == "139.0"
 assert manifest["incognito"] == "not_allowed"
@@ -33,6 +34,7 @@ required = [
     "src/core/persistent-state.js", "src/core/tab-sets.js", "src/core/stash-transaction.js",
     "src/core/snooze-store.js", "src/core/snooze.js", "src/core/snooze-transaction.js",
     "src/core/rule-state.js", "src/core/rules.js", "src/core/commands.js", "src/core/manager-model.js", "src/core/portability.js", "src/core/session-snapshots.js",
+    "src/shared/glaze.css",
     "src/sidebar/sidebar.html", "src/sidebar/sidebar.js", "src/sidebar/open-tabs-view.js", "src/sidebar/saved-view.js", "src/sidebar/duplicates-view.js", "src/sidebar/snoozed-view.js", "src/sidebar/rules-view.js", "src/sidebar/command-palette.js", "src/sidebar/command-palette.css", "src/sidebar/manager-link.js", "src/sidebar/rules.css", "src/sidebar/ui.js", "src/sidebar/sidebar.css",
     "src/popup/popup.html", "src/popup/popup.js", "src/popup/popup.css",
     "src/manager/manager.html", "src/manager/manager.js", "src/manager/manager.css",
