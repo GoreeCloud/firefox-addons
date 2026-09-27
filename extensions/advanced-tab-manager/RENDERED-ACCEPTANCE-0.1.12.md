@@ -155,3 +155,12 @@ The 0.1.12 Development line now adds **Later today**, **Tomorrow 9:00 AM**, and 
 Earlier normal-light screenshot evidence remains valid for the unchanged surfaces and conditions it actually showed, but it does not constitute rendered acceptance of these newly added snooze-control states. Fresh representative rendering of the updated snooze dialog and Snoozed-view cancellation control is required before those exact UI states are accepted.
 
 Recurring snooze behavior remains outside this change pending a separate repeat-policy/UX definition.
+
+
+## Tree-branch action refinement boundary
+
+The 0.1.12 Development line now adds compact Tree-view branch close/discard controls for tabs with current descendants. The controls appear only when the whole branch is visible. Closing a branch and discarding an eligible branch both require explicit confirmation; discard is withheld for branches containing active, pinned, or audible tabs.
+
+This changes constrained-sidebar row-action presentation after the previously reviewed normal-light screenshots. Those screenshots remain valid historical evidence for their exact revisions and unchanged surfaces, but they do not establish rendered acceptance for the new branch-control state. Fresh exact-candidate sidebar rendering is required before this new Tree-view state can be accepted.
+
+Drag-and-drop, branch move, and richer reparenting are not claimed by this slice. Stable remains `0.1.11`.
