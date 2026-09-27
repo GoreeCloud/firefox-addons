@@ -188,6 +188,32 @@ button:disabled { cursor: not-allowed; opacity: .48; }
 
 .metrics dt { overflow: hidden; color: var(--muted); font-size: 9.5px; text-overflow: ellipsis; white-space: nowrap; }
 .metrics dd { margin: 5px 0 0; font-size: clamp(24px, 3vw, 32px); font-weight: 790; font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+.residency-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  margin-top: 10px;
+  padding: 11px 12px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--surface-strong) 52%, transparent);
+}
+.residency-summary[data-state="protected"] { border-color: color-mix(in srgb, AccentColor 34%, var(--border)); }
+.residency-summary[data-state="attention"] { border-color: color-mix(in srgb, Mark 52%, var(--border)); }
+.residency-kicker { margin: 0 0 2px; color: var(--muted); font-size: 8.5px; font-weight: 760; letter-spacing: .09em; text-transform: uppercase; }
+.residency-summary strong { display: block; font-size: 11.5px; }
+.residency-summary #residency-detail { margin: 4px 0 0; color: var(--muted); font-size: 9.5px; line-height: 1.45; }
+.residency-badge {
+  min-width: 52px;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  text-align: center;
+  font-size: 9.5px;
+  font-weight: 760;
+}
 .snapshot-toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: 8px; margin-top: 5px; }
 .retention-field { display: grid; gap: 4px; color: var(--muted); font-size: 9.5px; }
 .retention-field input { width: 88px; min-height: 39px; padding: 7px 9px; border: 1px solid var(--border); border-radius: 11px; background: color-mix(in srgb, var(--surface-strong) 72%, transparent); color: CanvasText; }
@@ -253,7 +279,7 @@ footer { margin: 18px 3px 0; color: var(--muted); font-size: 9.5px; line-height:
 }
 @media (forced-colors: active) {
   body { background: Canvas; }
-  .manager-topbar, .panel, .metrics > div, .store-row, .store-status, .snapshot-card, .import-preview,
+  .manager-topbar, .panel, .metrics > div, .residency-summary, .residency-badge, .store-row, .store-status, .snapshot-card, .import-preview,
   button, .file-button, .retention-field input, .status { border: 1px solid ButtonText; box-shadow: none; }
   .manager-topbar::after, .overview-panel::before, .feature-panel::before { display: none; }
 }

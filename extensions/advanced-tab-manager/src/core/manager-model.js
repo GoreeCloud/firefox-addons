@@ -1,3 +1,5 @@
+import { summarizeTabResidency } from "./state.js";
+
 function asArray(value) {
   return Array.isArray(value) ? value : [];
 }
@@ -37,6 +39,7 @@ export function buildManagerModel({ dashboard, snooze, rules, manifest, generate
   const windows = asArray(snapshot.windows);
   const groups = asArray(snapshot.groups);
   const tabs = windows.flatMap((window) => asArray(window?.tabs));
+  const residency = summarizeTabResidency(snapshot);
   const organizationalState = dashboard?.ok ? dashboard.state : null;
   const snoozeState = snooze?.ok ? snooze.state : null;
   const ruleState = rules?.ok ? rules.state : null;
@@ -57,6 +60,7 @@ export function buildManagerModel({ dashboard, snooze, rules, manifest, generate
       contentScripts: contentScripts.length,
       incognitoMode: String(manifest?.incognito ?? "unknown")
     },
+    residency,
     availability: {
       liveBrowserState: Boolean(dashboard?.snapshot),
       organizationalState: Boolean(dashboard?.ok),
