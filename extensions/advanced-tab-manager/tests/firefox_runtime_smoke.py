@@ -593,7 +593,7 @@ def main() -> int:
             server.shutdown()
             server.server_close()
 
-    require(len(passes) == 14, "all release-critical unsigned runtime checks passed", str(passes))
+    require(len(passes) == 15, "all release-critical unsigned runtime checks passed", str(passes))
     print("Advanced Tab Manager unsigned real-Firefox runtime acceptance passed.")
     return 0
 
