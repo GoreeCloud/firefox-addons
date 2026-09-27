@@ -1,16 +1,16 @@
-# GoreeCloud Firefox Extensions
+# GoreeCloud Firefox Add-ons
 
-This repository is the canonical source-control home for **standalone** Firefox extensions built and maintained by GoreeCloud, plus shared Firefox/WebExtension tooling.
+This repository is the canonical monorepo for all GoreeCloud Firefox projects, including add-ons, extensions, themes, plugins, shared tooling, validation, packaging, and release workflows.
 
 Firefox support that is a client, adapter, or platform variant of a broader GoreeCloud application belongs in that application's repository alongside its other supported variants (for example Android, iOS, web, Linux, and Firefox). Such an extension must not be split into its own isolated repository. During migration, an application-owned Firefox extension may temporarily remain represented here, but its permanent source-control authority is the owning application repository.
 
 ## Repository role
 
-`GoreeCloud/goreecloud-firefox-extensions` is the authoritative Firefox-extension maintenance location for GoreeCloud.
+`GoreeCloud/firefox-addons` is the canonical GoreeCloud Firefox add-ons and Firefox-development monorepo.
 
 The repository provides:
 
-- one discoverable home for standalone GoreeCloud Firefox extensions and shared browser-extension tooling;
+- one discoverable home for GoreeCloud Firefox add-ons, extensions, themes, plugins, and shared browser tooling;
 - independent extension identities and release boundaries inside one repository;
 - shared Firefox/WebExtension validation and deterministic packaging tooling;
 - common Mozilla signing and release-gate guidance;
@@ -100,7 +100,7 @@ The accepted deterministic unsigned XPI SHA-256 is `ac605e4781a6dcc605d6c7474989
 
 ## Maintenance rule
 
-A standalone GoreeCloud Firefox extension is not fully centralized until its active source, documentation, validation, package workflow, release instructions, required licensing/attribution, and relevant release history are represented here. After migration acceptance, its isolated legacy repository must be retired; long-term provenance belongs in canonical records or approved archives rather than a permanent standalone extension repository.
+A GoreeCloud Firefox add-on, extension, theme, plugin, or other Firefox-specific project that is owned by this monorepo is not fully centralized until its active source, documentation, validation, package workflow, release instructions, required licensing/attribution, and relevant release history are represented here. After migration acceptance, its isolated legacy repository must be retired; long-term provenance belongs in canonical records or approved archives rather than a permanent standalone extension repository.
 
 An application-owned Firefox client is not permanently centralized here. Its authoritative source must converge on the owning application repository, where Firefox is maintained as one supported platform variant alongside the application's other clients. Transitional copies must be clearly identified and removed from authority after migration acceptance.
 
