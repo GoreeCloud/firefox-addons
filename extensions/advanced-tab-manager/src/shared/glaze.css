@@ -1,0 +1,129 @@
+:root {
+  color-scheme: light dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+
+  --glz-canvas: Canvas;
+  --glz-text: CanvasText;
+  --glz-accent: AccentColor;
+  --glz-accent-text: AccentColorText;
+  --glz-muted: color-mix(in srgb, CanvasText 62%, transparent);
+  --glz-subtle: color-mix(in srgb, CanvasText 48%, transparent);
+  --glz-line: color-mix(in srgb, CanvasText 13%, transparent);
+  --glz-line-strong: color-mix(in srgb, CanvasText 22%, transparent);
+
+  --glz-surface: color-mix(in srgb, Canvas 93%, CanvasText 2%);
+  --glz-soft: color-mix(in srgb, Canvas 88%, CanvasText 4%);
+  --glz-glaze: color-mix(in srgb, Canvas 80%, transparent);
+  --glz-deep: color-mix(in srgb, Canvas 78%, CanvasText 7%);
+  --glz-deepest: color-mix(in srgb, Canvas 70%, CanvasText 10%);
+  --glz-accent-soft: color-mix(in srgb, AccentColor 12%, Canvas);
+  --glz-accent-medium: color-mix(in srgb, AccentColor 20%, Canvas);
+  --glz-accent-line: color-mix(in srgb, AccentColor 48%, transparent);
+
+  --glz-shadow-1: 0 1px 1px color-mix(in srgb, CanvasText 5%, transparent), 0 8px 24px color-mix(in srgb, CanvasText 6%, transparent);
+  --glz-shadow-2: 0 2px 2px color-mix(in srgb, CanvasText 5%, transparent), 0 18px 54px color-mix(in srgb, CanvasText 11%, transparent);
+  --glz-shadow-accent: 0 12px 32px color-mix(in srgb, AccentColor 20%, transparent);
+
+  --glz-radius-sm: 9px;
+  --glz-radius-md: 13px;
+  --glz-radius-lg: 18px;
+  --glz-radius-xl: 24px;
+  --glz-control-height: 38px;
+  --glz-focus: 2px solid AccentColor;
+
+  --bg: var(--glz-canvas);
+  --surface: var(--glz-surface);
+  --surface-raised: var(--glz-soft);
+  --surface-strong: var(--glz-deep);
+  --surface-accent: var(--glz-accent-soft);
+  --border: var(--glz-line);
+  --border-strong: var(--glz-line-strong);
+  --muted: var(--glz-muted);
+  --accent: var(--glz-accent);
+  --accent-text: var(--glz-accent-text);
+  --shadow: var(--glz-shadow-2);
+}
+
+* { box-sizing: border-box; }
+html { min-width: 0; }
+body { color: var(--glz-text); }
+button, input, select, .file-button { font: inherit; color: inherit; }
+button, input, select { accent-color: var(--glz-accent); }
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+.file-button:focus-within {
+  outline: var(--glz-focus);
+  outline-offset: 2px;
+}
+
+.glz-lockup {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+}
+.glz-lockup-copy { min-width: 0; }
+.glz-mark {
+  position: relative;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border: 1px solid color-mix(in srgb, AccentColor 42%, CanvasText 12%);
+  border-radius: 11px;
+  background:
+    radial-gradient(circle at 72% 22%, color-mix(in srgb, AccentColorText 34%, transparent) 0 12%, transparent 13%),
+    linear-gradient(145deg, color-mix(in srgb, AccentColor 92%, Canvas) 0%, color-mix(in srgb, AccentColor 58%, CanvasText) 100%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, AccentColorText 32%, transparent), var(--glz-shadow-accent);
+  color: var(--glz-accent-text);
+}
+.glz-mark::before,
+.glz-mark::after {
+  content: "";
+  position: absolute;
+  border: 1.5px solid currentColor;
+  border-radius: 4px;
+}
+.glz-mark::before { inset: 8px 8px 12px 8px; opacity: .94; }
+.glz-mark::after { inset: 12px 6px 7px 10px; opacity: .72; }
+
+.glz-eyebrow,
+.eyebrow,
+.section-kicker {
+  color: var(--glz-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glz-glaze: Canvas;
+    --glz-surface: Canvas;
+    --glz-soft: color-mix(in srgb, Canvas 94%, CanvasText 4%);
+  }
+  .glz-mark { box-shadow: none; }
+}
+
+@media (forced-colors: active) {
+  :root {
+    --glz-surface: Canvas;
+    --glz-soft: Canvas;
+    --glz-glaze: Canvas;
+    --glz-deep: Canvas;
+    --glz-deepest: Canvas;
+    --glz-accent-soft: Canvas;
+    --glz-accent-medium: Canvas;
+    --glz-line: ButtonText;
+    --glz-line-strong: ButtonText;
+  }
+  .glz-mark {
+    border-color: ButtonText;
+    background: Canvas;
+    color: ButtonText;
+    box-shadow: none;
+    forced-color-adjust: auto;
+  }
+}
