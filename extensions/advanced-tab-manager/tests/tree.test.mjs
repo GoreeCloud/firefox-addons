@@ -1,9 +1,28 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { analyzeTree, buildTreeRows, wouldCreateCycle } from "../src/core/tree.js";
+import { analyzeTree, buildTreeRows, collectTreeBranchTabs, wouldCreateCycle } from "../src/core/tree.js";
 function tab(id, logicalId, index, treeParentLogicalId = null, windowId = 1) { return { id, logicalId, index, treeParentLogicalId, windowId, title: logicalId }; }
 test("tree rows preserve hierarchy independently of Firefox runtime tab IDs", () => { const tabs=[tab(91,"root",0),tab(44,"child",1,"root"),tab(12,"grandchild",2,"child")]; assert.deepEqual(buildTreeRows(tabs).map(({tab:value,depth})=>[value.logicalId,depth]),[["root",0],["child",1],["grandchild",2]]); const restored=[tab(501,"root",0),tab(502,"child",1,"root"),tab(503,"grandchild",2,"child")]; assert.deepEqual(buildTreeRows(restored).map(({tab:value,depth})=>[value.logicalId,depth]),[["root",0],["child",1],["grandchild",2]]); });
 test("missing or cross-window parents remain durable metadata but reconcile as orphaned live roots", () => { const tabs=[tab(1,"child-a",0,"missing"),tab(2,"parent-b",1,null,2),tab(3,"child-b",2,"parent-b",1)]; const analysis=analyzeTree(tabs); assert.equal(analysis.statusByLogicalId.get("child-a"),"orphaned"); assert.equal(analysis.statusByLogicalId.get("child-b"),"orphaned"); assert.equal(analysis.parentByChild.has("child-a"),false); assert.equal(analysis.parentByChild.has("child-b"),false); });
 test("pre-existing cycles are broken for presentation without inventing browser state", () => { const tabs=[tab(1,"a",0,"b"),tab(2,"b",1,"a"),tab(3,"c",2,"a")]; const rows=buildTreeRows(tabs); const statuses=new Map(rows.map((row)=>[row.tab.logicalId,row.treeStatus])); assert.equal(statuses.get("a"),"cycle"); assert.equal(statuses.get("b"),"cycle"); assert.equal(statuses.get("c"),"attached"); assert.equal(rows.length,3); });
 test("cycle prevention rejects self-parenting and attachment beneath a descendant", () => { const tabs=[tab(1,"root",0),tab(2,"child",1,"root"),tab(3,"leaf",2,"child")]; assert.equal(wouldCreateCycle(tabs,"root","root"),true); assert.equal(wouldCreateCycle(tabs,"root","leaf"),true); assert.equal(wouldCreateCycle(tabs,"leaf","root"),false); });
 test("existing malformed parent loops fail closed for new attachments", () => { const tabs=[tab(1,"a",0,"b"),tab(2,"b",1,"a"),tab(3,"free",2)]; assert.equal(wouldCreateCycle(tabs,"free","a"),true); });
+
+test("tree branch collection returns only the selected tab and current descendants", () => {
+  const tabs=[
+    tab(1,"root",0),
+    tab(2,"child-a",1,"root"),
+    tab(3,"grandchild",2,"child-a"),
+    tab(4,"child-b",3,"root"),
+    tab(5,"other-root",4)
+  ];
+  assert.deepEqual(
+    collectTreeBranchTabs(tabs, 2).map((value)=>value.logicalId),
+    ["child-a","grandchild"]
+  );
+  assert.deepEqual(
+    collectTreeBranchTabs(tabs, 1).map((value)=>value.logicalId),
+    ["root","child-a","grandchild","child-b"]
+  );
+  assert.deepEqual(collectTreeBranchTabs(tabs, 999), []);
+});

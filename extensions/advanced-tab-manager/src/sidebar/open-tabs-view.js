@@ -1,5 +1,5 @@
 import { TAB_GROUP_ID_NONE } from "../core/state.js";
-import { analyzeTree, buildTreeRows } from "../core/tree.js";
+import { analyzeTree, buildTreeRows, collectTreeBranchTabs } from "../core/tree.js";
 import { isRestorableUrl } from "../core/persistent-state.js";
 import { actionButton, badge } from "./ui.js";
 
@@ -14,7 +14,7 @@ function previousBrowserTab(window, tab) {
   return position > 0 ? ordered[position - 1] : null;
 }
 
-function createTabRow(tab, { depth = 0, treeStatus = "root", groupsById, window }) {
+function createTabRow(tab, { depth = 0, treeStatus = "root", groupsById, window, branchInfo = null }) {
   const row = document.createElement("div");
   row.className = "tab-row";
   row.dataset.tabId = String(tab.id);
@@ -62,6 +62,12 @@ function createTabRow(tab, { depth = 0, treeStatus = "root", groupsById, window 
     actions.append(actionButton("◷", "Choose when to snooze this tab after its recovery record and alarm are verified", "snooze", tab.id));
     actions.append(actionButton("▣", "Stash tab locally and close it after persistence is verified", "stash", tab.id));
   }
+  if (branchInfo?.size > 1) {
+    if (branchInfo.discardable) {
+      actions.append(actionButton(`◌${branchInfo.size}`, `Discard this tree branch (${branchInfo.size} tabs)`, "discard-tree-branch", tab.id, { branchSize: branchInfo.size }));
+    }
+    actions.append(actionButton(`×${branchInfo.size}`, `Close this tree branch (${branchInfo.size} tabs)`, "close-tree-branch", tab.id, { branchSize: branchInfo.size }));
+  }
   if (!tab.active && !tab.pinned && !tab.audible) actions.append(actionButton("◌", "Discard tab", "discard", tab.id));
   actions.append(actionButton("×", "Close tab", "close", tab.id));
 
@@ -102,7 +108,15 @@ function renderTreeView(window, visibleIds, groupsById) {
   const tree = document.createElement("section");
   tree.className = "tree";
   for (const rowInfo of buildTreeRows(window.tabs)) {
-    if (visibleIds.has(rowInfo.tab.id)) tree.append(createTabRow(rowInfo.tab, { ...rowInfo, groupsById, window }));
+    if (!visibleIds.has(rowInfo.tab.id)) continue;
+    const branchTabs = collectTreeBranchTabs(window.tabs, rowInfo.tab.id);
+    const wholeBranchVisible = branchTabs.length > 1 && branchTabs.every((tab) => visibleIds.has(tab.id));
+    const branchInfo = wholeBranchVisible ? {
+      size: branchTabs.length,
+      discardable: branchTabs.some((tab) => !tab.discarded)
+        && branchTabs.every((tab) => !tab.active && !tab.pinned && !tab.audible)
+    } : null;
+    tree.append(createTabRow(rowInfo.tab, { ...rowInfo, groupsById, window, branchInfo }));
   }
   return tree.childElementCount ? tree : null;
 }

@@ -406,6 +406,46 @@ def main() -> int:
             require(bool(by_id[child_id].get("treeParentLogicalId")), "tree relationship reconstructs from live Firefox state")
             passes.append("tree")
 
+            branch_root_url = f"{base}/tree-branch-root"
+            branch_child_url = f"{base}/tree-branch-child"
+            branch_leaf_url = f"{base}/tree-branch-leaf"
+            branch_root = create_tab(driver, branch_root_url)
+            branch_child = create_tab(driver, branch_child_url)
+            branch_leaf = create_tab(driver, branch_leaf_url)
+            require(
+                extension_message(driver, {"type": "atm:set-tree-parent", "tabId": branch_child, "parentTabId": branch_root}).get("ok") is True,
+                "tree branch child relationship persisted",
+            )
+            require(
+                extension_message(driver, {"type": "atm:set-tree-parent", "tabId": branch_leaf, "parentTabId": branch_child}).get("ok") is True,
+                "tree branch leaf relationship persisted",
+            )
+            branch_discard = extension_message(driver, {"type": "atm:discard-tree-branch", "tabId": branch_root})
+            require(
+                branch_discard.get("ok") is True and branch_discard.get("discarded") == 3,
+                "guarded tree branch discard completed",
+                repr(branch_discard),
+            )
+            discarded_snapshot = extension_message(driver, {"type": "atm:get-snapshot"})
+            discarded_by_id = {tab["id"]: tab for tab in flatten(discarded_snapshot)}
+            require(
+                all(discarded_by_id.get(tab_id, {}).get("discarded") is True for tab_id in [branch_root, branch_child, branch_leaf]),
+                "tree branch discard unloads every controlled branch member",
+                repr(discarded_by_id),
+            )
+            branch_close = extension_message(driver, {"type": "atm:close-tree-branch", "tabId": branch_root})
+            require(
+                branch_close.get("ok") is True and branch_close.get("closed") == 3,
+                "guarded tree branch close completed",
+                repr(branch_close),
+            )
+            closed_snapshot = extension_message(driver, {"type": "atm:get-snapshot"})
+            require(
+                all(tab.get("url") not in {branch_root_url, branch_child_url, branch_leaf_url} for tab in flatten(closed_snapshot)),
+                "tree branch close removes every controlled branch member",
+            )
+            passes.append("tree-branch-actions")
+
             tab_set = extension_message(driver, {"type": "atm:save-focused-window-tab-set", "name": "Runtime acceptance"})
             require(isinstance(tab_set, dict) and tab_set.get("ok") is True and tab_set.get("itemCount", 0) >= 2,
                     "Tab Set capture persisted restorable tabs", repr(tab_set))
@@ -612,7 +652,7 @@ def main() -> int:
             server.shutdown()
             server.server_close()
 
-    require(len(passes) == 15, "all release-critical unsigned runtime checks passed", str(passes))
+    require(len(passes) == 16, "all release-critical unsigned runtime checks passed", str(passes))
     print("Advanced Tab Manager unsigned real-Firefox runtime acceptance passed.")
     return 0
 
