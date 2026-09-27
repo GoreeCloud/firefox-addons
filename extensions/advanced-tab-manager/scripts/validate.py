@@ -28,7 +28,7 @@ required = [
     "README.md", "FEATURES.md", "FEATURE-ROADMAP.md", "SPECIFICATIONS.md", "ARCHITECTURE.md",
     "PRIVACY.md", "SECURITY.md", "CHANGELOG.md", "LICENSE",
     "GLAZE-UI-1.5.1-ADOPTION.md", "RENDERED-ACCEPTANCE-0.1.12.md", "STABLE-SECURITY-REVIEW-0.1.11.md", "RELEASE-ACCEPTANCE-0.1.11.md",
-    "src/background/background.js", "src/background/browser-state.js", "src/background/saved-state.js", "src/background/duplicate-cleanup.js", "src/background/snooze.js", "src/background/rules.js", "src/background/manager.js", "src/background/portability.js",
+    "src/background/background.js", "src/background/browser-state.js", "src/background/tab-residency.js", "src/background/saved-state.js", "src/background/duplicate-cleanup.js", "src/background/snooze.js", "src/background/rules.js", "src/background/manager.js", "src/background/portability.js",
     "src/core/state.js", "src/core/tree.js", "src/core/tree-session.js", "src/core/duplicates.js",
     "src/core/persistent-state.js", "src/core/tab-sets.js", "src/core/stash-transaction.js",
     "src/core/snooze-store.js", "src/core/snooze.js", "src/core/snooze-transaction.js",
@@ -42,7 +42,7 @@ required = [
     "tests/snooze-store.test.mjs", "tests/snooze.test.mjs", "tests/snooze-transaction.test.mjs", "tests/background-snooze.test.mjs",
     "tests/rule-state.test.mjs", "tests/rules.test.mjs", "tests/background-rules.test.mjs", "tests/commands.test.mjs",
     "tests/manager-model.test.mjs", "tests/background-manager.test.mjs", "tests/portability.test.mjs", "tests/background-portability.test.mjs",
-    "tests/session-snapshots.test.mjs", "tests/background-session-snapshots.test.mjs",
+    "tests/session-snapshots.test.mjs", "tests/background-session-snapshots.test.mjs", "tests/tab-residency.test.mjs",
     "tests/firefox_runtime_smoke.py", "tests/signed_restart_smoke.py", "tests/amo_signed_version_recovery.py", "tests/verify_signed_xpi.py",
     "RELEASE-ACCEPTANCE-0.1.10.md",
     "scripts/large-session-qualification.mjs", "scripts/stable_security_review.py", "scripts/glaze_consumer_qualification.py"
@@ -51,6 +51,7 @@ for relative in required:
     assert (ROOT / relative).is_file(), f"missing required source-candidate file: {relative}"
 
 background = (ROOT / "src/background/background.js").read_text(encoding="utf-8")
+tab_residency = (ROOT / "src/background/tab-residency.js").read_text(encoding="utf-8")
 manager_background = (ROOT / "src/background/manager.js").read_text(encoding="utf-8")
 manager_model = (ROOT / "src/core/manager-model.js").read_text(encoding="utf-8")
 manager_page = (ROOT / "src/manager/manager.js").read_text(encoding="utf-8")
@@ -77,6 +78,11 @@ manager_link = (ROOT / "src/sidebar/manager-link.js").read_text(encoding="utf-8"
 popup_html = (ROOT / "src/popup/popup.html").read_text(encoding="utf-8")
 popup_js = (ROOT / "src/popup/popup.js").read_text(encoding="utf-8")
 
+assert "createTabResidencyPolicy" in background
+assert "protectAllOpenTabs" in background and "protectTab(tab)" in background
+assert "autoDiscardable: false" in tab_residency
+assert "browser.tabs.query({})" in tab_residency and "browser.tabs.update" in tab_residency
+assert "browser.tabs.reload" not in tab_residency, "default residency must not silently reload a user-discarded tab"
 assert "createRuleManager" in background
 assert "atm:get-rule-state" in background and "atm:set-rule-engine-enabled" in background
 assert "atm:upsert-rule" in background and "atm:delete-rule" in background and "atm:preview-rule-evaluation" in background

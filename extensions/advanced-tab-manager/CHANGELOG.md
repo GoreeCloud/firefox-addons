@@ -10,7 +10,9 @@
 - Corrected the Manager so retained session-snapshot count is rendered from the existing privacy-minimized model.
 - Kept current Stable Glaze UI V1.5 / 1.5.1 as the consumer target and preserved Reduced Transparency, Forced Colors, focus, responsive, and semantic system-color fallbacks.
 - Refactored candidate security/Glaze/release-qualification tooling to bind to the exact current manifest version while preserving historical Stable 0.1.11 release/signing evidence.
-- Added no Firefox permission, host permission, content script, telemetry path, remote dependency, private-browsing access, storage schema, or new browser mutation authority.
+- Added default live-tab residency using the existing `tabs` permission: eligible non-private tabs are set to `autoDiscardable=false` at background startup and on tab creation so Firefox does not automatically unload background tabs. Explicit manual/rule-driven discard remains available.
+- Preserved browser authority over background scheduling: the residency policy does not bypass timer/animation throttling, does not inspect page content, and does not silently reload a tab the user explicitly discarded.
+- Added no Firefox permission, host permission, content script, telemetry path, remote dependency, private-browsing access, or storage schema; browser mutation authority expands only by the bounded `autoDiscardable=false` residency update.
 - Removed the unsupported Manifest V3 `background.persistent` key after Firefox 156 surfaced it as a temporary-load warning; non-persistent event-page behavior remains the intended MV3 model.
 - Corrected deterministic large-session evidence generation so `sourceVersion` is read from the exact candidate manifest instead of retaining the historical 0.1.11 label.
 - Refined the sidebar toolbar after representative Firefox rendering showed the injected command trigger forcing Refresh onto a second row; the command trigger is now a compact `⌘K` control in the shared toolbar system, and row actions remain quieter than primary content without becoming nearly invisible.

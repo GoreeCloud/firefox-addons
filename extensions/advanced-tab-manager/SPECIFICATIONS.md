@@ -77,7 +77,9 @@ This repository document describes the implemented source boundary for version `
 - The Manager now renders the retained session-snapshot count already present in the privacy-minimized manager model.
 - Sidebar tab rows expose stronger keyboard/assistive semantics while preserving the established activation and action routes.
 - Semantic Firefox/system colors, visible focus, Reduced Transparency, Forced Colors, and responsive constrained-window fallbacks remain mandatory.
-- No new Firefox permission, host permission, content script, telemetry path, remote dependency, private-browsing access, storage schema, or browser mutation route is introduced.
+- No new Firefox permission, host permission, content script, telemetry path, remote dependency, private-browsing access, or storage schema is introduced.
+- 0.1.12 adds one bounded browser-state policy through the existing `tabs` permission: on extension/background startup and when a new tab is created, eligible non-private open tabs are updated with `autoDiscardable: false`. This prevents Firefox from automatically discarding those tabs while keeping explicit `tabs.discard` actions available when the user deliberately chooses to unload a tab.
+- The residency policy does not silently reload an already user-discarded tab and does not claim foreground-equivalent execution for background pages. Firefox remains authoritative for timer/animation throttling and operating-system process/resource constraints.
 - Because the presentation delta is material, 0.1.12 requires fresh exact-revision Glaze UI 1.5.1 consumer qualification plus representative real-Firefox rendered/accessibility acceptance before any Stable promotion.
 - Advanced Tab Manager has no approved canonical product icon in `GoreeCloud/goreecloud-branding-assets` at this source revision; no local replacement is invented by this candidate.
 

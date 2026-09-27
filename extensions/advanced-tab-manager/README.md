@@ -34,9 +34,12 @@ The 0.1.12 candidate:
 - removes stale embedded `In Development · source-candidate` text from the Manager model so runtime UI does not manufacture canonical release lifecycle truth;
 - fixes the Manager so retained session-snapshot count is actually rendered instead of remaining an em dash;
 - strengthens interactive tab-row semantics with explicit button/current-page semantics;
-- preserves the existing permission, privacy, storage, recovery, and browser-authority boundaries with no new Firefox permission, host permission, content script, telemetry path, remote dependency, or private-browsing access.
+- keeps every eligible non-private open tab non-auto-discardable by default, including background tabs, by applying Firefox `autoDiscardable=false` at background startup and when tabs are created; explicit manual/rule-driven Discard remains available as a deliberate override;
+- preserves the existing permission, privacy, storage, and recovery boundaries with no new Firefox permission, host permission, content script, telemetry path, remote dependency, or private-browsing access. The bounded residency update uses the already-declared `tabs` permission.
 
-This is a material presentation change. Fresh exact-revision Glaze UI 1.5.1 consumer qualification, real-Firefox runtime acceptance, rendered visual/accessibility review, packaging, signing, and Stable promotion are separate gates. Representative Firefox 156/Linux normal-light rendering has now been accepted for the observed popup/sidebar/Manager conditions in `RENDERED-ACCEPTANCE-0.1.12.md`; keyboard/assistive-technology and alternate appearance/environment rendering remain pending. The candidate must not inherit 0.1.11 Stable status.
+The default residency policy prevents Firefox's automatic tab discard, but it does not override browser-owned background timer/animation throttling or operating-system process/resource limits, and it does not silently reload a tab the user has explicitly discarded.
+
+This is a material presentation and behavior change. Fresh exact-revision Glaze UI 1.5.1 consumer qualification, real-Firefox runtime acceptance, rendered visual/accessibility review, packaging, signing, and Stable promotion are separate gates. Representative Firefox 156/Linux normal-light rendering has now been accepted for the observed popup/sidebar/Manager conditions in `RENDERED-ACCEPTANCE-0.1.12.md`; keyboard/assistive-technology and alternate appearance/environment rendering remain pending. The candidate must not inherit 0.1.11 Stable status.
 
 
 ### Source-preserving operations

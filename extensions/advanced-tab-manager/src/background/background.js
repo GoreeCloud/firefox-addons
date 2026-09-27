@@ -5,6 +5,7 @@ import { createPortabilityManager } from "./portability.js";
 import { createRuleManager } from "./rules.js";
 import { createSavedState } from "./saved-state.js";
 import { createSnoozeManager } from "./snooze.js";
+import { createTabResidencyPolicy } from "./tab-residency.js";
 
 const CHANGE_MESSAGE = "atm:state-changed";
 
@@ -21,6 +22,7 @@ function registerEvent(source, reason) {
 }
 
 const browserState = createBrowserState({ browser, broadcastChange, idFactory: newId });
+const tabResidencyPolicy = createTabResidencyPolicy({ browser });
 const savedState = createSavedState({
   browser,
   readLiveSnapshot: browserState.readLiveSnapshot,
@@ -62,9 +64,17 @@ const portabilityManager = createPortabilityManager({
 });
 
 browser.tabs.onCreated.addListener((tab) => {
+  tabResidencyPolicy.protectTab(tab)
+    .catch((error) => console.warn("Advanced Tab Manager could not protect new tab residency", error));
   browserState.adoptOpenerRelationship(tab)
     .catch((error) => console.warn("Advanced Tab Manager could not adopt opener tree relationship", error))
     .finally(() => broadcastChange("tab-created"));
+});
+
+void tabResidencyPolicy.protectAllOpenTabs().then((result) => {
+  if (!result.ok) console.warn("Advanced Tab Manager could not protect every open tab from automatic discard", result.failures);
+}).catch((error) => {
+  console.error("Advanced Tab Manager open-tab residency protection failed", error);
 });
 registerEvent(browser.tabs.onUpdated, "tab-updated");
 registerEvent(browser.tabs.onRemoved, "tab-removed");

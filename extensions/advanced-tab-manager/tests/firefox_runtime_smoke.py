@@ -354,6 +354,27 @@ def main() -> int:
             require(manager["model"]["permissions"]["hosts"] == [], "Manager confirms no host permissions")
             passes.append("manager-model")
 
+            residency = driver.execute_async_script(
+                """
+                const done = arguments[arguments.length - 1];
+                browser.tabs.query({}).then(
+                  tabs => done(tabs.filter(tab => !tab.incognito).map(tab => ({
+                    id: tab.id,
+                    autoDiscardable: tab.autoDiscardable,
+                    discarded: tab.discarded
+                  }))),
+                  error => done({error: String(error)})
+                );
+                """
+            )
+            require(
+                isinstance(residency, list) and len(residency) > 0
+                and all(tab.get("autoDiscardable") is False for tab in residency),
+                "all currently open non-private tabs reject Firefox automatic discard by default",
+                repr(residency),
+            )
+            passes.append("tab-residency-default")
+
             parent_id = create_tab(driver, f"{base}/tree-parent")
             child_id = create_tab(driver, f"{base}/tree-child")
             tree = extension_message(driver, {"type": "atm:set-tree-parent", "tabId": child_id, "parentTabId": parent_id})
@@ -469,7 +490,7 @@ def main() -> int:
             server.shutdown()
             server.server_close()
 
-    require(len(passes) == 13, "all release-critical unsigned runtime checks passed", str(passes))
+    require(len(passes) == 14, "all release-critical unsigned runtime checks passed", str(passes))
     print("Advanced Tab Manager unsigned real-Firefox runtime acceptance passed.")
     return 0
 
