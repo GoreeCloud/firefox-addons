@@ -264,7 +264,16 @@ def main() -> int:
 
             navigate_extension(driver, "src/manager/manager.html")
             WebDriverWait(driver, 15).until(
-                lambda d: d.find_element("id", "source-version").text.strip() == EXPECTED_VERSION
+                lambda d: d.find_element("id", "count-snapshot-retention").text.strip() == "10"
+            )
+            disclosure = driver.find_element("css selector", ".technical-disclosure > summary")
+            disclosure.click()
+            WebDriverWait(driver, 5).until(
+                lambda d: d.find_element("css selector", ".technical-disclosure").get_attribute("open") is not None
+            )
+            require(
+                driver.find_element("id", "source-version").text.strip() == EXPECTED_VERSION,
+                "Manager technical disclosure renders source version after user expansion",
             )
             require(driver.find_element("id", "create-snapshot").is_enabled(), "Manager snapshot control is interactive")
             require(driver.find_element("id", "export-backup").is_enabled(), "Manager backup export control is interactive")
