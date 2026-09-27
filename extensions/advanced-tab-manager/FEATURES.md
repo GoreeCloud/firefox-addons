@@ -3,6 +3,7 @@
 ## In development — 0.1.12
 
 - Default live-tab residency: on background startup and for newly created tabs, Advanced Tab Manager sets Firefox `autoDiscardable=false` for every eligible non-private open tab so Firefox does not automatically unload background tabs. Explicit manual/rule-driven Discard remains available as a user action.
+- Residency visibility: live snapshot normalization preserves Firefox's `autoDiscardable` state so the sidebar can show an `auto-protected` count, the popup can report protection health, and the Manager can explain eligible/protected/resident/explicitly-discarded counts without exposing tab titles, URLs, or page content.
 - The residency default does not claim foreground-equivalent scheduling. Firefox remains authoritative for background timer/rendering throttling and operating-system process/resource constraints; the extension does not inspect or alter page content to bypass those browser policies.
 
 - Redesigned popup command surface with glanceable open-tab, Tab Set, snoozed, and exact-duplicate counts.
