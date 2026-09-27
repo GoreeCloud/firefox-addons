@@ -29,7 +29,7 @@ required = [
     "README.md", "FEATURES.md", "FEATURE-ROADMAP.md", "SPECIFICATIONS.md", "ARCHITECTURE.md",
     "PRIVACY.md", "SECURITY.md", "CHANGELOG.md", "LICENSE",
     "GLAZE-UI-1.5.1-ADOPTION.md", "GLAZE-UI-1.6.0-ADOPTION.md", "RENDERED-ACCEPTANCE-0.1.12.md", "STABLE-SECURITY-REVIEW-0.1.11.md", "RELEASE-ACCEPTANCE-0.1.11.md",
-    "src/background/background.js", "src/background/browser-state.js", "src/background/tab-residency.js", "src/background/saved-state.js", "src/background/duplicate-cleanup.js", "src/background/snooze.js", "src/background/rules.js", "src/background/manager.js", "src/background/portability.js",
+    "src/background/background.js", "src/background/browser-state.js", "src/background/tab-residency.js", "src/background/tree-branch-actions.js", "src/background/saved-state.js", "src/background/duplicate-cleanup.js", "src/background/snooze.js", "src/background/rules.js", "src/background/manager.js", "src/background/portability.js",
     "src/core/state.js", "src/core/tree.js", "src/core/tree-session.js", "src/core/duplicates.js",
     "src/core/persistent-state.js", "src/core/tab-sets.js", "src/core/stash-transaction.js",
     "src/core/snooze-store.js", "src/core/snooze.js", "src/core/snooze-time.js", "src/core/snooze-transaction.js",
@@ -38,7 +38,7 @@ required = [
     "src/sidebar/sidebar.html", "src/sidebar/sidebar.js", "src/sidebar/open-tabs-view.js", "src/sidebar/saved-view.js", "src/sidebar/duplicates-view.js", "src/sidebar/snoozed-view.js", "src/sidebar/rules-view.js", "src/sidebar/command-palette.js", "src/sidebar/command-palette.css", "src/sidebar/manager-link.js", "src/sidebar/rules.css", "src/sidebar/ui.js", "src/sidebar/sidebar.css",
     "src/popup/popup.html", "src/popup/popup.js", "src/popup/popup.css",
     "src/manager/manager.html", "src/manager/manager.js", "src/manager/manager.css",
-    "tests/state.test.mjs", "tests/tree.test.mjs", "tests/tree-session.test.mjs",
+    "tests/state.test.mjs", "tests/tree.test.mjs", "tests/tree-session.test.mjs", "tests/tree-branch-actions.test.mjs",
     "tests/persistent-state.test.mjs", "tests/tab-sets.test.mjs", "tests/stash-transaction.test.mjs", "tests/background-storage.test.mjs",
     "tests/duplicates.test.mjs", "tests/duplicate-cleanup.test.mjs",
     "tests/snooze-store.test.mjs", "tests/snooze.test.mjs", "tests/snooze-time.test.mjs", "tests/snooze-transaction.test.mjs", "tests/background-snooze.test.mjs",
@@ -56,6 +56,8 @@ for relative in required:
 
 background = (ROOT / "src/background/background.js").read_text(encoding="utf-8")
 tab_residency = (ROOT / "src/background/tab-residency.js").read_text(encoding="utf-8")
+tree_branch_actions = (ROOT / "src/background/tree-branch-actions.js").read_text(encoding="utf-8")
+tree_core = (ROOT / "src/core/tree.js").read_text(encoding="utf-8")
 manager_background = (ROOT / "src/background/manager.js").read_text(encoding="utf-8")
 manager_model = (ROOT / "src/core/manager-model.js").read_text(encoding="utf-8")
 state_core = (ROOT / "src/core/state.js").read_text(encoding="utf-8")
@@ -91,6 +93,13 @@ assert "autoDiscardable: false" in tab_residency
 assert "autoDiscardable" in state_core and "summarizeTabResidency" in state_core
 assert "browser.tabs.query({})" in tab_residency and "browser.tabs.update" in tab_residency
 assert "browser.tabs.reload" not in tab_residency, "default residency must not silently reload a user-discarded tab"
+assert "collectTreeBranchTabs" in tree_core
+assert "createTreeBranchActions" in tree_branch_actions
+assert "tree-branch-changed" in tree_branch_actions and "tree-branch-not-discardable" in tree_branch_actions
+assert "browser.tabs.remove" in tree_branch_actions and "browser.tabs.discard" in tree_branch_actions
+assert "atm:close-tree-branch" in background and "atm:discard-tree-branch" in background
+assert "close-tree-branch" in open_tabs_view and "discard-tree-branch" in open_tabs_view
+assert "branchTabs.every((tab) => visibleIds.has(tab.id))" in open_tabs_view
 assert "createRuleManager" in background
 assert "atm:get-rule-state" in background and "atm:set-rule-engine-enabled" in background
 assert "atm:upsert-rule" in background and "atm:delete-rule" in background and "atm:preview-rule-evaluation" in background
