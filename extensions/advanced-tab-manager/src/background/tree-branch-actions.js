@@ -26,6 +26,7 @@ function branchPlan(snapshot, rootTabId) {
       windowId: tab.windowId,
       index: tab.index,
       groupId: Number.isInteger(tab.groupId) ? tab.groupId : TAB_GROUP_ID_NONE,
+      splitViewId: Number.isInteger(tab.splitViewId) ? tab.splitViewId : -1,
       active: Boolean(tab.active),
       pinned: Boolean(tab.pinned),
       audible: Boolean(tab.audible),
@@ -42,7 +43,8 @@ function planSignature(plan) {
     tab.treeParentLogicalId,
     tab.windowId,
     tab.index,
-    tab.groupId
+    tab.groupId,
+    tab.splitViewId
   ]));
 }
 
@@ -127,14 +129,15 @@ export function createTreeBranchActions({ browser, readLiveSnapshot, broadcastCh
     const plan = await verifiedPlan(rootTabId);
     if (!plan.ok) return plan;
 
-    const blocked = plan.members.filter((tab) => tab.pinned || tab.groupId !== TAB_GROUP_ID_NONE);
+    const blocked = plan.members.filter((tab) => tab.pinned || tab.groupId !== TAB_GROUP_ID_NONE || tab.splitViewId !== -1);
     if (blocked.length) {
       return {
         ok: false,
         reason: "tree-branch-not-movable",
         blockedCount: blocked.length,
         pinnedCount: blocked.filter((tab) => tab.pinned).length,
-        groupedCount: blocked.filter((tab) => tab.groupId !== TAB_GROUP_ID_NONE).length
+        groupedCount: blocked.filter((tab) => tab.groupId !== TAB_GROUP_ID_NONE).length,
+        splitViewCount: blocked.filter((tab) => tab.splitViewId !== -1).length
       };
     }
 
@@ -166,6 +169,7 @@ export function createTreeBranchActions({ browser, readLiveSnapshot, broadcastCh
         return tab.id === before.id
           && tab.logicalId === before.logicalId
           && tab.treeParentLogicalId === before.treeParentLogicalId
+          && tab.splitViewId === before.splitViewId
           && tab.windowId === destinationWindowId;
       });
 
