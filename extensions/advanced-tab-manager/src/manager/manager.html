@@ -16,6 +16,7 @@
           <p class="eyebrow">GoreeCloud Advanced Tab Manager</p>
           <h1>Manager</h1>
           <p class="lede">A local-first workspace for session recovery, tab organization, portability, and browser-state diagnostics.</p>
+          <p id="status" class="status" aria-live="polite">Reading current state…</p>
         </div>
       </div>
       <div class="topbar-actions">
@@ -23,8 +24,6 @@
         <button id="refresh" class="primary" type="button">Refresh</button>
       </div>
     </header>
-
-    <p id="status" class="status" aria-live="polite">Reading current state…</p>
 
     <section class="overview-grid" aria-label="Advanced Tab Manager overview">
       <article class="panel overview-panel live-panel">
@@ -90,7 +89,15 @@
       </article>
     </section>
 
-    <section class="detail-grid" aria-label="Technical status">
+    <details class="technical-disclosure" aria-label="Technical status and diagnostics">
+      <summary>
+        <span>
+          <span class="section-kicker">Technical details</span>
+          <strong>Diagnostics and boundaries</strong>
+          <small>Store health, permissions, build identity, and behavior limits</small>
+        </span>
+      </summary>
+      <section class="detail-grid" aria-label="Technical status">
       <article class="panel store-panel">
         <div class="section-heading"><div><p class="section-kicker">Local state</p><h2>Store health</h2></div></div>
         <div id="store-health" class="store-health"></div>
@@ -121,7 +128,8 @@
         <p>Session snapshot capture is bounded to restorable non-private URLs and uses additive restore into new windows. Existing live windows are not replaced or closed.</p>
         <p>Release lifecycle, signing, and platform acceptance are intentionally not embedded as mutable truth in this runtime surface.</p>
       </article>
-    </section>
+      </section>
+    </details>
 
     <footer><p>Local-first Firefox tab organization. Release and signing provenance are maintained in canonical GoreeCloud release records.</p></footer>
   </main>
