@@ -1,28 +1,21 @@
-:root {
-  color-scheme: light dark;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --bg: Canvas;
-  --surface: color-mix(in srgb, Canvas 92%, CanvasText 3%);
-  --surface-raised: color-mix(in srgb, Canvas 86%, CanvasText 5%);
-  --surface-accent: color-mix(in srgb, AccentColor 12%, Canvas);
-  --border: color-mix(in srgb, CanvasText 14%, transparent);
-  --muted: color-mix(in srgb, CanvasText 62%, transparent);
-  --accent: AccentColor;
-  --accent-text: AccentColorText;
-  --shadow: 0 14px 40px color-mix(in srgb, CanvasText 10%, transparent);
-}
-* { box-sizing: border-box; }
 body {
   margin: 0;
   color: CanvasText;
   background:
-    linear-gradient(160deg, color-mix(in srgb, AccentColor 7%, Canvas) 0%, Canvas 42%),
-    var(--bg);
+    radial-gradient(circle at 8% 0%, color-mix(in srgb, AccentColor 14%, transparent) 0, transparent 15rem),
+    linear-gradient(155deg, color-mix(in srgb, AccentColor 5%, Canvas), Canvas 60%);
 }
-button { font: inherit; color: inherit; }
 .popup-shell {
-  width: 336px;
-  padding: 16px;
+  width: 352px;
+  padding: 14px;
+}
+.popup-frame {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 19px;
+  background: color-mix(in srgb, var(--glz-glaze) 94%, transparent);
+  box-shadow: var(--glz-shadow-2);
+  backdrop-filter: blur(22px) saturate(1.16);
 }
 .popup-header {
   display: flex;
@@ -30,104 +23,116 @@ button { font: inherit; color: inherit; }
   justify-content: space-between;
   gap: 12px;
 }
-.eyebrow {
-  margin: 0 0 3px;
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: .11em;
-  text-transform: uppercase;
-}
+.popup-title { min-width: 0; }
+.eyebrow { margin: 0 0 3px; }
 h1 {
   margin: 0;
-  font-size: 20px;
-  line-height: 1.15;
-  letter-spacing: -.015em;
+  font-size: 19px;
+  line-height: 1.12;
+  letter-spacing: -.02em;
 }
 .version-badge {
   flex: 0 0 auto;
   padding: 4px 7px;
   border: 1px solid var(--border);
   border-radius: 999px;
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 74%, transparent);
   color: var(--muted);
-  font-size: 10px;
+  font-size: 9.5px;
   font-variant-numeric: tabular-nums;
 }
 .status-line {
+  position: relative;
   min-height: 18px;
-  margin: 12px 0 10px;
+  margin: 13px 0 10px;
+  padding-left: 12px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 10.5px;
   line-height: 1.45;
+}
+.status-line::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .5em;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, AccentColor 12%, transparent);
 }
 .metrics {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
-  margin: 0 0 12px;
+  gap: 7px;
+  margin: 0 0 11px;
 }
 .metrics > div {
+  position: relative;
   min-width: 0;
-  padding: 9px 8px 8px;
+  min-height: 65px;
+  padding: 10px 10px 9px;
+  overflow: hidden;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--surface);
+  border-radius: 13px;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--surface) 92%, transparent), color-mix(in srgb, var(--surface-strong) 55%, transparent));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, Canvas 58%, transparent);
+}
+.metrics > div::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: color-mix(in srgb, AccentColor 48%, transparent);
 }
 .metrics dt {
   overflow: hidden;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 9.5px;
   line-height: 1.25;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .metrics dd {
-  margin: 3px 0 0;
-  font-size: 20px;
-  font-weight: 750;
+  margin: 4px 0 0;
+  font-size: 21px;
+  font-weight: 780;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em;
 }
 button {
   min-height: 38px;
   border: 1px solid var(--border);
   border-radius: 11px;
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, Canvas 58%, transparent);
   cursor: pointer;
 }
-button:hover { background: var(--surface-raised); }
+button:hover { border-color: var(--border-strong); background: var(--surface-raised); }
 button:active { transform: translateY(1px); }
-button:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
 .primary-action {
   display: grid;
   width: 100%;
   gap: 2px;
-  padding: 10px 12px;
-  border-color: color-mix(in srgb, var(--accent) 72%, CanvasText);
-  background: var(--accent);
+  padding: 11px 12px;
+  border-color: color-mix(in srgb, var(--accent) 62%, CanvasText);
+  background:
+    radial-gradient(circle at 92% 0%, color-mix(in srgb, AccentColorText 16%, transparent) 0, transparent 8rem),
+    linear-gradient(145deg, color-mix(in srgb, var(--accent) 94%, Canvas) 0%, color-mix(in srgb, var(--accent) 76%, CanvasText) 100%);
   color: var(--accent-text);
   text-align: left;
-  box-shadow: var(--shadow);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, AccentColorText 26%, transparent), var(--glz-shadow-accent);
 }
-.primary-action:hover {
-  background: color-mix(in srgb, var(--accent) 88%, CanvasText);
-}
-.primary-action span { font-weight: 750; }
-.primary-action small {
-  color: currentColor;
-  font-size: 10px;
-  opacity: .82;
-}
+.primary-action:hover { background: color-mix(in srgb, var(--accent) 86%, CanvasText); }
+.primary-action span { font-weight: 760; }
+.primary-action small { color: currentColor; font-size: 9.5px; line-height: 1.35; opacity: .84; }
 .quick-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 7px;
   margin-top: 8px;
 }
-.quick-actions button { padding: 8px 10px; }
+.quick-actions button { padding: 8px 10px; font-weight: 650; }
 .popup-footer {
   display: flex;
   align-items: center;
@@ -137,22 +142,24 @@ button:focus-visible {
   padding-top: 10px;
   border-top: 1px solid var(--border);
   color: var(--muted);
-  font-size: 10px;
+  font-size: 9.5px;
 }
 .quiet-action {
   min-height: 28px;
   padding: 4px 8px;
   border-color: transparent;
   background: transparent;
+  box-shadow: none;
   color: inherit;
 }
 @media (prefers-reduced-transparency: reduce) {
-  :root { --surface: Canvas; --surface-raised: Canvas; }
   body { background: Canvas; }
+  .popup-frame { background: Canvas; backdrop-filter: none; box-shadow: none; }
   .primary-action { box-shadow: none; }
 }
 @media (forced-colors: active) {
   body { background: Canvas; }
-  .metrics > div, button, .version-badge { border: 1px solid ButtonText; }
+  .popup-frame, .metrics > div, button, .version-badge { border: 1px solid ButtonText; box-shadow: none; }
   .quiet-action { border-color: ButtonText; }
+  .status-line::before, .metrics > div::after { background: Highlight; box-shadow: none; }
 }
