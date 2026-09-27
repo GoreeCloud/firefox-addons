@@ -1,7 +1,7 @@
 # GoreeCloud Advanced Tab Manager — Feature Roadmap
 
 **Lifecycle:** Development 0.1.12 · Accepted Stable: 0.1.11  
-**Authoritative project record:** `GoreeCloud/Projects/Project Specification — Advanced Tab Manager.md`
+**Authoritative project record:** `GoreeCloud/Project Specifications/Project Specification — Advanced Tab Manager.docx`
 
 | ID | Obligation | Priority | State |
 | --- | --- | --- | --- |
