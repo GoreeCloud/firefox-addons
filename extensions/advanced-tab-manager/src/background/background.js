@@ -179,6 +179,8 @@ browser.runtime.onMessage.addListener(async (message) => {
       return treeBranchActions.closeTreeBranch(message.tabId);
     case "atm:discard-tree-branch":
       return treeBranchActions.discardTreeBranch(message.tabId);
+    case "atm:move-tree-branch-new-window":
+      return treeBranchActions.moveTreeBranchToNewWindow(message.tabId);
     case "atm:activate-tab": {
       const tab = await browser.tabs.get(message.tabId);
       await browser.windows.update(tab.windowId, { focused: true });
