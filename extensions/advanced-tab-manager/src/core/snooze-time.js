@@ -1,5 +1,7 @@
 export const DEFAULT_SNOOZE_DELAY_MS = 60 * 60 * 1000;
 export const DEFAULT_MORNING_HOUR = 9;
+export const LATER_TODAY_HOURS = Object.freeze([15, 18, 21, 23]);
+export const MIN_LATER_TODAY_LEAD_MS = 30 * 60 * 1000;
 
 export function toLocalDateTimeValue(timestamp) {
   const date = new Date(timestamp);
@@ -24,6 +26,17 @@ export function parseLocalSnoozeTime(value, now = Date.now()) {
 
 export function defaultSnoozeWakeAt(now = Date.now()) {
   return now + DEFAULT_SNOOZE_DELAY_MS;
+}
+
+export function laterTodayWakeAt(now = Date.now()) {
+  const threshold = now + MIN_LATER_TODAY_LEAD_MS;
+  for (const hour of LATER_TODAY_HOURS) {
+    const candidate = new Date(now);
+    candidate.setHours(hour, 0, 0, 0);
+    const wakeAt = candidate.getTime();
+    if (wakeAt >= threshold) return wakeAt;
+  }
+  return null;
 }
 
 export function tomorrowMorningWakeAt(now = Date.now(), hour = DEFAULT_MORNING_HOUR) {

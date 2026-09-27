@@ -1,6 +1,7 @@
 import { flattenTabs, summarizeTabResidency } from "../core/state.js";
 import {
   defaultSnoozeWakeAt,
+  laterTodayWakeAt,
   nextWeekWakeAt,
   parseLocalSnoozeTime,
   toLocalDateTimeValue,
@@ -27,6 +28,7 @@ const snoozeDialogError = document.querySelector("#snooze-dialog-error");
 const snoozeSubmit = document.querySelector("#snooze-submit");
 const snoozeCancel = document.querySelector("#snooze-cancel");
 const snoozeCancelX = document.querySelector("#snooze-cancel-x");
+const laterTodayPreset = snoozeDialog.querySelector('[data-snooze-preset="later-today"]');
 
 let snapshot = null;
 let organizationalState = null;
@@ -137,6 +139,11 @@ function openSnoozeDialog(context) {
   snoozeDeadline.min = toLocalDateTimeValue(Date.now() + 60_000);
   snoozeDeadline.value = toLocalDateTimeValue(wakeAt);
   snoozeSubmit.textContent = context.mode === "reschedule" ? "Save wake time" : "Snooze tab";
+  const laterToday = laterTodayWakeAt();
+  laterTodayPreset.disabled = laterToday === null;
+  laterTodayPreset.title = laterToday === null
+    ? "No Later today preset remains; choose a custom time or Tomorrow."
+    : `Later today at ${new Date(laterToday).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
   snoozeDialog.showModal();
   snoozeDeadline.focus();
 }
@@ -356,11 +363,18 @@ content.addEventListener("click", async (event) => {
 snoozeDialog.addEventListener("click", (event) => {
   const preset = event.target.closest("button[data-snooze-preset]");
   if (!preset) return;
-  const wakeAt = preset.dataset.snoozePreset === "tomorrow"
-    ? tomorrowMorningWakeAt()
-    : preset.dataset.snoozePreset === "next-week"
-      ? nextWeekWakeAt()
-      : defaultSnoozeWakeAt();
+  const wakeAt = preset.dataset.snoozePreset === "later-today"
+    ? laterTodayWakeAt()
+    : preset.dataset.snoozePreset === "tomorrow"
+      ? tomorrowMorningWakeAt()
+      : preset.dataset.snoozePreset === "next-week"
+        ? nextWeekWakeAt()
+        : defaultSnoozeWakeAt();
+  if (wakeAt === null) {
+    snoozeDialogError.textContent = "No Later today preset remains. Choose a custom time or Tomorrow.";
+    snoozeDeadline.focus();
+    return;
+  }
   snoozeDeadline.value = toLocalDateTimeValue(wakeAt);
   snoozeDialogError.textContent = "";
   snoozeDeadline.focus();

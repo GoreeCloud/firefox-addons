@@ -467,6 +467,25 @@ def main() -> int:
             WebDriverWait(driver, 5).until(
                 lambda d: d.find_element("id", "snooze-dialog").get_attribute("open") is not None
             )
+            preset_buttons = driver.find_elements("css selector", "button[data-snooze-preset]")
+            require(len(preset_buttons) == 4, "snooze dialog exposes four bounded presets", str(len(preset_buttons)))
+            later_today = driver.find_element("css selector", 'button[data-snooze-preset="later-today"]')
+            if later_today.is_enabled():
+                later_today.click()
+                later_value = driver.find_element("id", "snooze-deadline").get_attribute("value")
+                later_same_day = driver.execute_script(
+                    """
+                    const target = new Date(arguments[0]);
+                    const now = new Date();
+                    return Number.isFinite(target.getTime())
+                      && target.getTime() > now.getTime()
+                      && target.getFullYear() === now.getFullYear()
+                      && target.getMonth() === now.getMonth()
+                      && target.getDate() === now.getDate();
+                    """,
+                    later_value,
+                )
+                require(later_same_day is True, "Later today preset stays on the current local calendar day", later_value)
             driver.find_element("css selector", 'button[data-snooze-preset="next-week"]').click()
             preset_value = driver.find_element("id", "snooze-deadline").get_attribute("value")
             preset_timestamp = driver.execute_script(
