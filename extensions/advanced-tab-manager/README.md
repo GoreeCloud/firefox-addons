@@ -39,7 +39,7 @@ The 0.1.12 candidate:
 
 The default residency policy prevents Firefox's automatic tab discard, but it does not override browser-owned background timer/animation throttling or operating-system process/resource limits, and it does not silently reload a tab the user has explicitly discarded.
 
-This is a material presentation and behavior change. Fresh exact-revision Glaze UI 1.5.1 consumer qualification, real-Firefox runtime acceptance, rendered visual/accessibility review, packaging, signing, and Stable promotion are separate gates. Representative Firefox 156/Linux normal-light rendering has now been accepted for the observed popup/sidebar/Manager conditions in `RENDERED-ACCEPTANCE-0.1.12.md`; keyboard/assistive-technology and alternate appearance/environment rendering remain pending. The candidate must not inherit 0.1.11 Stable status.
+This is a material presentation and behavior change. The current shared target is GLAZE UI V1.6 / 1.6.0; fresh exact-revision repository-local V1.6 source mapping, real-Firefox runtime acceptance, rendered visual/accessibility review, packaging, signing, and Stable promotion are separate gates. Historical V1.5.1 acceptance remains provenance for Stable 0.1.11 only. Representative Firefox 156/Linux normal-light rendering has now been accepted for the observed popup/sidebar/Manager conditions in `RENDERED-ACCEPTANCE-0.1.12.md`; keyboard/assistive-technology and alternate appearance/environment rendering remain pending. The candidate must not inherit 0.1.11 Stable status.
 
 
 ### Source-preserving operations
@@ -112,7 +112,7 @@ This lifecycle promotion changes release metadata and documentation only. The ac
 
 Required GoreeCloud runtime dependencies: none. Core tab management remains local and Firefox-native.
 
-Stable 0.1.11 is qualified against the current Stable Glaze V1.5 / 1.5.1 consumer contract. The material 0.1.12 presentation change requires fresh repository-local qualification through `scripts/glaze_consumer_qualification.py`; shared performance/posture evidence is not inherited. Webspaces integration and other platform-system integrations remain optional/planned and are not represented as implemented.
+Stable 0.1.11 retains its historical GLAZE UI V1.5.1 consumer acceptance. The current shared adoption target is GLAZE UI V1.6 / 1.6.0, so the material 0.1.12 presentation change requires fresh repository-local V1.6 source mapping through `scripts/glaze_consumer_qualification.py` plus downstream rendered/accessibility acceptance; shared Glaze acceptance is not inherited. Webspaces integration and other platform-system integrations remain optional/planned and are not represented as implemented.
 
 ## Development validation
 
@@ -127,4 +127,4 @@ python -m py_compile extensions/advanced-tab-manager/tests/firefox_runtime_smoke
 
 The permanent **Advanced Tab Manager Firefox Runtime** workflow packages the exact candidate and exercises release-critical paths in a clean real Firefox profile against controlled local fixtures. That workflow is an unsigned temporary-install gate; it does not substitute for Mozilla signing, persistent signed installation, full Firefox restart acceptance, current-Stable Glaze UI consumer acceptance, or Stable qualification.
 
-Packaging produces a deterministic unsigned XPI under `dist/`. `RELEASE-ACCEPTANCE-0.1.11.md` and `STABLE-SECURITY-REVIEW-0.1.11.md` remain the historical accepted Stable evidence; `GLAZE-UI-1.5.1-ADOPTION.md` records the current Glaze qualification boundary and `RENDERED-ACCEPTANCE-0.1.12.md` records the scoped owner-rendered normal-light acceptance for the 0.1.12 presentation candidate.
+Packaging produces a deterministic unsigned XPI under `dist/`. `RELEASE-ACCEPTANCE-0.1.11.md` and `STABLE-SECURITY-REVIEW-0.1.11.md` remain the historical accepted Stable evidence; `GLAZE-UI-1.5.1-ADOPTION.md` remains historical Stable 0.1.11 provenance; `GLAZE-UI-1.6.0-ADOPTION.md` records the current 0.1.12 V1.6 adoption boundary, and `RENDERED-ACCEPTANCE-0.1.12.md` records the scoped owner-rendered normal-light evidence that still requires current-target reconciliation before consumer acceptance.

@@ -59,9 +59,9 @@ jobs:
       - name: Qualify Stable security blockers
         run: |
           python extensions/advanced-tab-manager/scripts/stable_security_review.py             --xpi "dist/release/goreecloud-advanced-tab-manager-${ATM_CANDIDATE_VERSION}.xpi"             --source-revision "${{ github.event.pull_request.head.sha || github.sha }}"             --output dist/release/advanced-tab-manager-stable-security-review.json
-      - name: Qualify GLAZE UI 1.5.1 consumer adoption
+      - name: Record GLAZE UI 1.6.0 source adoption state
         run: |
-          python extensions/advanced-tab-manager/scripts/glaze_consumer_qualification.py             --source-revision "${{ github.event.pull_request.head.sha || github.sha }}"             --output dist/release/advanced-tab-manager-glaze-1.5.1-acceptance.json
+          python extensions/advanced-tab-manager/scripts/glaze_consumer_qualification.py             --source-revision "${{ github.event.pull_request.head.sha || github.sha }}"             --output dist/release/advanced-tab-manager-glaze-1.6.0-adoption.json
       - name: Retain release qualification evidence
         uses: actions/upload-artifact@v4
         with:
@@ -72,5 +72,5 @@ jobs:
             dist/release/goreecloud-advanced-tab-manager-*.xpi
             dist/release/candidate-sha256.txt
             dist/release/advanced-tab-manager-stable-security-review.json
-            dist/release/advanced-tab-manager-glaze-1.5.1-acceptance.json
+            dist/release/advanced-tab-manager-glaze-1.6.0-adoption.json
             dist/advanced-tab-manager-large-session-qualification.json

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Repository-local GLAZE UI 1.5.1 consumer qualification for Advanced Tab Manager."""
+"""Repository-local GLAZE UI V1.6.0 source-adoption evidence for Advanced Tab Manager."""
 
 from __future__ import annotations
 
@@ -12,10 +12,12 @@ ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_VERSION = str(
     json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))["version"]
 )
-GLAZE_VERSION = "1.5.1"
-GLAZE_AUTHORITY_REVISION = "af0d0d3e85aaf46e83a2baa64aab914fd96a7e98"
-GLAZE_REVIEWED_IMPLEMENTATION = "ee1032a0822ab8e103f8afe48e5c1859fde65cc9"
-GLAZE_QUALIFICATION_ANCHOR = "5b59d0e36950d737dba35b58ae58058684e0831b"
+GLAZE_VERSION = "1.6.0"
+GLAZE_AUTHORITY_REPOSITORY = "GoreeCloud/glaze-ui"
+GLAZE_STABLE_SOURCE = "a7180679ea851389e0f3004515f9a25f420e716d"
+GLAZE_QUALIFICATION_ANCHOR = "c7509c79256b04b0aa67cb9dd0737d7588e0ae4a"
+GLAZE_EVIDENCE_INTEGRATION = "354f5759385c28596fcfec26a3ad525e89fb1c35"
+GLAZE_STABLE_ARTIFACT_SHA256 = "687268b5eb76917eccae9d935ffa1bead333d5dee50b6098e996a3f44cee50af"
 
 
 def require(condition: bool, message: str) -> None:
@@ -30,7 +32,7 @@ def read(relative: str) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--source-revision", required=True)
-    parser.add_argument("--output", default="dist/advanced-tab-manager-glaze-1.5.1-acceptance.json")
+    parser.add_argument("--output", default="dist/advanced-tab-manager-glaze-1.6.0-adoption.json")
     args = parser.parse_args()
     require(re.fullmatch(r"[0-9a-f]{40}", args.source_revision) is not None, "source revision must be a full lowercase SHA")
 
@@ -51,7 +53,7 @@ def main() -> int:
     rule_state = read("src/core/rule-state.js")
     all_css = "\n".join((sidebar_css, palette_css, rules_css, popup_css, manager_css))
 
-    # Stable presentation and accessibility obligations applicable to constrained Firefox surfaces.
+    # Current V1.6 source-mapping invariants applicable to constrained Firefox surfaces.
     for token in ("Canvas", "CanvasText", "AccentColor", "AccentColorText"):
         require(token in all_css, f"missing system semantic color token: {token}")
     require("prefers-reduced-transparency" in sidebar_css, "sidebar lacks Reduced Transparency fallback")
@@ -67,7 +69,9 @@ def main() -> int:
     require("aria-live" in sidebar_html and "aria-live" in popup_html and "aria-live" in manager_html, "live state semantics are incomplete")
     require("aria-label" in sidebar_html and "aria-label" in manager_html, "accessible labeling is incomplete")
     require("aria-modal" in palette_js and 'role=\"listbox\"' in palette_js, "command palette dialog/list semantics are missing")
-    require("animation:" not in all_css and "transition:" not in all_css, "unqualified motion is not permitted in the release candidate")
+    require("animation:" not in all_css and "transition:" not in all_css, "unqualified motion is not permitted in the source candidate")
+    require("primary" in popup_html.lower() or "primary" in popup_css.lower(), "V1.6 action hierarchy needs an explicit primary-action treatment")
+    require("empty" in manager_html.lower() or "empty" in manager_js.lower(), "V1.6 resilience mapping requires an explicit empty-state path")
 
     # Authority, privacy, and fallback obligations.
     require("browser.permissions.request" not in "\n".join((manager_js, palette_js)), "presentation layer must not request permissions")
@@ -88,20 +92,26 @@ def main() -> int:
         "sourceRevision": args.source_revision,
         "supportedPlatform": "Firefox browser extension",
         "glazeTargetVersion": GLAZE_VERSION,
-        "glazeAuthorityRepository": "GoreeCloud/goreecloud-glaze-ui",
-        "glazeAuthorityRevisionReviewed": GLAZE_AUTHORITY_REVISION,
-        "glazeReviewedImplementationAnchor": GLAZE_REVIEWED_IMPLEMENTATION,
+        "glazeAuthorityRepository": GLAZE_AUTHORITY_REPOSITORY,
+        "glazeStableReleaseSource": GLAZE_STABLE_SOURCE,
         "glazeQualificationAnchor": GLAZE_QUALIFICATION_ANCHOR,
-        "adoptionMode": "repository-local constrained-browser contract adoption",
-        "status": "accepted-v1",
-        "applicablePresentationObligationsAccepted": True,
+        "glazeQualificationEvidenceIntegrationCommit": GLAZE_EVIDENCE_INTEGRATION,
+        "glazeStableArtifactSha256": GLAZE_STABLE_ARTIFACT_SHA256,
+        "adoptionMode": "repository-local constrained-browser V1.6 source mapping",
+        "status": "adoption-required",
+        "sourceMappingValidated": True,
+        "applicablePresentationObligationsAccepted": False,
         "authorityBoundaryPreserved": True,
         "privacyMinimizedDiagnosticsPreserved": True,
-        "accessibilityPrecedenceAccepted": True,
-        "responsiveConstrainedWindowAccepted": True,
-        "reducedTransparencyAccepted": True,
-        "forcedColorsAccepted": True,
-        "keyboardFocusAccepted": True,
+        "accessibilityPrecedenceSourceMapped": True,
+        "responsiveConstrainedWindowSourceMapped": True,
+        "reducedTransparencySourceMapped": True,
+        "forcedColorsSourceMapped": True,
+        "keyboardFocusSourceMapped": True,
+        "representativeRenderedAcceptanceComplete": False,
+        "assistiveTechnologyAcceptanceComplete": False,
+        "largeTextAcceptanceComplete": False,
+        "consumerRegistryAccepted": False,
         "automaticPermissionRequest": False,
         "automaticConsequentialExecution": False,
         "sharedPerformanceAcceptanceInherited": False,
