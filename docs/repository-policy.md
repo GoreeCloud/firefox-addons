@@ -1,12 +1,12 @@
-# Firefox Extension Repository Policy
+# Firefox Add-ons Repository Policy
 
 ## Purpose
 
-This document defines the source-control and maintenance boundary for Firefox extensions built by GoreeCloud.
+This document defines the source-control and maintenance boundary for GoreeCloud Firefox projects, including add-ons, extensions, themes, plugins, and shared Firefox development tooling.
 
 ## Authoritative repository
 
-`GoreeCloud/goreecloud-firefox-extensions` is the canonical repository for **standalone** GoreeCloud Firefox extensions and shared Firefox/WebExtension tooling.
+`GoreeCloud/firefox-addons` is the canonical monorepo for all GoreeCloud Firefox projects, including add-ons, extensions, themes, plugins, shared tooling, validation, packaging, and release workflows.
 
 Firefox support that is a client, adapter, or platform variant of a broader GoreeCloud application belongs in the owning application repository rather than in a separate isolated repository. For a multi-platform application, Firefox should be maintained alongside the application's Android, iOS, web, Linux, desktop, or other governed variants. GoreeCloud Memos is the model: a Firefox variant belongs with GoreeCloud Memos rather than in an isolated Firefox-only repository.
 
