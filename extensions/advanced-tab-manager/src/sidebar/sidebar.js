@@ -230,11 +230,18 @@ async function handleDuplicateCleanup(button) {
     summary.textContent = "Choose one reviewed tab to keep before duplicate cleanup.";
     return;
   }
-  if (!window.confirm("Close only the currently eligible exact-URL duplicates in this reviewed set? Guarded tabs will remain open.")) return;
+
+  const mode = button.dataset.duplicateMode || "exact-url";
+  const matchKey = button.dataset.duplicateKey || button.dataset.duplicateUrl;
+  const confirmation = mode === "tracking-normalized"
+    ? "Close only the currently eligible tabs in this tracking-normalized set? This mode ignores recognized tracking query parameters, but preserves path, fragment, and all other query data. Guarded tabs will remain open."
+    : "Close only the currently eligible exact-URL duplicates in this reviewed set? Guarded tabs will remain open.";
+  if (!window.confirm(confirmation)) return;
 
   const result = await browser.runtime.sendMessage({
-    type: "atm:cleanup-exact-duplicates",
-    url: button.dataset.duplicateUrl,
+    type: "atm:cleanup-duplicates",
+    mode,
+    matchKey,
     keepTabId
   });
   if (!result?.ok) {
@@ -242,7 +249,8 @@ async function handleDuplicateCleanup(button) {
     await load();
     return;
   }
-  summary.textContent = `${result.closed} eligible duplicate tab${result.closed === 1 ? "" : "s"} closed. Guarded tabs were preserved.`;
+  const modeLabel = mode === "tracking-normalized" ? " tracking-normalized" : "";
+  summary.textContent = `${result.closed} eligible${modeLabel} duplicate tab${result.closed === 1 ? "" : "s"} closed. Guarded tabs were preserved.`;
   await load();
 }
 

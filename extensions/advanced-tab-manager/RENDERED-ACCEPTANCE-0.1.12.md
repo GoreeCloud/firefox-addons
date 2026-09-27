@@ -163,6 +163,15 @@ The 0.1.12 Development line now adds compact Tree-view branch close/discard cont
 
 This changes constrained-sidebar row-action presentation after the previously reviewed normal-light screenshots. Those screenshots remain valid historical evidence for their exact revisions and unchanged surfaces, but they do not establish rendered acceptance for the new branch-control state. Fresh exact-candidate sidebar rendering is required before this new Tree-view state can be accepted.
 
-The subsequent ATM-004A branch-move slice adds one more Tree-row branch control for fully visible, unpinned, ungrouped, non-Split-View branches. That move operation has automated source/unit/real-Firefox qualification requirements, but the previously supplied screenshots do not show this new control or its post-move window state. Fresh exact-candidate rendering of a branch row with Move/Discard/Close controls is therefore still required before the expanded Tree-view action state is visually accepted.
+The subsequent ATM-004A branch-move slice adds one more Tree-row branch control for fully visible, unpinned, ungrouped, non-Split-View branches. Split View members are intentionally withheld because Firefox may move an associated partner as a browser-owned side effect outside the verified branch plan. That move operation has automated source/unit/real-Firefox qualification requirements, but the previously supplied screenshots do not show this new control or its post-move window state. Fresh exact-candidate rendering of a branch row with Move/Discard/Close controls is therefore still required before the expanded Tree-view action state is visually accepted.
 
 Drag-and-drop and richer manual reparenting remain outside this slice. Stable remains `0.1.11`.
+
+
+## Normalized duplicate refinement boundary
+
+The 0.1.12 Development line now adds an opt-in **Ignore tracking parameters** mode inside the Duplicates view. Exact URL matching remains the default. The new selector and normalized-review cards show original URLs and explain that only recognized tracking query parameters are ignored; path, fragment, and all other query data remain significant.
+
+This changes the Duplicates-view presentation after the previously supplied normal-light screenshots. Those screenshots remain bounded evidence for the exact revisions and surfaces they actually show, but they do not establish rendered acceptance for the new matching selector, normalized URL rows, or normalized-cleanup confirmation state. Fresh exact-candidate rendering of the Duplicates view is required before this UI state is visually accepted.
+
+Automated source/unit/real-Firefox qualification may establish the bounded matching and cleanup behavior, but it does not substitute for that rendered review or the still-pending accessibility/alternate-environment gates. Stable remains `0.1.11`.

@@ -173,6 +173,12 @@ browser.runtime.onMessage.addListener(async (message) => {
       return snoozeManager.cancelSnoozedItem(message.snoozedItemId);
     case "atm:reschedule-snoozed-item":
       return snoozeManager.rescheduleSnoozedItem(message.snoozedItemId, message.wakeAt);
+    case "atm:cleanup-duplicates":
+      return duplicateCleanup.cleanupDuplicates({
+        mode: message.mode,
+        matchKey: message.matchKey,
+        keepTabId: message.keepTabId
+      });
     case "atm:cleanup-exact-duplicates":
       return duplicateCleanup.cleanupExactDuplicates({ url: message.url, keepTabId: message.keepTabId });
     case "atm:close-tree-branch":

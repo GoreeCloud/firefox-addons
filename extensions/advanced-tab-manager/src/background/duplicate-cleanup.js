@@ -1,19 +1,35 @@
-import { buildExactDuplicateReview, planExactDuplicateCleanup } from "../core/duplicates.js";
+import {
+  buildDuplicateReview,
+  DUPLICATE_MODES,
+  planDuplicateCleanup
+} from "../core/duplicates.js";
 
 export function createDuplicateCleanup({ browser, readLiveSnapshot, broadcastChange }) {
-  async function cleanupExactDuplicates({ url, keepTabId }) {
-    if (typeof url !== "string" || !url) return { ok: false, reason: "duplicate-url-required" };
+  async function cleanupDuplicates({ mode = DUPLICATE_MODES.EXACT_URL, matchKey, keepTabId }) {
+    if (!Object.values(DUPLICATE_MODES).includes(mode)) {
+      return { ok: false, reason: "unsupported-duplicate-mode" };
+    }
+    if (typeof matchKey !== "string" || !matchKey) {
+      return { ok: false, reason: "duplicate-match-key-required" };
+    }
     if (!Number.isInteger(keepTabId)) return { ok: false, reason: "selected-keeper-required" };
 
     const snapshot = await readLiveSnapshot();
-    const review = buildExactDuplicateReview(snapshot);
-    const duplicateSet = review.sets.find((candidate) => candidate.url === url);
+    const review = buildDuplicateReview(snapshot, { mode });
+    const duplicateSet = review.sets.find((candidate) => candidate.matchKey === matchKey);
     if (!duplicateSet) return { ok: false, reason: "duplicate-set-no-longer-current" };
 
-    const plan = planExactDuplicateCleanup(duplicateSet, { keepTabId });
+    const plan = planDuplicateCleanup(duplicateSet, { keepTabId });
     if (!plan.ok) return plan;
     if (!plan.closeTabIds.length) {
-      return { ok: true, closed: 0, keepTabId: plan.keepTabId, blocked: plan.blocked };
+      return {
+        ok: true,
+        mode,
+        matchKey,
+        closed: 0,
+        keepTabId: plan.keepTabId,
+        blocked: plan.blocked
+      };
     }
 
     try {
@@ -24,8 +40,24 @@ export function createDuplicateCleanup({ browser, readLiveSnapshot, broadcastCha
     }
 
     broadcastChange("duplicate-cleanup");
-    return { ok: true, closed: plan.closeTabIds.length, keepTabId: plan.keepTabId, blocked: plan.blocked };
+    return {
+      ok: true,
+      mode,
+      matchKey,
+      closed: plan.closeTabIds.length,
+      keepTabId: plan.keepTabId,
+      blocked: plan.blocked
+    };
   }
 
-  return { cleanupExactDuplicates };
+  async function cleanupExactDuplicates({ url, keepTabId }) {
+    if (typeof url !== "string" || !url) return { ok: false, reason: "duplicate-url-required" };
+    return cleanupDuplicates({
+      mode: DUPLICATE_MODES.EXACT_URL,
+      matchKey: url,
+      keepTabId
+    });
+  }
+
+  return { cleanupDuplicates, cleanupExactDuplicates };
 }

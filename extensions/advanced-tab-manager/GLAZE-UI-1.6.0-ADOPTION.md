@@ -30,6 +30,7 @@ The current 0.1.12 source maps the following applicable V1.6 principles:
 - a shared repository-local `src/shared/glaze.css` surface/token layer consumed by the sidebar, popup, and Manager so material hierarchy, geometry, focus treatment, and product lockup presentation remain consistent without a remote runtime dependency;
 - semantic system colors and protected state meaning;
 - visible live-tab residency semantics that distinguish Firefox automatic-unload protection from current resident/discarded state without using color alone or manufacturing foreground-execution claims;
+- a native, explicitly labeled duplicate-matching selector whose optional tracking-normalized state remains subordinate to exact matching and explains its bounded policy in text rather than relying on color;
 - presentation-only authority with no inferred permission, privacy, security, or release truth;
 - a single visually dominant primary action where appropriate and subordinate secondary actions;
 - local-first presentation with no remote Glaze dependency;
@@ -98,3 +99,10 @@ The source-adoption record is therefore a migration/control record, not a Stable
 The 0.1.12 Development candidate now preserves Firefox's `autoDiscardable` state in the privacy-minimized live snapshot so the sidebar, popup, and Manager can make the default residency policy visible. The presentation distinguishes automatic-discard protection from current resident/discarded state and keeps explicit manual Discard available.
 
 This refinement changes rendered sidebar, popup, and Manager presentation after the post-PR #110 normal-light screenshot review. That earlier review remains bounded evidence for its exact revision and observed conditions; it is not silently inherited as rendered acceptance for the residency-visibility candidate. Fresh representative rendered review remains required after integration, alongside the already-pending accessibility and alternate-environment gates.
+
+
+## Normalized duplicate review refinement
+
+ATM-006A adds a native Duplicates-view selector for exact versus tracking-normalized review. Exact matching remains selected by default. The normalized state exposes the original URLs, uses textual policy copy, and preserves native focus/Forced Colors behavior through the existing sidebar control system.
+
+This is a presentation and interaction change, not a new authority grant: no permission, storage schema, remote dependency, telemetry path, page-content access, or private-browsing access is added. Fresh representative rendering and accessibility review of the new Duplicates state remain required before current V1.6 consumer acceptance can include it.

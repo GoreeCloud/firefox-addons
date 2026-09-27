@@ -253,6 +253,40 @@ select:focus-visible,
   padding: 10px 9px 10px 11px;
 }
 .duplicate-intro, .duplicate-policy { color: var(--muted); font-size: 10px; line-height: 1.48; }
+.duplicate-mode-control {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 9px;
+  align-items: end;
+  padding: 10px 11px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+}
+.duplicate-mode-field {
+  display: grid;
+  gap: 4px;
+  min-width: 132px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 720;
+}
+.duplicate-mode-field select {
+  min-height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--surface-strong) 72%, transparent);
+  color: CanvasText;
+  padding: 6px 8px;
+}
+.duplicate-results { display: grid; gap: 9px; }
+.duplicate-original-url {
+  margin-top: 3px;
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.35;
+}
 .duplicate-heading { padding: 10px 11px; border-radius: 14px 14px 0 0; background: color-mix(in srgb, var(--surface-strong) 74%, transparent); }
 .duplicate-members { display: grid; }
 .duplicate-member {
@@ -374,7 +408,7 @@ select:focus-visible,
 @media (forced-colors: active) {
   body, .sidebar-chrome { background: Canvas; }
   .group, .tree, .saved-card, .duplicate-card, .toolbar-button, .row-action,
-  .search-field input, .view-field select, .summary-chip, .snooze-dialog, .snooze-presets button,
+  .search-field input, .view-field select, .summary-chip, .duplicate-mode-control, .duplicate-mode-field select, .snooze-dialog, .snooze-presets button,
   .snooze-dialog-actions button, .snooze-deadline-field input, .empty { border: 1px solid ButtonText; }
   .tab-row[data-active="true"] { outline: 2px solid Highlight; outline-offset: -2px; box-shadow: none; }
 }
