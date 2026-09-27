@@ -32,3 +32,11 @@ export function tomorrowMorningWakeAt(now = Date.now(), hour = DEFAULT_MORNING_H
   date.setHours(hour, 0, 0, 0);
   return date.getTime();
 }
+
+
+export function nextWeekWakeAt(now = Date.now(), hour = DEFAULT_MORNING_HOUR) {
+  const date = new Date(now);
+  date.setDate(date.getDate() + 7);
+  date.setHours(hour, 0, 0, 0);
+  return date.getTime();
+}
