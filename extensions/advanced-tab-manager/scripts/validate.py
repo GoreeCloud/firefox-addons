@@ -370,7 +370,11 @@ assert "ATM_RELEASE_CANDIDATE_SHA256: '837777e35d4eddd1554f488ddb27e5f43dd6ba12b
 assert "ATM_TARGET_RECORD_SHA256: 'e590735ccd3909d164b0e3ad6802a4366ff08e8dcfa35ba8a73121749ac1307c'" in signing_workflow
 assert "target-acceptance-provenance-0.1.13.json" in signing_workflow
 assert "validate-provenance" in signing_workflow and "--expected-source-revision" in signing_workflow and "--expected-record-sha256" in signing_workflow
-assert "git merge-base --is-ancestor" in signing_workflow and 'git checkout --detach "$ATM_RELEASE_SOURCE_REVISION"' in signing_workflow
+assert "ATM_RELEASE_INTEGRATION_REVISION: '8deabbedb7f89525396e0e94fa2c96d0664814d6'" in signing_workflow
+assert 'git cat-file -e "$ATM_RELEASE_SOURCE_REVISION^{commit}"' in signing_workflow
+assert 'git merge-base --is-ancestor "$ATM_RELEASE_INTEGRATION_REVISION" "$GITHUB_SHA"' in signing_workflow
+assert 'git merge-base --is-ancestor "$ATM_RELEASE_SOURCE_REVISION" "$GITHUB_SHA"' not in signing_workflow
+assert 'git checkout --detach "$ATM_RELEASE_SOURCE_REVISION"' in signing_workflow
 assert "Bind signing to authoritative main" in signing_workflow
 assert "web-ext@10.5.0 sign" in signing_workflow and "--channel=unlisted" in signing_workflow
 assert "AMO_JWT_ISSUER" in signing_workflow and "AMO_JWT_SECRET" in signing_workflow

@@ -91,6 +91,10 @@ assert '"release_ready": true' in provenance
 
 assert "ATM_RELEASE_VERSION: '0.1.13'" in signing_workflow
 assert "ATM_RELEASE_SOURCE_REVISION: '89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe'" in signing_workflow
+assert "ATM_RELEASE_INTEGRATION_REVISION: '8deabbedb7f89525396e0e94fa2c96d0664814d6'" in signing_workflow
+assert 'git cat-file -e "$ATM_RELEASE_SOURCE_REVISION^{commit}"' in signing_workflow
+assert 'git merge-base --is-ancestor "$ATM_RELEASE_INTEGRATION_REVISION" "$GITHUB_SHA"' in signing_workflow
+assert 'git merge-base --is-ancestor "$ATM_RELEASE_SOURCE_REVISION" "$GITHUB_SHA"' not in signing_workflow
 assert "ATM_RELEASE_CANDIDATE_SHA256: '837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5'" in signing_workflow
 assert "ATM_TARGET_RECORD_SHA256: 'e590735ccd3909d164b0e3ad6802a4366ff08e8dcfa35ba8a73121749ac1307c'" in signing_workflow
 assert "validate-provenance" in signing_workflow
