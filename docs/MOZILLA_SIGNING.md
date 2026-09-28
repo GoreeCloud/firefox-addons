@@ -38,7 +38,7 @@ The manifest version must match `source_version` exactly. `accepted_stable_versi
 - **GoreeCloud Privacy Shield 0.2.0** is Stable for Mozilla unlisted/self-distribution after its governed signing and signed-runtime/persistent-restart acceptance.
 - **GoreeCloud Webspaces 0.1.14** is Stable for Mozilla unlisted/self-distribution. The exact accepted unsigned candidate SHA-256 is `ac605e4781a6dcc605d6c7474989e5f125cee12448580786cfefc4ffd81f3e00`. Mozilla produced the signed XPI with SHA-256 `37a42b44e779b0a5585b622ae5040ffe1b51e15a72099e2c13182ca3c5a18479`. Governed signing/restart run `34735370919` revalidated the exact candidate, retrieved the existing unlisted Mozilla-signed 0.1.14 artifact from AMO, verified archive integrity, version, add-on ID, and Mozilla `META-INF` signature metadata, installed it persistently in Firefox 155.0.1, fully restarted Firefox on the same profile without reinstalling, and verified that the active Webspaces registration plus all six distinct built-in contextual identities persisted after restart. Direct Firefox acceptance already covered Standard fallback/current-identity reconciliation, six-Webspace Isolation Health, provider marks, and Proton routing.
 - **GoreeCloud Redirector** checks in source version 0.2.1 while historical Stable acceptance remains 0.2.0. The newer source version requires its own signing and runtime acceptance before it can replace that Stable release.
-- **GoreeCloud Advanced Tab Manager 0.1.13** is a source candidate that adds the canonical packaged extension icon. It is not Stable and is not authorized for Mozilla signing by the existing 0.1.12 signing configuration; it must complete its own exact-candidate target review, Glaze consumer acceptance, signing, persistent-install/restart, and promotion gates before replacing Stable 0.1.12.
+- **GoreeCloud Advanced Tab Manager 0.1.13** is a source candidate whose governed human target review is accepted for runtime revision `89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe` and deterministic unsigned SHA-256 `837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5`. Privacy-safe target provenance is committed and the separate 0.1.13 Mozilla-signing workflow is authorized to proceed. Stable 0.1.12 remains authoritative until signed parity/persistent-restart acceptance, fresh Glaze consumer-registry acceptance, and separate Stable promotion complete.
 - **GoreeCloud Advanced Tab Manager 0.1.12** is Stable for Mozilla unlisted/self-distribution. Governed signing/restart run `36378135958` accepted runtime revision `43f3010607550d7d4380353b97f85a4dd0186695`, deterministic unsigned SHA-256 `3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f`, and Mozilla-signed XPI SHA-256 `2e54bdf2aa312c9cfe2895fd456f6d088a58eab6d24de80339e996e3e9ae11ba`. The run revalidated Stable Security Blockers, verified Mozilla signature metadata and governed payload parity, installed the signed XPI persistently, fully restarted Firefox without reinstalling, and passed post-restart release-critical acceptance. GLAZE UI V1.6 consumer acceptance is authoritative at `b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb`. Stable 0.1.11 remains historical rollback provenance.
 - **GoreeCloud Bookmarks** checks in source version 0.1.1 as a source candidate with no accepted Stable version recorded. Its required runtime, signing, restart, and post-restart gates remain outstanding.
 - **GoreeCloud Source Resync** checks in source version 1.1.2 as canonical source with no accepted Stable version currently recorded in the shared inventory.
@@ -66,6 +66,15 @@ python shared/scripts/package_extension.py webspaces
 ```
 
 Generated packages are written beneath `dist/` by default. `dist/` is build output and must not be treated as authoritative source.
+
+
+## Advanced Tab Manager 0.1.13 accepted target / signing boundary
+
+The owner completed the governed 0.1.13 target review on September 28, 2026 and explicitly reported all governed checks PASS for exact runtime revision `89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe` and deterministic unsigned XPI SHA-256 `837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5`.
+
+The complete local target record remains private. Repository-visible provenance records canonical target-record SHA-256 `e590735ccd3909d164b0e3ad6802a4366ff08e8dcfa35ba8a73121749ac1307c`, decision `accepted`, and `release_ready: true`. The 0.1.13 signing workflow is bound to those exact identifiers and may submit or recover only that exact unlisted Mozilla version.
+
+The signed-restart harness additionally requires the native Firefox product icon and all declared icon sizes to resolve to the canonical packaged artwork before and after the full Firefox restart. Successful signing does not itself promote 0.1.13 to Stable.
 
 
 ## Advanced Tab Manager 0.1.12 Stable boundary
