@@ -67,8 +67,8 @@ python shared/scripts/package_extension.py webspaces
 Generated packages are written beneath `dist/` by default. `dist/` is build output and must not be treated as authoritative source.
 
 
-## Advanced Tab Manager 0.1.12 readiness boundary
+## Advanced Tab Manager 0.1.12 signing boundary
 
-Advanced Tab Manager 0.1.12 remains Development and is not authorized for Mozilla signing. Its existing signing workflow must remain pinned to accepted Stable 0.1.11 until the governed 0.1.12 human target review is complete.
+The governed 0.1.12 human target review is complete for source revision `43f3010607550d7d4380353b97f85a4dd0186695` and deterministic unsigned XPI SHA-256 `3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f`. The complete privacy-minimized target record remains local; the repository stores only its accepted provenance envelope and canonical record digest.
 
-The 0.1.12 target-acceptance tooling can emit a privacy-safe provenance envelope only from a release-ready local record. That envelope binds the exact source revision, deterministic unsigned XPI SHA-256, and canonical digest of the complete local target record without publishing the underlying human-review details. A future source change that enables 0.1.12 signing must validate that provenance and match the rebuilt candidate bytes exactly before any AMO submission. The provenance envelope is an input to signing authorization, not a substitute for the remaining signing, signed-package parity, persistent-install, restart, post-restart, or Stable-promotion gates.
+The Mozilla-signing workflow is therefore permitted to advance to 0.1.12, but only by validating that accepted provenance, checking out the accepted source revision, rebuilding the deterministic candidate, and matching the accepted XPI digest before any AMO submission. The workflow must still verify Mozilla-signed package parity, persistent installation, full Firefox restart, and post-restart behavior. Successful signing/restart acceptance does not itself promote 0.1.12 to Stable; Stable promotion remains a separate governed source change.
