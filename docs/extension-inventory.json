@@ -8,8 +8,8 @@
       "directory": "extensions/advanced-tab-manager",
       "gecko_id": "advanced-tab-manager@goreecloud.com",
       "source_version": "0.1.13",
-      "source_state": "source-candidate",
-      "accepted_stable_version": "0.1.12",
+      "source_state": "stable",
+      "accepted_stable_version": "0.1.13",
       "legacy_repository": null
     },
     {
