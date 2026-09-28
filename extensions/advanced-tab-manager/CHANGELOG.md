@@ -10,6 +10,7 @@
 - Stored the custom label with Firefox session-tab metadata so the value follows supported close/restore cycles without treating runtime tab IDs as durable.
 - Hardened rename/restore persistence as a rollback-aware transaction: if Firefox session-tab metadata cannot be committed after the visible title changes, Advanced Tab Manager verifies or restores the previous session value, restores the prior title state when scripting authority remains available, suppresses the success broadcast, and reports the rollback outcome.
 - Added a specific dialog message when Firefox session-tab metadata cannot be read before a rename, so the fail-closed state is understandable instead of falling through to a generic error.
+- Added privacy-safe target-acceptance provenance tooling that can emit and validate an exact source/XPI/review-record digest envelope only from fully accepted local human evidence; the complete human review remains local and the Mozilla-signing workflow stays pinned to Stable 0.1.11 until a separate governed 0.1.12 signing change.
 - Added `activeTab`, `menus`, and `scripting` as narrowly scoped permissions. No host permission or declarative content script is added.
 - Restricted pages fail closed; navigation/reload can restore the website title and requires explicit user reapplication rather than broad background injection.
 - Added deterministic unit/source validation for eligibility, session metadata, injected targeting, restore behavior, menu registration, and no-host-permission posture.
