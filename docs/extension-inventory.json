@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "repository": "GoreeCloud/goreecloud-firefox-extensions",
+  "repository": "GoreeCloud/firefox-addons",
   "extensions": [
     {
       "slug": "advanced-tab-manager",
