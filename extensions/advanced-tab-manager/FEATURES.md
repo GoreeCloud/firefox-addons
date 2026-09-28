@@ -2,6 +2,8 @@
 
 ## In development — 0.1.12
 
+- Firefox tab-title renaming: right-click any eligible ordinary HTTP(S) Firefox tab and choose **Rename tab title…** to assign a local custom label. The flow uses the clicked tab's temporary `activeTab` authority plus `scripting`, stores the custom name with Firefox session tab metadata, continuously reapplies it against same-document title changes, and provides Restore page title. No broad host permission or declarative content script is requested; protected Firefox/Mozilla pages fail closed, and navigation/reload can require explicit reapplication.
+
 - Default live-tab residency: on background startup and for newly created tabs, Advanced Tab Manager sets Firefox `autoDiscardable=false` for every eligible non-private open tab so Firefox does not automatically unload background tabs. Explicit manual/rule-driven Discard remains available as a user action.
 - Residency visibility: live snapshot normalization preserves Firefox's `autoDiscardable` state so the sidebar can show an `auto-protected` count, the popup can report protection health, and the Manager can explain eligible/protected/resident/explicitly-discarded counts without exposing tab titles, URLs, or page content.
 - The residency default does not claim foreground-equivalent scheduling. Firefox remains authoritative for background timer/rendering throttling and operating-system process/resource constraints; the extension does not inspect or alter page content to bypass those browser policies.
@@ -16,7 +18,7 @@
 - Strengthened sidebar tab-row keyboard and assistive semantics.
 - Added an opt-in tracking-normalized duplicate review mode while keeping exact URL matching as the default. The normalized mode ignores only `utm_*`, `gclid`, `dclid`, `fbclid`, `msclkid`, `mc_cid`, and `mc_eid`; path, fragment, and every other query parameter remain significant.
 - Normalized cleanup uses the same active/pinned/audible/hidden/private/tree guards, requires a reviewed keeper plus explicit confirmation, and reconstructs the current live set before closing any eligible tab. Durable user-defined protected-tab cleanup exclusions remain planned.
-- Preserved existing Firefox permissions, host/content/private-browsing boundaries, storage schemas, recovery semantics, automation boundaries, and local-first behavior.
+- Preserved the no-host-permission/private-browsing, recovery, telemetry, and local-first boundaries while adding only `activeTab`, `menus`, and `scripting` for explicit user-invoked tab-title renaming; no declarative content script or broad host access is introduced.
 - The current shared Glaze adoption target is GLAZE UI V1.6 / 1.6.0. Version 0.1.12 now requires fresh repository-local V1.6.0 source mapping plus representative rendered/accessibility acceptance before consumer acceptance; historical V1.5.1 evidence remains provenance for Stable 0.1.11 only.
 - Stable 0.1.11 remains the accepted signed rollback/production baseline until a later release completes all required gates.
 
