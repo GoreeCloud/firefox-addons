@@ -181,3 +181,10 @@ Automated source/unit/real-Firefox qualification may establish the bounded match
 The current 0.1.12 Development source adds a new **Rename tab title** dialog launched from Firefox's native tab context menu. No screenshot set previously recorded in this document includes that dialog or its Restore page title/error states.
 
 Earlier screenshots therefore remain bounded evidence only for the exact surfaces and revisions they actually show. They do not establish normal-light, alternate-appearance, large-text, keyboard, or assistive-technology acceptance for the new dialog. Fresh exact-candidate rendered review must also confirm that the Firefox tab-strip title visibly changes on an eligible HTTP(S) page and that restricted pages fail without misleading success state. Stable remains `0.1.11`.
+
+
+## Native tab rename menu regression evidence — September 27, 2026
+
+Owner-supplied Firefox 156.0.1/Linux evidence for the distributed unsigned 0.1.12 candidate shows the extension loaded and running, but Firefox's native tab context menu does **not** contain the expected **Rename tab title…** item. This is a functional acceptance failure for the newly introduced tab-title feature, not a cosmetic discrepancy.
+
+Source review identified a Manifest V3 event-page lifecycle defect: the candidate removed and recreated the menu during ordinary background initialization instead of creating persistent menu state from `runtime.onInstalled`. The corrective candidate binds menu creation to the installation/update event and adds real-Firefox qualification that opens the native tab context menu and requires the rename label to be present. The owner screenshots remain regression/remediation evidence; fresh post-fix owner-visible rendering and interaction evidence is still required before this UI path is considered visually accepted.
