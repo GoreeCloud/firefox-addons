@@ -575,6 +575,86 @@ def main() -> int:
             set_current_extension_zoom(driver, 1.0)
             passes.append("tab-title-reflow-preflight")
 
+            set_firefox_int_pref(driver, "ui.systemUsesDarkTheme", 1)
+            wait_until(
+                lambda: rename_appearance_state(driver)["dark"],
+                5,
+                "rename dialog enters Firefox dark appearance",
+            )
+            dark_state = rename_appearance_state(driver)
+            require(
+                dark_state["shellBackground"] != dark_state["shellColor"],
+                "rename dialog preserves distinct foreground and background in dark appearance",
+                repr(dark_state),
+            )
+            set_firefox_int_pref(driver, "ui.systemUsesDarkTheme", 0)
+            wait_until(
+                lambda: not rename_appearance_state(driver)["dark"],
+                5,
+                "rename dialog returns to Firefox light appearance",
+            )
+
+            set_firefox_int_pref(driver, "ui.prefersReducedTransparency", 1)
+            wait_until(
+                lambda: rename_appearance_state(driver)["reducedTransparency"],
+                5,
+                "rename dialog observes Reduced Transparency",
+            )
+            reduced_transparency_state = rename_appearance_state(driver)
+            require(
+                reduced_transparency_state["shellBackdropFilter"] == "none"
+                and reduced_transparency_state["shellBoxShadow"] == "none",
+                "rename dialog removes translucent material effects for Reduced Transparency",
+                repr(reduced_transparency_state),
+            )
+            set_firefox_int_pref(driver, "ui.prefersReducedTransparency", 0)
+            wait_until(
+                lambda: not rename_appearance_state(driver)["reducedTransparency"],
+                5,
+                "rename dialog exits Reduced Transparency",
+            )
+
+            set_firefox_int_pref(driver, "browser.display.document_color_use", 2)
+            wait_until(
+                lambda: rename_appearance_state(driver)["forcedColors"],
+                5,
+                "rename dialog enters Firefox Forced Colors",
+            )
+            forced_state = rename_appearance_state(driver)
+            require(
+                forced_state["shellBoxShadow"] == "none"
+                and forced_state["shellBorderStyle"] != "none",
+                "rename dialog preserves explicit structure without decorative shadows in Forced Colors",
+                repr(forced_state),
+            )
+            set_firefox_int_pref(driver, "browser.display.document_color_use", 1)
+            wait_until(
+                lambda: not rename_appearance_state(driver)["forcedColors"],
+                5,
+                "rename dialog exits Firefox Forced Colors",
+            )
+
+            set_firefox_int_pref(driver, "ui.prefersReducedMotion", 1)
+            wait_until(
+                lambda: rename_appearance_state(driver)["reducedMotion"],
+                5,
+                "rename dialog observes Reduced Motion",
+            )
+            reduced_motion_state = rename_appearance_state(driver)
+            require(
+                reduced_motion_state["primaryAnimationName"] == "none"
+                and reduced_motion_state["primaryTransitionDuration"] == "0s",
+                "rename dialog remains motion-free under Reduced Motion",
+                repr(reduced_motion_state),
+            )
+            set_firefox_int_pref(driver, "ui.prefersReducedMotion", 0)
+            wait_until(
+                lambda: not rename_appearance_state(driver)["reducedMotion"],
+                5,
+                "rename dialog exits Reduced Motion",
+            )
+            passes.append("tab-title-appearance-preflight")
+
             title_input = driver.find_element("id", "tab-title")
             title_input.clear()
             title_input.send_keys("Runtime custom title", Keys.ENTER)
@@ -1125,7 +1205,7 @@ def main() -> int:
             server.shutdown()
             server.server_close()
 
-    require(len(passes) == 21, "all release-critical unsigned runtime checks passed", str(passes))
+    require(len(passes) == 22, "all release-critical unsigned runtime checks passed", str(passes))
     print("Advanced Tab Manager unsigned real-Firefox runtime acceptance passed.")
     return 0
 
