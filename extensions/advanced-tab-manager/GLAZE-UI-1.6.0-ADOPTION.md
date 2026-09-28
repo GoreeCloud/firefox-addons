@@ -90,6 +90,8 @@ Advanced Tab Manager 0.1.13 completed the applicable product-specific human V1.6
 
 Governed signing/restart run `36431225028` then verified the same accepted payload after Mozilla signing, persistent installation, and a full Firefox restart. The authoritative `GoreeCloud/glaze-ui` registry accepted the exact 0.1.13 consumer record in merge `937d2a31e2ff55ec1c9e4c6688899389a9323642` with `status: accepted-v1` and `productionEligible: false`. Product Stable lifecycle authority remains independent and is recorded in canonical Firefox-extension lifecycle metadata.
 
+After Stable lifecycle promotion, run `36436396986` repeated the governed signed-runtime/full-restart path against current lifecycle metadata and derived `stablePromoted: true` plus `glazeConsumerAccepted: true` while preserving the same accepted runtime and signed XPI digests.
+
 ## Completed product acceptance
 
 Advanced Tab Manager 0.1.12 completed the applicable product-specific V1.6 rendered, keyboard, assistive-technology, Forced Colors, Reduced Transparency, dark-appearance, Reduced Motion, high-zoom/large-text/reflow, constrained-layout, packaging/security, Mozilla signing, persistent-install, and full-restart gates.
