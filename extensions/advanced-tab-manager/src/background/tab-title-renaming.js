@@ -155,7 +155,8 @@ export function createTabTitleRenaming({ browser, broadcastChange = () => {} }) 
       browser.menus.create({
         id: TAB_TITLE_MENU_ID,
         title: "Rename tab title…",
-        contexts: ["tab"]
+        contexts: ["tab"],
+        documentUrlPatterns: ["http://*/*", "https://*/*"]
       }, () => {
         const lastError = browser.runtime?.lastError;
         if (lastError) {
