@@ -42,7 +42,7 @@ shared/
 
 | Extension | Current directory | Firefox add-on ID | Source state | Ownership / disposition |
 | --- | --- | --- | --- | --- |
-| GoreeCloud Advanced Tab Manager | `extensions/advanced-tab-manager/` | `advanced-tab-manager@goreecloud.com` | 0.1.12 Development/source candidate; **Stable 0.1.11** remains accepted for Mozilla unlisted/self-distribution | Standalone Firefox product; remains here |
+| GoreeCloud Advanced Tab Manager | `extensions/advanced-tab-manager/` | `advanced-tab-manager@goreecloud.com` | **Stable 0.1.12** accepted for Mozilla unlisted/self-distribution | Standalone Firefox product; remains here |
 | GoreeCloud Privacy Shield | `extensions/privacy-shield/` | `privacy-shield@goreecloud.com` | Stable 0.2.0 accepted for Mozilla unlisted/self-distribution | Platform adapter; retained here pending explicit platform-boundary review |
 | GoreeCloud Redirector | `extensions/redirector/` | `redirector@goreecloud.com` | Canonical source | Standalone Firefox product; canonical here; isolated legacy repository retired 2026-09-18 after history/provenance preservation |
 | GoreeCloud Source Resync | `extensions/source-resync/` | `source-resync@goreecloud.com` | Canonical source | Standalone Firefox product; canonical here; former standalone repository retired 2026-09-18 after history/release preservation |
@@ -76,11 +76,11 @@ Generated packages are written to `dist/` and are build outputs rather than auth
 
 See [`docs/MOZILLA_SIGNING.md`](docs/MOZILLA_SIGNING.md). Each extension keeps an independent release state. A source merge or unsigned package must never be described as Stable solely because repository validation passes.
 
-### GoreeCloud Advanced Tab Manager 0.1.11
+### GoreeCloud Advanced Tab Manager 0.1.12
 
-Advanced Tab Manager 0.1.11 is the accepted Stable release for Mozilla unlisted/self-distribution. Governed signing/restart run `35350654198` accepted authoritative source revision `34c27805c3b56f3ba858794c785f6b68d1f7b8f3`, deterministic unsigned XPI SHA-256 `9c0f44926ac1d2f213fd07f82dd18fa11bd54ceebc6cd871898fe82b962a5b02`, and Mozilla-signed XPI SHA-256 `e0f16901529cb8fa76e57d9aa056c98de9fa04e708f2232c151d5b75c1dfdb1d`.
+Advanced Tab Manager 0.1.12 is the accepted Stable release for Mozilla unlisted/self-distribution. The accepted runtime revision is `43f3010607550d7d4380353b97f85a4dd0186695`; deterministic unsigned XPI SHA-256 is `3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f`; Mozilla-signed XPI SHA-256 is `2e54bdf2aa312c9cfe2895fd456f6d088a58eab6d24de80339e996e3e9ae11ba`.
 
-The governed gate re-ran Stable Security Blockers and GLAZE UI 1.5.1 consumer qualification, verified Mozilla signature metadata and governed signed-payload parity, installed the signed XPI persistently, fully restarted Firefox without reinstalling the add-on, verified persisted organizational state, and repeated release-critical Manager/tree/stash/snooze/duplicate/rule/session-snapshot/backup acceptance after restart.
+Governed signing/restart run `36378135958` verified Mozilla signature metadata, payload parity, persistent installation, full Firefox restart without reinstalling, and post-restart release-critical acceptance. GLAZE UI V1.6 consumer acceptance is authoritative in `GoreeCloud/glaze-ui` at registry acceptance commit `b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb`. Stable 0.1.11 remains historical rollback provenance.
 
 ### GoreeCloud Download Manager Extension 0.2.12
 
