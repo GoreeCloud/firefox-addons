@@ -357,6 +357,9 @@ def rename_appearance_state(driver: webdriver.Firefox) -> dict:
           shellBackdropFilter: shellStyle.getPropertyValue("backdrop-filter").trim(),
           shellBoxShadow: shellStyle.boxShadow,
           secondaryBoxShadow: secondaryStyle.boxShadow,
+          primaryColor: primaryStyle.color,
+          primaryBackgroundColor: primaryStyle.backgroundColor,
+          primaryText: primary.textContent.trim(),
           animationCount: document.getAnimations().length
         };
         """
