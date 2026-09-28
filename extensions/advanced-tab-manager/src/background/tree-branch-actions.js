@@ -148,8 +148,8 @@ export function createTreeBranchActions({ browser, readLiveSnapshot, broadcastCh
       if (!Number.isInteger(destinationWindowId)) throw new Error("Firefox did not return the new window ID");
 
       const descendantIds = plan.members.slice(1).map((tab) => tab.id);
-      if (descendantIds.length) {
-        await browser.tabs.move(descendantIds, { windowId: destinationWindowId, index: -1 });
+      for (const descendantId of descendantIds) {
+        await browser.tabs.move(descendantId, { windowId: destinationWindowId, index: -1 });
       }
     } catch (error) {
       const rollback = await rollbackTreeBranchMove(plan, destinationWindowId);
