@@ -110,3 +110,12 @@ Validate the envelope before any future signing-source change with `validate-pro
 Fresh owner-supplied screenshots for the post-Forced-Colors current candidate establish the normal-light rendered subset for the sidebar, popup, Manager, and Rename tab title dialog, including visible input focus and a successful visible tab-title change to **Tab Manager**.
 
 This evidence remains bounded. It does not convert automated dark, Forced Colors, Reduced Transparency, Reduced Motion, or 200%-zoom preflight into human acceptance, and it does not establish assistive-technology or complete keyboard-traversal acceptance. Those remaining checks must still be completed before release-ready provenance, 0.1.12 signing, or Stable promotion can proceed.
+
+
+## Owner completion — September 27, 2026
+
+The owner explicitly reported **all remaining governed human checks PASS** for the exact 0.1.12 candidate identified by source revision `43f3010607550d7d4380353b97f85a4dd0186695` and unsigned XPI SHA-256 `3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f`.
+
+The local privacy-minimized target record therefore has every keyboard, assistive-technology, and environment/reflow check set to true, zero blockers, and decision `accepted`. The complete record remains local. Its canonical SHA-256 is `862d449ab63ed362a2c2c5d7c76e0f540e063b1f1fe03b1171f6682d89d9f6e2`, and the repository stores only the privacy-safe provenance envelope under `docs/target-acceptance-provenance-0.1.12.json`.
+
+This completes the human target-acceptance gate. It authorizes the separate provenance-bound 0.1.12 signing/restart workflow; it does not by itself establish Mozilla signing, signed-package parity, persistent-install/restart acceptance, or Stable promotion. Those remain machine-verified downstream gates.
