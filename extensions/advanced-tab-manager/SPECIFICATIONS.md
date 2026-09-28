@@ -1,20 +1,20 @@
 # GoreeCloud Advanced Tab Manager — Repository Specifications
 
-This repository document is the canonical source-controlled specification for the current `0.1.13` source-candidate boundary while preserving accepted Stable `0.1.12` release evidence. Legacy Drive project-specification copies are migration sources only and do not supersede repository-native specification state.
+This repository document is the canonical source-controlled specification for the accepted Stable `0.1.13` boundary while preserving Stable `0.1.12` rollback evidence. Legacy Drive project-specification copies are migration sources only and do not supersede repository-native specification state.
 
 ## Component and dependency contract
 
 - Component class: browser extension.
 - Supported platform: Firefox 139+.
-- Source state: `source-candidate`; product lifecycle: Development. Accepted Stable release: `0.1.12`.
+- Source state: `stable`; product lifecycle: Stable. Accepted Stable release: `0.1.13`.
 - Required GoreeCloud runtime dependencies: none.
 - Optional/planned integrations such as Webspaces are not implemented dependencies in 0.1.12.
-- Browser-surface presentation has authoritative GLAZE UI V1.6 / 1.6.0 consumer acceptance for exact runtime revision `43f3010607550d7d4380353b97f85a4dd0186695`; no separate Glaze runtime package is embedded.
+- Browser-surface presentation has authoritative GLAZE UI V1.6 / 1.6.0 consumer acceptance for exact runtime revision `89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe` at registry merge `937d2a31e2ff55ec1c9e4c6688899389a9323642`; no separate Glaze runtime package is embedded.
 
 ## Implemented source contract
 
 - Manifest V3 add-on ID `advanced-tab-manager@goreecloud.com`.
-- Source candidate 0.1.13 packages the canonical Advanced Tab Manager product SVG at `icons/advanced-tab-manager.svg`, requires byte identity with branding blob `2c1865ee3809ae91c3bcb42d2d39275668651ab7`, and declares Firefox `icons` plus `action.default_icon`; this changes product identity presentation only and does not widen browser authority.
+- Stable 0.1.13 packages the canonical Advanced Tab Manager product SVG at `icons/advanced-tab-manager.svg`, requires byte identity with branding blob `2c1865ee3809ae91c3bcb42d2d39275668651ab7`, and declares Firefox `icons` plus `action.default_icon`; this changes product identity presentation only and does not widen browser authority.
 - Non-persistent ES-module background scripts.
 - Permissions only: `activeTab`, `alarms`, `menus`, `scripting`, `sessions`, `storage`, `tabGroups`, and `tabs`.
 - No `unlimitedStorage`, host permissions, declarative/persistent content scripts, remote telemetry, general page-content inspection, or private-browsing access. Tab-title renaming may programmatically touch only the clicked eligible page's `document.title` under temporary `activeTab` authority.
