@@ -116,15 +116,6 @@ This evidence remains bounded. It does not convert automated dark, Forced Colors
 
 The owner explicitly reported **all remaining governed human checks PASS** for the exact 0.1.12 candidate identified by source revision `43f3010607550d7d4380353b97f85a4dd0186695` and unsigned XPI SHA-256 `3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f`.
 
-The local privacy-minimized target record therefore has every keyboard, assistive-technology, and environment/reflow check set to true, zero blockers, and decision `accepted`. The complete record remains local. Its canonical SHA-256 is `862d449ab63ed362a2c2c5d7c76e0f540e063b1f1fe03b1171f6682d89d9f6e2`, and the repository stores only the privacy-safe provenance envelope under `docs/target-acceptance-provenance-0.1.12.json`.
-
-This completes the human target-acceptance gate. It authorizes the separate provenance-bound 0.1.12 signing/restart workflow; it does not by itself establish Mozilla signing, signed-package parity, persistent-install/restart acceptance, or Stable promotion. Those remain machine-verified downstream gates.
-
-
-## Owner completion — September 27, 2026
-
-The owner explicitly reported **all remaining governed human checks PASS** for the exact 0.1.12 candidate identified by source revision `43f3010607550d7d4380353b97f85a4dd0186695` and unsigned XPI SHA-256 `3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f`.
-
-The local target record therefore has every keyboard, assistive-technology, and environment/reflow check set to true, zero blockers, and decision `accepted`. The complete record remains local. Its canonical SHA-256 is `862d449ab63ed362a2c2c5d7c76e0f540e063b1f1fe03b1171f6682d89d9f6e2`; the repository stores only the privacy-safe provenance envelope in `docs/target-acceptance-provenance-0.1.12.json`.
+The privacy-minimized target record has every keyboard, assistive-technology, and environment/reflow check set to true, zero blockers, and decision `accepted`. The complete record remains local. Its canonical SHA-256 is `922e7f0eb1ceb3c9f0bbab23c63bfe72d99556da1661ae1abee17ab1c7ccabde`; the repository stores only the privacy-safe provenance envelope at `docs/target-acceptance-provenance-0.1.12.json`.
 
 This completes the human target-acceptance gate. Mozilla signing, signed-package parity, persistent-install/restart acceptance, and Stable promotion remain separate downstream gates.
