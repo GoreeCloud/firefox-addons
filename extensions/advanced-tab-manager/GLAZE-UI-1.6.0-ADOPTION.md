@@ -74,9 +74,9 @@ Accepted evidence state:
 
 `TARGET-ACCEPTANCE-0.1.12.md` and `scripts/target_acceptance.py` define a closed, privacy-minimized human-review evidence contract. The manual **Advanced Tab Manager Target Review Candidate** workflow can package one exact source revision twice, prove deterministic bytes, rerun repository/runtime/security/Glaze-source checks, and retain the exact unsigned XPI for human review. The complete human record remains local unless a later governed release step explicitly binds to a privacy-safe provenance digest.
 
-This infrastructure is preparatory evidence governance only. It does not establish keyboard, assistive-technology, alternate-appearance, or large-text acceptance.
+This infrastructure remains the governed evidence mechanism. For Stable 0.1.12, its human keyboard, assistive-technology, alternate-appearance, and large-text/reflow review is complete and bound to the accepted runtime revision.
 
-September 27 owner-rendered screenshots of the then-current 0.1.12 candidate were reviewed as remediation evidence. They confirmed that runtime surfaces were functional but still lacked the visual refinement expected for current V1.6 consumer acceptance, especially in Manager material hierarchy and cross-surface cohesion. The resulting shared-token/visual-polish source change therefore requires fresh post-change rendered review and does not inherit the earlier normal-light acceptance record.
+September 27 owner-rendered screenshots initially served as remediation evidence and drove the shared-token/visual-polish refinement. Subsequent exact-candidate owner review completed the required post-change rendering and accessibility acceptance for the runtime revision recorded below.
 
 ## Completed product acceptance
 
@@ -86,26 +86,26 @@ The authoritative Glaze consumer registry accepted the product as `accepted-v1` 
 
 ## Residency visibility refinement
 
-The 0.1.12 Development candidate now preserves Firefox's `autoDiscardable` state in the privacy-minimized live snapshot so the sidebar, popup, and Manager can make the default residency policy visible. The presentation distinguishes automatic-discard protection from current resident/discarded state and keeps explicit manual Discard available.
+Stable 0.1.12 preserves Firefox's `autoDiscardable` state in the privacy-minimized live snapshot so the sidebar, popup, and Manager can make the default residency policy visible. The presentation distinguishes automatic-discard protection from current resident/discarded state and keeps explicit manual Discard available.
 
-This refinement changes rendered sidebar, popup, and Manager presentation after the post-PR #110 normal-light screenshot review. That earlier review remains bounded evidence for its exact revision and observed conditions; it is not silently inherited as rendered acceptance for the residency-visibility candidate. Fresh representative rendered review remains required after integration, alongside the already-pending accessibility and alternate-environment gates.
+The residency-visibility refinement received fresh representative rendered, accessibility, and alternate-environment review as part of the completed 0.1.12 target acceptance; earlier screenshots remain historical remediation evidence only.
 
 
 ## Normalized duplicate review refinement
 
 ATM-006A adds a native Duplicates-view selector for exact versus tracking-normalized review. Exact matching remains selected by default. The normalized state exposes the original URLs, uses textual policy copy, and preserves native focus/Forced Colors behavior through the existing sidebar control system.
 
-This is a presentation and interaction change, not a new authority grant: no permission, storage schema, remote dependency, telemetry path, page-content access, or private-browsing access is added. Fresh representative rendering and accessibility review of the new Duplicates state remain required before current V1.6 consumer acceptance can include it.
+This is a presentation and interaction change, not a new authority grant: no permission, storage schema, remote dependency, telemetry path, page-content access, or private-browsing access is added. Representative rendering and accessibility review of the Duplicates state completed in the governed 0.1.12 target acceptance.
 
 ## Tab-title rename dialog refinement
 
-The 0.1.12 Development line now includes a dedicated Glaze-aligned **Rename tab title** dialog reached from Firefox's native tab context menu. The dialog uses semantic native controls, visible focus, system/Firefox colors, Reduced Transparency handling, and Forced Colors border fallbacks. It deliberately explains the no-broad-host-permission boundary and the navigation/reload limitation.
+Stable 0.1.12 includes a dedicated Glaze-aligned **Rename tab title** dialog reached from Firefox's native tab context menu. The dialog uses semantic native controls, visible focus, system/Firefox colors, Reduced Transparency handling, and Forced Colors border fallbacks. It deliberately explains the no-broad-host-permission boundary and the navigation/reload limitation.
 
-The dialog now also consumes the shared Glaze product mark and material tokens directly, with a layered semantic surface, accent privacy note, stronger primary-action hierarchy, narrow-width stacking, and a 200% zoom overflow preflight. These source/runtime guards improve consistency but do not replace representative human rendering in normal light, dark appearance, Forced Colors, Reduced Transparency, and large-text/zoom conditions.
+The dialog now also consumes the shared Glaze product mark and material tokens directly, with a layered semantic surface, accent privacy note, stronger primary-action hierarchy, narrow-width stacking, and a 200% zoom overflow preflight. These source/runtime guards complement the completed representative human review in normal light, dark appearance, Forced Colors, Reduced Transparency, and large-text/zoom conditions.
 
-This feature also adds narrowly scoped `activeTab`, `menus`, and `scripting` permissions for explicit user invocation, while host permissions remain none and no declarative content script is registered. Because both the permission posture and a new rendered surface changed after prior 0.1.12 evidence, fresh exact-candidate permission/security review plus representative normal-light, dark, Forced Colors, Reduced Transparency, large-text/zoom, keyboard, and assistive-technology review of the rename dialog are required before current V1.6 consumer acceptance can include it.
+This feature also adds narrowly scoped `activeTab`, `menus`, and `scripting` permissions for explicit user invocation, while host permissions remain none and no declarative content script is registered. Exact-candidate permission/security review plus representative normal-light, dark, Forced Colors, Reduced Transparency, large-text/zoom, keyboard, and assistive-technology review completed before current V1.6 consumer acceptance.
 
-Fresh owner-visible normal-light screenshots now confirm the Glaze-refined dialog's product lockup, material hierarchy, visible focused input, unclipped controls, and successful visible tab-title change on the reviewed 0.1.12 candidate. That closes the rename dialog's normal-light rendered subset only. Dark appearance, Forced Colors, Reduced Transparency, large-text/zoom human review, assistive technology, and the broader product-level V1.6 consumer acceptance remain pending.
+Fresh owner-visible screenshots confirmed the Glaze-refined dialog's product lockup, material hierarchy, visible focused input, unclipped controls, and successful visible tab-title change. The owner subsequently completed the remaining dark appearance, Forced Colors, Reduced Transparency, large-text/zoom, keyboard, assistive-technology, and product-level V1.6 acceptance gates.
 
 
 ## Product acceptance completion — September 28, 2026
