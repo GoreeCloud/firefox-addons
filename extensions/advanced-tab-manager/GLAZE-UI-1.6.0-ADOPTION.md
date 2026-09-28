@@ -3,8 +3,8 @@
 ## Status
 
 **Product:** GoreeCloud Advanced Tab Manager 0.1.12  
-**Lifecycle:** Development / source candidate  
-**Accepted product Stable:** 0.1.11  
+**Lifecycle:** Stable  
+**Accepted product Stable:** 0.1.12  
 **Platform:** Firefox browser extension  
 **Required shared target:** GLAZE UI V1.6 / machine version 1.6.0  
 **Shared authority repository:** `GoreeCloud/glaze-ui`  
@@ -21,7 +21,7 @@ Advanced Tab Manager uses repository-local Firefox HTML/CSS/JavaScript presentat
 
 The shared V1.6 Stable release does not grant Advanced Tab Manager consumer acceptance, product Stable status, production eligibility, signing acceptance, or deployment acceptance automatically.
 
-Current machine evidence deliberately reports `status: adoption-required`. It may prove source mapping and preserved authority/privacy invariants, but it must not emit `accepted-v1` until product-specific V1.6 rendered, accessibility, supported-environment, and other applicable acceptance evidence is complete.
+Current machine evidence reports `status: accepted-v1` only after product-specific V1.6 rendered/accessibility/environmental acceptance, Mozilla-signed restart acceptance, and authoritative consumer-registry acceptance are all recorded.
 
 ## Applicable V1.6 source mapping
 
@@ -57,16 +57,16 @@ The previous 0.1.12 source/machine qualification against V1.5.1 and the owner-re
 
 `dist/advanced-tab-manager-glaze-1.6.0-adoption.json`
 
-Expected evidence state before downstream acceptance:
+Accepted evidence state:
 
 - `glazeTargetVersion: 1.6.0`;
-- `status: adoption-required`;
+- `status: accepted-v1`;
 - `sourceMappingValidated: true`;
-- `applicablePresentationObligationsAccepted: false`;
-- `representativeRenderedAcceptanceComplete: false`;
-- `assistiveTechnologyAcceptanceComplete: false`;
-- `largeTextAcceptanceComplete: false`;
-- `consumerRegistryAccepted: false`;
+- `applicablePresentationObligationsAccepted: true`;
+- `representativeRenderedAcceptanceComplete: true`;
+- `assistiveTechnologyAcceptanceComplete: true`;
+- `largeTextAcceptanceComplete: true`;
+- `consumerRegistryAccepted: true`;
 - `productStableStatusImplied: false`;
 - `productionEligibilityImplied: false`.
 
@@ -78,21 +78,11 @@ This infrastructure is preparatory evidence governance only. It does not establi
 
 September 27 owner-rendered screenshots of the then-current 0.1.12 candidate were reviewed as remediation evidence. They confirmed that runtime surfaces were functional but still lacked the visual refinement expected for current V1.6 consumer acceptance, especially in Manager material hierarchy and cross-surface cohesion. The resulting shared-token/visual-polish source change therefore requires fresh post-change rendered review and does not inherit the earlier normal-light acceptance record.
 
-## Remaining product acceptance
+## Completed product acceptance
 
-Before Advanced Tab Manager 0.1.12 can claim current Glaze consumer acceptance or replace Stable 0.1.11, it still requires the applicable product-specific evidence, including:
+Advanced Tab Manager 0.1.12 completed the applicable product-specific V1.6 rendered, keyboard, assistive-technology, Forced Colors, Reduced Transparency, dark-appearance, Reduced Motion, high-zoom/large-text/reflow, constrained-layout, packaging/security, Mozilla signing, persistent-install, and full-restart gates.
 
-- representative keyboard and assistive-technology acceptance;
-- Forced Colors rendered acceptance;
-- Reduced Transparency rendered acceptance;
-- dark-appearance rendered acceptance;
-- high-zoom and large-text/reflow acceptance;
-- any resulting corrections and fresh exact-head qualification;
-- product-specific packaging/security/restart/signing gates;
-- a separate governed product Stable promotion.
-
-The source-adoption record is therefore a migration/control record, not a Stable or production acceptance record.
-
+The authoritative Glaze consumer registry accepted the product as `accepted-v1` at target `1.6.0` in `GoreeCloud/glaze-ui` merge `b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb`. The registry intentionally retains `productionEligible: false` because product lifecycle authority remains independent.
 
 ## Residency visibility refinement
 
@@ -126,8 +116,6 @@ The completed product-specific Glaze review now covers the current V1.6-mapped s
 
 Governed Mozilla signing/restart run `36378135958` subsequently verified the same accepted runtime payload, Mozilla-signed parity, persistent installation, full Firefox restart, and post-restart release-critical behavior. The signed XPI SHA-256 is `2e54bdf2aa312c9cfe2895fd456f6d088a58eab6d24de80339e996e3e9ae11ba`.
 
-At this point the repository-local product evidence needed for current Glaze V1.6 consumer acceptance is complete. The remaining Glaze step is updating the authoritative `GoreeCloud/glaze-ui` consumer registry from `adoption-required` to `accepted-v1` for exact product reference revision `43f3010607550d7d4380353b97f85a4dd0186695`.
+At this point the repository-local product evidence needed for current Glaze V1.6 consumer acceptance is complete. The authoritative `GoreeCloud/glaze-ui` consumer registry accepted Advanced Tab Manager as `accepted-v1` for exact reviewed runtime revision `43f3010607550d7d4380353b97f85a4dd0186695` in merge `b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb`, backed by `acceptance/consumer-advanced-tab-manager-v1.6.0.json`.
 
-Until that registry change is authoritative, this repository's machine source-mapping script continues to emit `status: adoption-required` and `consumerRegistryAccepted: false`. That fail-closed state prevents local documentation from unilaterally claiming shared-registry acceptance.
-
-Product Stable promotion remains separate even after Glaze registry acceptance.
+Product Stable promotion is recorded separately in canonical Firefox-extension lifecycle metadata; Glaze registry acceptance does not itself grant product production eligibility.
