@@ -44,6 +44,14 @@ def accepted_record(root: Path) -> dict:
 
 
 class TargetAcceptanceTests(unittest.TestCase):
+    def test_summary_uses_current_release_identity(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            record = accepted_record(Path(tmp))
+            result = ta.validate_record(record)
+            summary = ta._summary(result)
+            self.assertIn(f"Advanced Tab Manager {ta.EXPECTED_RELEASE} Target Acceptance Summary", summary)
+            self.assertNotIn("Advanced Tab Manager 0.1.12 Target Acceptance Summary", summary)
+
     def test_release_ready_record_passes(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             record = accepted_record(Path(tmp))
