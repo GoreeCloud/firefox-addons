@@ -17,6 +17,7 @@
 - Completed governed Mozilla signing/full-restart acceptance in run `36431225028`; signed XPI SHA-256 is `6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c`.
 - Established fresh authoritative GLAZE UI V1.6 consumer acceptance for the exact 0.1.13 runtime at `GoreeCloud/glaze-ui` merge `937d2a31e2ff55ec1c9e4c6688899389a9323642`.
 - Promoted 0.1.13 to the canonical Stable lifecycle without changing accepted runtime bytes; Stable 0.1.12 remains rollback provenance.
+- Completed promotion-triggered Stable signing/restart run `36436396986`; it recovered the existing Mozilla-signed 0.1.13 XPI unchanged, repeated persistent-install/full-restart acceptance, and produced final lifecycle evidence with `stablePromoted: true` and `glazeConsumerAccepted: true`.
 
 ## 0.1.12 — Stable
 

@@ -342,7 +342,7 @@ assert signing_evidence_012["mozillaSigned"] is True
 assert signing_evidence_012["persistentInstallRestartAccepted"] is True
 assert signing_evidence_012["signedNonManifestPayloadMatchesCandidateByteForByte"] is True
 assert signing_evidence_012["signedManifestGovernedParityAccepted"] is True
-assert "0.1.13" in release_acceptance_013 and "Stable promotion state" in release_acceptance_013
+assert "0.1.13" in release_acceptance_013 and "**Lifecycle:** Stable" in release_acceptance_013
 assert "937d2a31e2ff55ec1c9e4c6688899389a9323642" in release_acceptance_013
 assert signing_evidence_013["version"] == "0.1.13"
 assert signing_evidence_013["candidateSha256"] == "837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5"
@@ -351,6 +351,11 @@ assert signing_evidence_013["mozillaSigned"] is True
 assert signing_evidence_013["persistentInstallRestartAccepted"] is True
 assert signing_evidence_013["signedNonManifestPayloadMatchesCandidateByteForByte"] is True
 assert signing_evidence_013["signedManifestGovernedParityAccepted"] is True
+assert signing_evidence_013["githubWorkflowRunId"] == 36436396986
+assert signing_evidence_013["sourceState"] == "stable"
+assert signing_evidence_013["acceptedStableVersion"] == "0.1.13"
+assert signing_evidence_013["stablePromoted"] is True
+assert signing_evidence_013["glazeConsumerAccepted"] is True
 assert '"git"' in security_script and '"log"' in security_script and "--full-history" in security_script
 assert "manifest.json" in security_script and "EXPECTED_VERSION" in security_script
 assert '"docs/"' in security_script, "Stable security inspection must reject extension maintenance docs in XPI"
@@ -437,4 +442,4 @@ assert "NoRedirect" in amo_recovery and "/api/v4/file/" in amo_recovery
 assert '"Authorization": f"JWT {token}"' in amo_recovery
 assert 'mirror_request = Request(location, headers={"User-Agent": USER_AGENT})' in amo_recovery
 
-print("Validated Advanced Tab Manager 0.1.13 Stable promotion state while preserving Stable 0.1.12 rollback evidence.")
+print("Validated Advanced Tab Manager Stable 0.1.13 while preserving Stable 0.1.12 rollback evidence.")

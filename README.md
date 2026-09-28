@@ -80,7 +80,7 @@ See [`docs/MOZILLA_SIGNING.md`](docs/MOZILLA_SIGNING.md). Each extension keeps a
 
 Advanced Tab Manager 0.1.13 is the current Stable release for Mozilla unlisted/self-distribution. The accepted runtime revision is `89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe`; deterministic unsigned XPI SHA-256 is `837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5`; Mozilla-signed XPI SHA-256 is `6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c`.
 
-Governed signing/restart run `36431225028` verified Mozilla signature metadata, payload parity, persistent installation, native Firefox icon identity before and after a full Firefox restart, and post-restart release-critical behavior. GLAZE UI V1.6 consumer acceptance for this exact runtime is authoritative in `GoreeCloud/glaze-ui` at registry merge `937d2a31e2ff55ec1c9e4c6688899389a9323642`. The promotion-triggered signing workflow re-verifies the same frozen runtime against current Stable lifecycle metadata; 0.1.12 remains rollback provenance.
+Governed signing/restart run `36431225028` established the signed candidate. Final Stable signing/restart run `36436396986` then recovered the same Mozilla-signed XPI, re-verified payload parity, persistent installation, native Firefox icon identity before and after a full restart, and post-restart release-critical behavior against canonical Stable metadata. GLAZE UI V1.6 consumer acceptance for this exact runtime is authoritative in `GoreeCloud/glaze-ui` at registry merge `937d2a31e2ff55ec1c9e4c6688899389a9323642`. Final machine evidence derives `stablePromoted: true` and `glazeConsumerAccepted: true`; 0.1.12 remains rollback provenance.
 
 ### GoreeCloud Download Manager Extension 0.2.12
 
