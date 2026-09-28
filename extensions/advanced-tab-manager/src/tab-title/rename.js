@@ -21,7 +21,7 @@ function setBusy(busy) {
   titleInput.disabled = busy;
 }
 
-function errorMessage(reason, maxLength) {
+function errorMessage(reason, maxLength, rollbackApplied = false) {
   switch (reason) {
     case "page-not-scriptable":
       return "Firefox does not allow extensions to rename this page. Built-in, protected, PDF, reader, and some Mozilla pages are restricted.";
@@ -30,7 +30,9 @@ function errorMessage(reason, maxLength) {
     case "tab-not-found":
       return "This Firefox tab is no longer open.";
     case "session-metadata-write-failed":
-      return "The title changed, but its local tab metadata could not be saved.";
+      return rollbackApplied
+        ? "Firefox could not save the local title metadata, so Advanced Tab Manager restored the previous tab title."
+        : "Firefox could not save the local title metadata, and the previous tab title could not be fully restored. Reopen Rename tab title… to review this tab.";
     default:
       return "The tab title could not be changed.";
   }
@@ -49,7 +51,7 @@ async function load() {
   });
 
   if (!result?.ok) {
-    setStatus(errorMessage(result?.reason, result?.maxLength), "error");
+    setStatus(errorMessage(result?.reason, result?.maxLength, result?.rollbackApplied), "error");
     setBusy(true);
     return;
   }
@@ -79,7 +81,7 @@ async function applyTitle(title) {
 
   if (!result?.ok) {
     setBusy(false);
-    setStatus(errorMessage(result?.reason, result?.maxLength), "error");
+    setStatus(errorMessage(result?.reason, result?.maxLength, result?.rollbackApplied), "error");
     titleInput.focus();
     return;
   }
