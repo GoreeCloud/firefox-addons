@@ -1,5 +1,7 @@
 # GoreeCloud Advanced Tab Manager — Implemented Features
 
+- 0.1.12 Development: native Firefox tab-context **Rename tab title…** support for eligible non-private HTTP(S) tabs, using temporary `activeTab` + `scripting` authority and Firefox session tab metadata without broad host access.
+
 > **Authority:** Component-scoped repository-native implemented-feature record, seeded from existing `FEATURES.md`. Stable 0.1.11 remains the accepted rollback/production baseline unless later governed evidence establishes otherwise.
 
 ## GoreeCloud Advanced Tab Manager — Features
