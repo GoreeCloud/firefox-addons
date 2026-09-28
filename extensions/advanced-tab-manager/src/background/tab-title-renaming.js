@@ -77,7 +77,7 @@ export function createTabTitleRenaming({ browser, broadcastChange = () => {} }) 
     try {
       customTitle = String(await browser.sessions.getTabValue(tabId, TAB_TITLE_SESSION_KEY) || "");
     } catch {
-      customTitle = "";
+      return { ok: false, reason: "session-metadata-read-failed" };
     }
 
     return {
