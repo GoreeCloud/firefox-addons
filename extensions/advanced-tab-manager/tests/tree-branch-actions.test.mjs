@@ -141,7 +141,10 @@ test("move tree branch opens a new window and preserves the verified branch", as
   const result = await manager.moveTreeBranchToNewWindow(1);
   assert.deepEqual(result, { ok: true, moved: 3, windowId: 9 });
   assert.deepEqual(created, [{ tabId: 1, focused: true }]);
-  assert.deepEqual(moves, [{ ids: [2,3], details: { windowId: 9, index: -1 } }]);
+  assert.deepEqual(moves, [
+    { ids: 2, details: { windowId: 9, index: -1 } },
+    { ids: 3, details: { windowId: 9, index: -1 } }
+  ]);
   assert.deepEqual(reasons, ["tree-branch-moved"]);
 });
 
@@ -183,9 +186,9 @@ test("move tree branch rolls the root back when descendant movement fails", asyn
       tabs: {
         remove: async () => {},
         discard: async () => {},
-        move: async (ids, details) => {
-          if (Array.isArray(ids)) throw new Error("simulated descendant move failure");
-          rollbackMoves.push({ id: ids, details });
+        move: async (id, details) => {
+          if (id === 2 && details.windowId === 9) throw new Error("simulated descendant move failure");
+          rollbackMoves.push({ id, details });
         },
         get: async (id) => id === 1
           ? { id: 1, windowId: 9, index: 0 }
