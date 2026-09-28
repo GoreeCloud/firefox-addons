@@ -1,15 +1,15 @@
 # GoreeCloud Advanced Tab Manager — Repository Specifications
 
-This repository document is the canonical source-controlled specification for the implemented `0.1.12` Development boundary. Legacy Drive project-specification copies are migration sources only and do not supersede repository-native specification state.
+This repository document is the canonical source-controlled specification for the accepted Stable `0.1.12` boundary. Legacy Drive project-specification copies are migration sources only and do not supersede repository-native specification state.
 
 ## Component and dependency contract
 
 - Component class: browser extension.
 - Supported platform: Firefox 139+.
-- Source state: `source-candidate`; product lifecycle: Development. Accepted Stable release: `0.1.11`.
+- Source state: `stable`; product lifecycle: Stable. Accepted Stable release: `0.1.12`.
 - Required GoreeCloud runtime dependencies: none.
 - Optional/planned integrations such as Webspaces are not implemented dependencies in 0.1.12.
-- Browser-surface presentation follows current GoreeCloud Glaze principles where practical without claiming a separate Glaze runtime-package or product-level acceptance state.
+- Browser-surface presentation has authoritative GLAZE UI V1.6 / 1.6.0 consumer acceptance for exact runtime revision `43f3010607550d7d4380353b97f85a4dd0186695`; no separate Glaze runtime package is embedded.
 
 ## Implemented source contract
 
@@ -87,10 +87,10 @@ This repository document is the canonical source-controlled specification for th
 - The dialog consumes the shared `src/shared/glaze.css` product lockup and material tokens, while semantic system colors, Reduced Transparency, Forced Colors, and native control semantics remain authoritative fallbacks.
 - Real-Firefox qualification also preflights the rename dialog under Firefox dark color-scheme override, Forced Colors override, Reduced Transparency preference, and Reduced Motion preference. It verifies media-state activation, fallback material behavior, zero active motion under Reduced Motion, and bounded horizontal reflow.
 - Automated keyboard/semantic/reflow/appearance qualification is a preflight only. It does not substitute for the separately governed human assistive-technology, visible-focus, appearance, large-text, or zoom acceptance record.
-- This feature reopens exact-candidate permission, rendered-dialog, keyboard/accessibility, and real-Firefox acceptance for the 0.1.12 Development line; it does not inherit Stable 0.1.11 acceptance.
+- The feature completed independent exact-candidate permission, rendered-dialog, keyboard/accessibility, real-Firefox, signed-restart, and Stable acceptance for 0.1.12; it does not inherit those facts from 0.1.11.
 
 
-- Stable 0.1.11 remains the accepted signed rollback/production baseline while 0.1.12 is a Development/source candidate.
+- Stable 0.1.12 is the accepted signed production baseline; 0.1.11 remains historical rollback provenance.
 - Popup, sidebar, and Manager presentation is reorganized for clearer hierarchy, density, action priority, responsive behavior, and GoreeCloud/Firefox fit without changing browser authority.
 - The Manager model no longer embeds mutable release lifecycle labels. It exposes immutable build version/component/platform information while canonical release records remain authoritative for lifecycle/signing status.
 - The Manager now renders the retained session-snapshot count already present in the privacy-minimized manager model.
@@ -113,4 +113,4 @@ This repository document is the canonical source-controlled specification for th
 
 ## Release boundary
 
-`0.1.12` is a Development/source candidate and is not Stable. Accepted Stable remains `0.1.11` for Mozilla unlisted/self-distribution. Governed run `35350654198` accepted 0.1.11 source revision `34c27805c3b56f3ba858794c785f6b68d1f7b8f3`, unsigned SHA-256 `9c0f44926ac1d2f213fd07f82dd18fa11bd54ceebc6cd871898fe82b962a5b02`, signed SHA-256 `e0f16901529cb8fa76e57d9aa056c98de9fa04e708f2232c151d5b75c1dfdb1d`, Stable Security Blockers, GLAZE UI 1.5.1 consumer acceptance, persistent signed installation, full Firefox restart, and post-restart product acceptance. Those 0.1.11 release facts are historical evidence, not acceptance of the 0.1.12 presentation delta.
+`0.1.12` is the accepted Stable release for Mozilla unlisted/self-distribution. Governed signing/restart run `36378135958` accepted exact runtime source revision `43f3010607550d7d4380353b97f85a4dd0186695`, unsigned SHA-256 `3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f`, signed SHA-256 `2e54bdf2aa312c9cfe2895fd456f6d088a58eab6d24de80339e996e3e9ae11ba`, Stable Security Blockers, GLAZE UI V1.6 consumer acceptance, persistent signed installation, full Firefox restart, and post-restart product acceptance. Stable 0.1.11 remains historical rollback evidence.
