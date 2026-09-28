@@ -59,7 +59,7 @@ The previous 0.1.12 source/machine qualification against V1.5.1 and the owner-re
 
 `dist/advanced-tab-manager-glaze-1.6.0-adoption.json`
 
-Accepted evidence state:
+Current pre-registry evidence state:
 
 - `glazeTargetVersion: 1.6.0`;
 - `status: adoption-required`;
