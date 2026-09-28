@@ -8,6 +8,10 @@
 - Expanded the clean-profile real-Firefox runtime smoke to query Firefox `AddonManager` after installation and fail unless the installed add-on resolves the canonical packaged product icon URL, giving native Firefox metadata coverage in addition to manifest/source checks.
 - Advanced the exact-source Firefox runtime and human target-review contracts to 0.1.13, including an explicit Firefox extension-icon surface review gate.
 - Corrected the privacy-safe target-acceptance summary generator so its heading derives the current candidate version instead of retaining the historical 0.1.12 label; added regression coverage to prevent another stale release identity.
+- Completed the governed 0.1.13 human target review for exact runtime revision `89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe`; the owner explicitly reported every governed keyboard, assistive-technology, alternate-appearance, reflow, clipping, and Firefox icon-surface check PASS with zero blockers.
+- Added privacy-safe accepted target provenance bound to unsigned XPI SHA-256 `837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5` and local target-record SHA-256 `e590735ccd3909d164b0e3ad6802a4366ff08e8dcfa35ba8a73121749ac1307c`.
+- Authorized the separate governed 0.1.13 Mozilla-signing path from the accepted provenance while preserving Stable 0.1.12 until signing, signed restart, Glaze consumer-registry acceptance, and Stable promotion complete.
+- Strengthened persistent signed-restart acceptance to verify Firefox AddonManager still resolves the canonical Advanced Tab Manager icon and all declared icon sizes both before and after the full Firefox restart.
 - Added no permission, host permission, content script, remote dependency, telemetry, or browser-authority expansion.
 - Stable 0.1.12 remains the accepted Mozilla-signed release; 0.1.13 does not inherit Stable or exact-revision GLAZE UI consumer acceptance.
 
