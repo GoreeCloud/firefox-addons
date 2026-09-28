@@ -244,7 +244,7 @@ test("tab context menu opens the dedicated rename dialog for the clicked tab", a
   assert.equal(calls.windows.length, 1);
   assert.equal(calls.windows[0].type, "popup");
   assert.equal(calls.windows[0].width, 440);
-  assert.equal(calls.windows[0].height, 380);
+  assert.equal(calls.windows[0].height, 410);
   assert.match(calls.windows[0].url, /src\/tab-title\/rename\.html\?tabId=42$/);
 });
 
