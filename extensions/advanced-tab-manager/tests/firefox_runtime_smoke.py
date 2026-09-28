@@ -474,7 +474,10 @@ def main() -> int:
 
             driver.get("about:blank")
             wait_until(lambda: driver.current_url == "about:blank", 10, "restricted Firefox page loaded for fail-closed rename check")
-            invoke_tab_title_menu(driver, expect_dialog=False)
+            require(
+                "Rename tab title…" not in tab_context_menu_labels(driver),
+                "restricted Firefox pages do not expose the inapplicable rename command",
+            )
             passes.append("tab-title-rename-restore-reload-restricted")
 
             navigate_extension(driver, "src/manager/manager.html")
