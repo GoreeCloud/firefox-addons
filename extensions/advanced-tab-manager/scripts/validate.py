@@ -26,14 +26,15 @@ assert "unlimitedStorage" not in manifest["permissions"], "bounded Stable saved 
 assert "persistent" not in manifest["background"], "Manifest V3 background must not declare unsupported persistent"
 assert manifest["background"].get("type") == "module"
 assert inventory_entry["source_version"] == "0.1.13"
-assert inventory_entry["source_state"] == "source-candidate"
-assert inventory_entry["accepted_stable_version"] == "0.1.12"
+assert inventory_entry["source_state"] == "stable"
+assert inventory_entry["accepted_stable_version"] == "0.1.13"
 
 required = [
     "README.md", "FEATURES.md", "IMPLEMENTED-FEATURES.md", "PLANNED-FEATURES.md", "CHANGELOGS.md", "SPECIFICATIONS.md", "ARCHITECTURE.md",
     "PRIVACY.md", "SECURITY.md", "CHANGELOG.md", "LICENSE", "icons/advanced-tab-manager.svg",
     "GLAZE-UI-1.5.1-ADOPTION.md", "GLAZE-UI-1.6.0-ADOPTION.md", "RENDERED-ACCEPTANCE-0.1.12.md", "STABLE-SECURITY-REVIEW-0.1.11.md", "RELEASE-ACCEPTANCE-0.1.11.md",
     "STABLE-SECURITY-REVIEW-0.1.12.md", "RELEASE-ACCEPTANCE-0.1.12.md", "docs/signing-evidence-0.1.12.json",
+    "RELEASE-ACCEPTANCE-0.1.13.md", "docs/signing-evidence-0.1.13.json",
     "src/background/background.js", "src/background/browser-state.js", "src/background/tab-residency.js", "src/background/tab-title-renaming.js", "src/background/tree-branch-actions.js", "src/background/saved-state.js", "src/background/duplicate-cleanup.js", "src/background/snooze.js", "src/background/rules.js", "src/background/manager.js", "src/background/portability.js",
     "src/core/state.js", "src/core/tree.js", "src/core/tree-session.js", "src/core/duplicates.js",
     "src/core/persistent-state.js", "src/core/tab-sets.js", "src/core/stash-transaction.js",
@@ -298,6 +299,8 @@ target_acceptance_012 = (ROOT / "TARGET-ACCEPTANCE-0.1.12.md").read_text(encodin
 target_acceptance_013 = (ROOT / "TARGET-ACCEPTANCE-0.1.13.md").read_text(encoding="utf-8")
 target_provenance_013 = json.loads((ROOT / "docs/target-acceptance-provenance-0.1.13.json").read_text(encoding="utf-8"))
 signing_evidence_012 = json.loads((ROOT / "docs/signing-evidence-0.1.12.json").read_text(encoding="utf-8"))
+release_acceptance_013 = (ROOT / "RELEASE-ACCEPTANCE-0.1.13.md").read_text(encoding="utf-8")
+signing_evidence_013 = json.loads((ROOT / "docs/signing-evidence-0.1.13.json").read_text(encoding="utf-8"))
 security_script = (ROOT / "scripts/stable_security_review.py").read_text(encoding="utf-8")
 package_script = (REPOSITORY_ROOT / "shared/scripts/package_extension.py").read_text(encoding="utf-8")
 glaze_script = (ROOT / "scripts/glaze_consumer_qualification.py").read_text(encoding="utf-8")
@@ -339,6 +342,15 @@ assert signing_evidence_012["mozillaSigned"] is True
 assert signing_evidence_012["persistentInstallRestartAccepted"] is True
 assert signing_evidence_012["signedNonManifestPayloadMatchesCandidateByteForByte"] is True
 assert signing_evidence_012["signedManifestGovernedParityAccepted"] is True
+assert "0.1.13" in release_acceptance_013 and "Stable promotion state" in release_acceptance_013
+assert "937d2a31e2ff55ec1c9e4c6688899389a9323642" in release_acceptance_013
+assert signing_evidence_013["version"] == "0.1.13"
+assert signing_evidence_013["candidateSha256"] == "837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5"
+assert signing_evidence_013["signedSha256"] == "6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c"
+assert signing_evidence_013["mozillaSigned"] is True
+assert signing_evidence_013["persistentInstallRestartAccepted"] is True
+assert signing_evidence_013["signedNonManifestPayloadMatchesCandidateByteForByte"] is True
+assert signing_evidence_013["signedManifestGovernedParityAccepted"] is True
 assert '"git"' in security_script and '"log"' in security_script and "--full-history" in security_script
 assert "manifest.json" in security_script and "EXPECTED_VERSION" in security_script
 assert '"docs/"' in security_script, "Stable security inspection must reject extension maintenance docs in XPI"
@@ -346,8 +358,12 @@ assert '"docs"' in package_script and "EXCLUDE_PARTS" in package_script, "shared
 assert 'GLAZE_VERSION = "1.6.0"' in glaze_script
 assert 'GLAZE_AUTHORITY_REPOSITORY = "GoreeCloud/glaze-ui"' in glaze_script
 assert 'GLAZE_STABLE_SOURCE = "a7180679ea851389e0f3004515f9a25f420e716d"' in glaze_script
-assert '"status": "adoption-required"' in glaze_script
-assert '"consumerRegistryAccepted": False' in glaze_script
+assert '"status": "accepted-v1"' in glaze_script
+assert '"consumerRegistryAccepted": True' in glaze_script
+assert 'GLAZE_CONSUMER_REGISTRY_ACCEPTANCE = "937d2a31e2ff55ec1c9e4c6688899389a9323642"' in glaze_script
+assert 'MOZILLA_SIGNED_XPI_SHA256 = "6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c"' in glaze_script
+assert "MOZILLA_SIGNING_RESTART_RUN_ID = 36431225028" in glaze_script
+assert '"signedRuntimeRestartAccepted": True' in glaze_script
 assert '"applicablePresentationObligationsAccepted": True' in glaze_script
 assert '"representativeRenderedAcceptanceComplete": True' in glaze_script
 assert '"assistiveTechnologyAcceptanceComplete": True' in glaze_script
@@ -355,7 +371,7 @@ assert '"largeTextAcceptanceComplete": True' in glaze_script
 assert 'ACCEPTED_RUNTIME_REVISION = "89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe"' in glaze_script
 assert 'ACCEPTED_UNSIGNED_XPI_SHA256 = "837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5"' in glaze_script
 assert 'TARGET_ACCEPTANCE_RECORD_SHA256 = "e590735ccd3909d164b0e3ad6802a4366ff08e8dcfa35ba8a73121749ac1307c"' in glaze_script
-assert "b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb" in glaze_adoption
+assert "937d2a31e2ff55ec1c9e4c6688899389a9323642" in glaze_adoption
 assert "sharedPerformanceAcceptanceInherited" in glaze_script and "False" in glaze_script
 assert "fetch-depth: 0" in release_workflow
 assert "github.event.pull_request.head.sha || github.sha" in release_workflow
@@ -380,6 +396,11 @@ assert "web-ext@10.5.0 sign" in signing_workflow and "--channel=unlisted" in sig
 assert "AMO_JWT_ISSUER" in signing_workflow and "AMO_JWT_SECRET" in signing_workflow
 assert "stable_security_review.py" in signing_workflow and "glaze_consumer_qualification.py" in signing_workflow
 assert "advanced-tab-manager-glaze-1.6.0-acceptance.json" in signing_workflow
+assert "Restore current Glaze consumer acceptance authority" in signing_workflow
+assert 'git show "$GITHUB_SHA":extensions/advanced-tab-manager/scripts/glaze_consumer_qualification.py' in signing_workflow
+assert "Capture current lifecycle metadata" in signing_workflow
+assert 'git show "$GITHUB_SHA":docs/extension-inventory.json > dist/current-extension-inventory.json' in signing_workflow
+assert "dist/current-extension-inventory.json" in signing_workflow
 assert "workflowRevision" in signing_workflow and "sourceRevision" in signing_workflow
 assert "dist/target-acceptance-provenance.json" in signing_workflow
 assert "verify_signed_xpi.py" in signing_workflow and "signed_restart_smoke.py" in signing_workflow
@@ -416,4 +437,4 @@ assert "NoRedirect" in amo_recovery and "/api/v4/file/" in amo_recovery
 assert '"Authorization": f"JWT {token}"' in amo_recovery
 assert 'mirror_request = Request(location, headers={"User-Agent": USER_AGENT})' in amo_recovery
 
-print("Validated Advanced Tab Manager 0.1.13 source candidate while preserving accepted Stable 0.1.12 release evidence.")
+print("Validated Advanced Tab Manager 0.1.13 Stable promotion state while preserving Stable 0.1.12 rollback evidence.")
