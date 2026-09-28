@@ -2,9 +2,9 @@
 
 ## Status
 
-**Product:** GoreeCloud Advanced Tab Manager 0.1.13 source candidate  
-**Lifecycle:** Development  
-**Accepted product Stable:** 0.1.12  
+**Product:** GoreeCloud Advanced Tab Manager 0.1.13  
+**Lifecycle:** Stable  
+**Accepted product Stable:** 0.1.13  
 **Platform:** Firefox browser extension  
 **Required shared target:** GLAZE UI V1.6 / machine version 1.6.0  
 **Shared authority repository:** `GoreeCloud/glaze-ui`  
@@ -13,21 +13,21 @@
 **Qualification evidence integration:** `354f5759385c28596fcfec26a3ad525e89fb1c35`  
 **Published shared artifact SHA-256:** `687268b5eb76917eccae9d935ffa1bead333d5dee50b6098e996a3f44cee50af`
 
-GLAZE UI V1.6 / 1.6.0 is the current shared GoreeCloud adoption target. V1.5.1 is the immediate shared rollback baseline and remains historical provenance for Advanced Tab Manager Stable 0.1.11; it is not the current acceptance target for 0.1.12.
+GLAZE UI V1.6 / 1.6.0 is the current shared GoreeCloud adoption target. V1.5.1 is the immediate shared rollback baseline and remains historical provenance for Advanced Tab Manager Stable 0.1.11; it is not the current acceptance target for 0.1.13.
 
 ## Adoption boundary
 
-The exact 0.1.13 runtime revision is not yet accepted in the authoritative Glaze consumer registry. Stable 0.1.12 acceptance remains current-release evidence and does not transfer automatically to this new package. The owner has now completed the fresh 0.1.13 product-specific human target review. Machine evidence continues to report `status: adoption-required` only because Mozilla-signed restart acceptance and authoritative Glaze consumer-registry acceptance remain separate downstream gates.
+The exact 0.1.13 runtime revision `89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe` is accepted in the authoritative Glaze consumer registry at merge `937d2a31e2ff55ec1c9e4c6688899389a9323642`. The accepted consumer record binds the owner-completed rendered/accessibility/environmental review, deterministic unsigned XPI SHA-256 `837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5`, Mozilla-signed XPI SHA-256 `6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c`, and signing/restart run `36431225028`.
 
 Advanced Tab Manager uses repository-local Firefox HTML/CSS/JavaScript presentation rather than embedding the shared Glaze runtime package. V1.6 adoption therefore means mapping the applicable Glaze contracts into the product's own constrained browser surfaces and proving those mappings at an exact consumer revision.
 
-The shared V1.6 Stable release does not grant Advanced Tab Manager consumer acceptance, product Stable status, production eligibility, signing acceptance, or deployment acceptance automatically.
+The shared V1.6 Stable release does not itself grant product lifecycle or production eligibility. Those remain independently governed in `GoreeCloud/firefox-addons`.
 
-Current machine evidence reports `status: accepted-v1` only after product-specific V1.6 rendered/accessibility/environmental acceptance, Mozilla-signed restart acceptance, and authoritative consumer-registry acceptance are all recorded.
+Current machine evidence reports `status: accepted-v1` with `consumerRegistryAccepted: true` because product-specific V1.6 rendered/accessibility/environmental acceptance, Mozilla-signed restart acceptance, and authoritative consumer-registry acceptance are all recorded for the exact 0.1.13 runtime.
 
 ## Applicable V1.6 source mapping
 
-The current 0.1.13 source candidate maps the following applicable V1.6 principles:
+Stable 0.1.13 maps the following applicable V1.6 principles:
 
 - a shared repository-local `src/shared/glaze.css` surface/token layer consumed by the sidebar, popup, Manager, and tab-title rename dialog so material hierarchy, geometry, focus treatment, and product lockup presentation remain consistent without a remote runtime dependency;
 - semantic system colors and protected state meaning;
@@ -59,22 +59,24 @@ The previous 0.1.12 source/machine qualification against V1.5.1 and the owner-re
 
 `dist/advanced-tab-manager-glaze-1.6.0-adoption.json`
 
-Current pre-registry evidence state:
+Current accepted consumer evidence state:
 
 - `glazeTargetVersion: 1.6.0`;
-- `status: adoption-required`;
+- `status: accepted-v1`;
 - `sourceMappingValidated: true`;
 - `applicablePresentationObligationsAccepted: true`;
 - `representativeRenderedAcceptanceComplete: true`;
 - `assistiveTechnologyAcceptanceComplete: true`;
 - `largeTextAcceptanceComplete: true`;
-- `consumerRegistryAccepted: false`;
+- `consumerRegistryAccepted: true`;
+- `consumerRegistryAcceptanceCommit: 937d2a31e2ff55ec1c9e4c6688899389a9323642`;
+- `signedRuntimeRestartAccepted: true`;
 - `productStableStatusImplied: false`;
 - `productionEligibilityImplied: false`.
 
 ## Governed target-review infrastructure
 
-`TARGET-ACCEPTANCE-0.1.12.md` and `scripts/target_acceptance.py` define a closed, privacy-minimized human-review evidence contract. The manual **Advanced Tab Manager Target Review Candidate** workflow can package one exact source revision twice, prove deterministic bytes, rerun repository/runtime/security/Glaze-source checks, and retain the exact unsigned XPI for human review. The complete human record remains local unless a later governed release step explicitly binds to a privacy-safe provenance digest.
+`TARGET-ACCEPTANCE-0.1.13.md` and `scripts/target_acceptance.py` define a closed, privacy-minimized human-review evidence contract. The manual **Advanced Tab Manager Target Review Candidate** workflow can package one exact source revision twice, prove deterministic bytes, rerun repository/runtime/security/Glaze-source checks, and retain the exact unsigned XPI for human review. The complete human record remains local unless a later governed release step explicitly binds to a privacy-safe provenance digest.
 
 This infrastructure remains the governed evidence mechanism. For Stable 0.1.12, its human keyboard, assistive-technology, alternate-appearance, and large-text/reflow review is complete and bound to the accepted runtime revision.
 
@@ -82,11 +84,11 @@ For the 0.1.13 candidate, the owner completed the same governed human review and
 
 September 27 owner-rendered screenshots initially served as remediation evidence and drove the shared-token/visual-polish refinement. Subsequent exact-candidate owner review completed the required post-change rendering and accessibility acceptance for the runtime revision recorded below.
 
-## 0.1.13 human product review complete; downstream acceptance pending
+## 0.1.13 consumer acceptance complete
 
-Advanced Tab Manager 0.1.13 has completed the applicable product-specific human V1.6 rendered, keyboard, assistive-technology, Forced Colors, Reduced Transparency, dark-appearance, Reduced Motion, high-zoom/large-text/reflow, constrained-layout, and Firefox native icon-surface review for the exact candidate identified above.
+Advanced Tab Manager 0.1.13 completed the applicable product-specific human V1.6 rendered, keyboard, assistive-technology, Forced Colors, Reduced Transparency, dark-appearance, Reduced Motion, high-zoom/large-text/reflow, constrained-layout, and Firefox native icon-surface review for the exact runtime identified above.
 
-This closes the human target-review portion of V1.6 adoption for 0.1.13. It does **not** inherit or manufacture shared-registry acceptance. Until Mozilla-signed restart acceptance completes and `GoreeCloud/glaze-ui` accepts the exact 0.1.13 consumer record, repository-local machine evidence remains `status: adoption-required` with `consumerRegistryAccepted: false`.
+Governed signing/restart run `36431225028` then verified the same accepted payload after Mozilla signing, persistent installation, and a full Firefox restart. The authoritative `GoreeCloud/glaze-ui` registry accepted the exact 0.1.13 consumer record in merge `937d2a31e2ff55ec1c9e4c6688899389a9323642` with `status: accepted-v1` and `productionEligible: false`. Product Stable lifecycle authority remains independent and is recorded in canonical Firefox-extension lifecycle metadata.
 
 ## Completed product acceptance
 

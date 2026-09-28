@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.13 — Source candidate
+## 0.1.13 — Stable
 
 - Added the approved GoreeCloud Advanced Tab Manager product icon as a byte-identical consumer derivative of `GoreeCloud/branding-assets/products/advanced-tab-manager/app-icon.svg` (canonical Git blob `2c1865ee3809ae91c3bcb42d2d39275668651ab7`).
 - Declared Firefox top-level `icons` metadata at 16, 32, 48, 64, 96, and 128 logical sizes and set `action.default_icon`, correcting the generic puzzle-piece identity shown in Add-ons Manager and toolbar surfaces when icon metadata is absent.
@@ -14,7 +14,9 @@
 - Corrected the signing source-history gate for the reviewed PR #144 head: because GitHub squash-merged that exact reviewed head, signing now verifies the accepted head exists, verifies its known squash integration commit is an ancestor of authoritative main, and still rebuilds the frozen head to the exact accepted XPI SHA-256 before submission instead of incorrectly requiring the pre-squash PR head itself to be a main-line ancestor.
 - Strengthened persistent signed-restart acceptance to verify Firefox AddonManager still resolves the canonical Advanced Tab Manager icon and all declared icon sizes both before and after the full Firefox restart.
 - Added no permission, host permission, content script, remote dependency, telemetry, or browser-authority expansion.
-- Stable 0.1.12 remains the accepted Mozilla-signed release; 0.1.13 does not inherit Stable or exact-revision GLAZE UI consumer acceptance.
+- Completed governed Mozilla signing/full-restart acceptance in run `36431225028`; signed XPI SHA-256 is `6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c`.
+- Established fresh authoritative GLAZE UI V1.6 consumer acceptance for the exact 0.1.13 runtime at `GoreeCloud/glaze-ui` merge `937d2a31e2ff55ec1c9e4c6688899389a9323642`.
+- Promoted 0.1.13 to the canonical Stable lifecycle without changing accepted runtime bytes; Stable 0.1.12 remains rollback provenance.
 
 ## 0.1.12 — Stable
 

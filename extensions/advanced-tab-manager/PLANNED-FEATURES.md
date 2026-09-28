@@ -2,7 +2,7 @@
 
 > **Authority:** Component-scoped repository-native planned-feature record under `extensions/advanced-tab-manager/`. The former Drive roadmap is retired after verified migration.
 
-**Lifecycle:** Development 0.1.13 · Accepted Stable: 0.1.12  
+**Lifecycle:** Stable 0.1.13 · Accepted Stable: 0.1.13  
 **Authoritative project record:** `GoreeCloud/Project Specifications/Project Specification — Advanced Tab Manager.docx`
 
 | ID | Obligation | Priority | State |
@@ -23,7 +23,7 @@
 | ATM-008C | Add a privacy-minimized full-window manager/diagnostics foundation without new mutation authority. | Medium | Accepted in Stable 0.1.11 |
 | ATM-008D | Add versioned local backup export and validated source-preserving import for implemented extension-owned stores. | Medium | Accepted in Stable 0.1.11 |
 | ATM-008E | Add retained local session snapshots and deterministic large-session core qualification without replacing the live Firefox session. | Medium | Accepted in Stable 0.1.11; additional representative rendered-scale/performance coverage remains future work |
-| ATM-008F | Refine popup, sidebar, and Manager visual hierarchy/interaction quality; remove stale embedded lifecycle labels; requalify the material presentation delta against current Stable Glaze UI. | High | Implemented in 0.1.12 Development source. Historical V1.5.1 source qualification and Firefox 156/Linux normal-light review remain bounded provenance; current shared GLAZE UI V1.6 / 1.6.0 source mapping is established, a shared cross-surface Glaze token/material refinement is implemented in the 0.1.12 Development line, and governed exact-source human target-review tooling is prepared. Fresh post-refinement rendered review plus human keyboard/assistive-technology, Forced Colors, Reduced Transparency, dark appearance, high zoom/text scaling, signing, and Stable acceptance remain pending. |
+| ATM-008F | Refine popup, sidebar, and Manager visual hierarchy/interaction quality; remove stale embedded lifecycle labels; requalify the material presentation delta against current Stable Glaze UI. | High | Accepted in Stable 0.1.12 and carried forward in Stable 0.1.13. Current shared GLAZE UI V1.6 / 1.6.0 consumer acceptance is established for the exact 0.1.13 runtime after fresh rendered, keyboard/assistive-technology, Forced Colors, Reduced Transparency, dark appearance, high zoom/text scaling, signing, and restart acceptance. |
 | ATM-009 | Complete privacy/security review, Firefox runtime acceptance, Mozilla signing, and later Stable qualification. | High | Completed for Stable 0.1.11 — governed run `35350654198` passed signed-XPI parity/integrity, persistent installation, full Firefox restart, post-restart product acceptance, Glaze 1.5.1 consumer qualification, and Stable Security Blockers |
 
 No roadmap entry is a release or Stable claim without exact implementation and acceptance evidence.
