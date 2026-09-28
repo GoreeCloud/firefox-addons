@@ -29,7 +29,7 @@ The saved label is not treated as browser authority. A navigation or reload can 
 - Duplicate cleanup remains reviewed, fresh-state checked, guarded, and non-automatic.
 - Snoozing preserves verified recovery-before-destruction semantics and reconstructs ephemeral Firefox alarms from durable local deadlines.
 - Rule-engine global state defaults disabled; explicit Apply now rechecks live plans and target tabs before bounded mutation.
-- Manager diagnostics remain privacy-minimized; 0.1.11 retains the explicit local portability path that mutates only extension-owned local stores after preview and confirmation.
+- Manager diagnostics remain privacy-minimized; Stable 0.1.12 retains the explicit local portability path that mutates only extension-owned local stores after preview and confirmation.
 - The manager model contains counts and health/version metadata only; it does not serialize tab titles/URLs, saved URLs, rule contents, or browsing history.
 - A failed local-store read degrades manager diagnostics rather than fabricating data or mutating recovery state.
 - Retained session snapshots reuse validated organizational state, exclude private/unsupported URLs, enforce 1–50 record retention, and restore additively into new windows with created-window rollback on failure.
@@ -40,7 +40,7 @@ The saved label is not treated as browser authority. A navigation or reload can 
 
 ## Release boundary
 
-Stable 0.1.11 completed the exact-candidate release gates: real-Firefox runtime acceptance, repository-local Glaze UI 1.5.1 qualification, Stable Security Blockers qualification, governed Mozilla signing, signed-XPI parity/integrity, persistent signed installation, full Firefox restart acceptance, and post-restart product acceptance. The Stable promotion changes metadata/documentation only and does not alter the accepted signed runtime payload.
+Stable 0.1.12 completed the exact-candidate release gates: real-Firefox runtime acceptance, authoritative GLAZE UI V1.6 consumer acceptance, Stable Security Blockers qualification, governed Mozilla signing, signed-XPI parity/integrity, persistent signed installation, full Firefox restart acceptance, and post-restart product acceptance. Accepted runtime revision is `43f3010607550d7d4380353b97f85a4dd0186695`; unsigned XPI SHA-256 is `3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f`; signed XPI SHA-256 is `2e54bdf2aa312c9cfe2895fd456f6d088a58eab6d24de80339e996e3e9ae11ba`.
 
 
 ## Portability hardening — 0.1.9
@@ -86,3 +86,10 @@ The signed XPI must then install persistently, survive a full Firefox process re
 Governed signing/restart run `35350654198` accepted source revision `34c27805c3b56f3ba858794c785f6b68d1f7b8f3`, deterministic unsigned XPI SHA-256 `9c0f44926ac1d2f213fd07f82dd18fa11bd54ceebc6cd871898fe82b962a5b02`, and Mozilla-signed XPI SHA-256 `e0f16901529cb8fa76e57d9aa056c98de9fa04e708f2232c151d5b75c1dfdb1d`.
 
 The same governed run re-ran the Stable Security Blocker qualification and GLAZE UI 1.5.1 consumer qualification, verified signed payload parity, and completed persistent-install/full-restart product acceptance. No security exception is recorded for this release.
+
+
+## Stable 0.1.12 accepted security evidence
+
+Governed signing/restart run `36378135958` accepted runtime source revision `43f3010607550d7d4380353b97f85a4dd0186695`, deterministic unsigned XPI SHA-256 `3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f`, and Mozilla-signed XPI SHA-256 `2e54bdf2aa312c9cfe2895fd456f6d088a58eab6d24de80339e996e3e9ae11ba`.
+
+The same governed run re-ran Stable Security Blockers, verified signed payload parity, installed the signed XPI persistently, completed a full Firefox restart without reinstalling, and passed post-restart release-critical acceptance. The authoritative GLAZE UI V1.6 registry acceptance commit is `b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb`. No security exception is recorded for Stable 0.1.12.
