@@ -3,12 +3,13 @@
 ## Status
 
 **Version:** 0.1.13  
-**Lifecycle:** Stable promotion state  
+**Lifecycle:** Stable  
 **Accepted Stable version:** 0.1.13  
 **Accepted runtime source revision:** `89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe`  
 **Accepted unsigned XPI SHA-256:** `837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5`  
 **Mozilla-signed XPI SHA-256:** `6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c`  
 **Initial signing/restart workflow run:** `36431225028`  
+**Final Stable signing/restart workflow run:** `36436396986`  
 **GLAZE UI V1.6 consumer acceptance:** `937d2a31e2ff55ec1c9e4c6688899389a9323642`
 
 0.1.13 is the accepted Stable successor to 0.1.12. Its bounded runtime change corrects Firefox-native extension product identity by packaging the canonical GoreeCloud Advanced Tab Manager artwork through manifest `icons` and `action.default_icon`. It does not expand the accepted permission, privacy, storage, remote-dependency, or browser-mutation boundaries of Stable 0.1.12.
@@ -41,9 +42,9 @@ There are no host permissions, no declarative content scripts, no private-browsi
 
 ## Mozilla signing and signed-XPI parity
 
-Governed workflow run `36431225028` submitted the exact accepted 0.1.13 candidate to Mozilla's unlisted signing channel and completed successfully. The run verified Mozilla signature metadata, exact add-on identity/version, non-manifest byte parity, governed manifest parity, and signed XPI SHA-256 `6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c`.
+Governed workflow run `36431225028` submitted the exact accepted 0.1.13 candidate to Mozilla's unlisted signing channel and completed successfully. After Stable lifecycle promotion, governed workflow run `36436396986` recovered the same approved unlisted Mozilla version and re-verified exact candidate identity, Mozilla signature metadata, non-manifest byte parity, governed manifest parity, and signed XPI SHA-256 `6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c`.
 
-The verbatim initial machine evidence is retained at `docs/signing-evidence-0.1.13.json`. Stable promotion changes only lifecycle/documentation/qualification authority; it does not rebuild or mutate the accepted runtime bytes.
+The final verbatim machine evidence is retained at `docs/signing-evidence-0.1.13.json`. It records `sourceState: stable`, `acceptedStableVersion: 0.1.13`, `stablePromoted: true`, `glazeConsumerAccepted: true`, and `persistentInstallRestartAccepted: true`. Stable promotion changed lifecycle/documentation/qualification authority only; it did not rebuild or mutate the accepted runtime bytes.
 
 ## Persistent signed installation and full restart
 
@@ -61,4 +62,4 @@ All pre-promotion human, security, Mozilla-signing, signed-payload parity, persi
 
 Canonical inventory records `source_state: stable` and `accepted_stable_version: 0.1.13`. The promotion introduces no packaged runtime delta and preserves the accepted runtime revision and XPI digests above. Stable 0.1.12 remains rollback provenance.
 
-The promotion changes the signing workflow so its post-promotion run evaluates current authoritative Glaze acceptance and current lifecycle metadata while rebuilding and signing only the frozen accepted runtime source. Task closure requires that promotion-triggered run to complete successfully and derive both `stablePromoted: true` and `glazeConsumerAccepted: true` without changing accepted runtime bytes.
+Promotion-triggered signing/restart run `36436396986` completed successfully against authoritative main `257fbeb40c4e7e3e7b1d7a9fa2ee32ec63a6621e`. It rebuilt the frozen accepted runtime to unsigned SHA-256 `837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5`, recovered the exact existing Mozilla-signed XPI with SHA-256 `6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c`, repeated full persistent-install/restart acceptance, and derived both `stablePromoted: true` and `glazeConsumerAccepted: true`.
