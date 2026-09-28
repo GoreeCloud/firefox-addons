@@ -121,7 +121,8 @@ assert "browser.scripting.executeScript" in tab_title_renaming, "tab title chang
 assert "browser.sessions.setTabValue" in tab_title_renaming and "browser.sessions.removeTabValue" in tab_title_renaming
 assert "restoreSessionTitle" in tab_title_renaming and "restorePageTitleOverride" in tab_title_renaming and "rollbackApplied" in tab_title_renaming
 assert "restoreSessionTitle" in tab_title_renaming and "restorePageTitleOverride" in tab_title_renaming and "rollbackApplied" in tab_title_renaming, "tab-title metadata failures must attempt verified rollback"
-assert "rollbackApplied" in tab_title_js and "restored the previous tab title" in tab_title_js, "rename dialog must report rollback outcome truthfully"
+assert "rollbackApplied" in tab_title_js and "restored the previous tab title" in tab_title_js
+assert "session-metadata-read-failed" in tab_title_renaming and "session-metadata-read-failed" in tab_title_js, "rename dialog must report rollback outcome truthfully"
 assert 'contexts: ["tab"]' in tab_title_renaming and 'title: "Rename tab title…"' in tab_title_renaming
 assert 'documentUrlPatterns: ["http://*/*", "https://*/*"]' in tab_title_renaming, "rename menu must be hidden on unsupported Firefox/system pages"
 assert "browser.runtime.onInstalled.addListener" in tab_title_renaming, "MV3 menu creation must be bound to runtime.onInstalled so event-page restarts cannot remove it"
