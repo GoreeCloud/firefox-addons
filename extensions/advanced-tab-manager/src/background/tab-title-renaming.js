@@ -47,7 +47,7 @@ export function applyTabTitleOverride(customTitle, fallbackTitle, maxLength = MA
 
   state.observer = new MutationObserver(() => {
     if (document.title === state.title) return;
-    state.pageTitle = String(document.title || state.pageTitle || "");
+    state.pageTitle = String(document.title ?? "");
     reapply();
   });
 
