@@ -6,6 +6,7 @@
 - Added **Rename tab title…** to Firefox's tab context menu for eligible non-private HTTP(S) tabs, with menu visibility itself restricted to HTTP(S) documents so Firefox/system/extension pages do not present an inapplicable command.
 - Added a dedicated Glaze-aligned rename dialog with Restore page title, 160-character validation, keyboard focus treatment, Reduced Transparency, and Forced Colors fallbacks.
 - Added a same-document title observer so dynamic sites cannot immediately overwrite the custom label.
+- Corrected Restore page title so an intentionally empty website title remains empty when restored; deterministic and real-Firefox qualification cover this edge case.
 - Stored the custom label with Firefox session-tab metadata so the value follows supported close/restore cycles without treating runtime tab IDs as durable.
 - Hardened rename/restore persistence as a rollback-aware transaction: if Firefox session-tab metadata cannot be committed after the visible title changes, Advanced Tab Manager verifies or restores the previous session value, restores the prior title state when scripting authority remains available, suppresses the success broadcast, and reports the rollback outcome.
 - Added a specific dialog message when Firefox session-tab metadata cannot be read before a rename, so the fail-closed state is understandable instead of falling through to a generic error.
