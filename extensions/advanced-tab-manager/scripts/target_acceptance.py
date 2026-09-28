@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Privacy-minimized human target-acceptance contract for Advanced Tab Manager 0.1.12."""
+"""Privacy-minimized human target-acceptance contract for Advanced Tab Manager 0.1.13."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from typing import Any
 
 SCHEMA_VERSION = 1
 PRODUCT = "GoreeCloud Advanced Tab Manager"
-EXPECTED_RELEASE = "0.1.12"
+EXPECTED_RELEASE = "0.1.13"
 EXPECTED_ADDON_ID = "advanced-tab-manager@goreecloud.com"
 
 DEVICE_CLASSES = {"desktop", "laptop"}
@@ -52,6 +52,7 @@ ENVIRONMENT_CHECKS = (
     "narrow_sidebar_usable",
     "popup_no_clipping",
     "manager_no_clipping",
+    "firefox_extension_icon_surfaces",
 )
 
 BLOCKER_CODES = {

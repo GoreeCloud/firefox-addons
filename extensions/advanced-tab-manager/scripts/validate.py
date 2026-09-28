@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import hashlib
 import json
 from pathlib import Path
 
@@ -10,24 +11,27 @@ inventory_entry = next(item for item in inventory["extensions"] if item["slug"] 
 
 assert manifest["manifest_version"] == 3
 assert manifest["name"] == "GoreeCloud Advanced Tab Manager"
-assert manifest["version"] == "0.1.12"
+assert manifest["version"] == "0.1.13"
 assert manifest["homepage_url"] == "https://github.com/GoreeCloud/firefox-addons"
 assert manifest["browser_specific_settings"]["gecko"]["id"] == "advanced-tab-manager@goreecloud.com"
 assert manifest["browser_specific_settings"]["gecko"]["strict_min_version"] == "139.0"
 assert manifest["incognito"] == "not_allowed"
+expected_icon = "icons/advanced-tab-manager.svg"
+assert manifest["icons"] == {size: expected_icon for size in ("16", "32", "48", "64", "96", "128")}
+assert manifest["action"].get("default_icon") == expected_icon
 assert set(manifest["permissions"]) == {"activeTab", "alarms", "menus", "scripting", "sessions", "storage", "tabGroups", "tabs"}
 assert not manifest.get("host_permissions"), "Stable source must not request host permissions"
 assert "content_scripts" not in manifest, "Stable source must not inspect page content"
 assert "unlimitedStorage" not in manifest["permissions"], "bounded Stable saved state must not request unlimited storage"
 assert "persistent" not in manifest["background"], "Manifest V3 background must not declare unsupported persistent"
 assert manifest["background"].get("type") == "module"
-assert inventory_entry["source_version"] == "0.1.12"
-assert inventory_entry["source_state"] == "stable"
+assert inventory_entry["source_version"] == "0.1.13"
+assert inventory_entry["source_state"] == "source-candidate"
 assert inventory_entry["accepted_stable_version"] == "0.1.12"
 
 required = [
     "README.md", "FEATURES.md", "IMPLEMENTED-FEATURES.md", "PLANNED-FEATURES.md", "CHANGELOGS.md", "SPECIFICATIONS.md", "ARCHITECTURE.md",
-    "PRIVACY.md", "SECURITY.md", "CHANGELOG.md", "LICENSE",
+    "PRIVACY.md", "SECURITY.md", "CHANGELOG.md", "LICENSE", "icons/advanced-tab-manager.svg",
     "GLAZE-UI-1.5.1-ADOPTION.md", "GLAZE-UI-1.6.0-ADOPTION.md", "RENDERED-ACCEPTANCE-0.1.12.md", "STABLE-SECURITY-REVIEW-0.1.11.md", "RELEASE-ACCEPTANCE-0.1.11.md",
     "STABLE-SECURITY-REVIEW-0.1.12.md", "RELEASE-ACCEPTANCE-0.1.12.md", "docs/signing-evidence-0.1.12.json",
     "src/background/background.js", "src/background/browser-state.js", "src/background/tab-residency.js", "src/background/tab-title-renaming.js", "src/background/tree-branch-actions.js", "src/background/saved-state.js", "src/background/duplicate-cleanup.js", "src/background/snooze.js", "src/background/rules.js", "src/background/manager.js", "src/background/portability.js",
@@ -51,10 +55,14 @@ required = [
     "RELEASE-ACCEPTANCE-0.1.10.md",
     "scripts/large-session-qualification.mjs", "scripts/stable_security_review.py", "scripts/glaze_consumer_qualification.py",
     "scripts/target_acceptance.py", "scripts/test_target_acceptance.py", "scripts/validate_target_acceptance_source.py",
-    "TARGET-ACCEPTANCE-0.1.12.md"
+    "TARGET-ACCEPTANCE-0.1.12.md", "TARGET-ACCEPTANCE-0.1.13.md"
 ]
 for relative in required:
     assert (ROOT / relative).is_file(), f"missing required Advanced Tab Manager file: {relative}"
+
+icon_bytes = (ROOT / expected_icon).read_bytes()
+icon_blob_sha1 = hashlib.sha1(f"blob {len(icon_bytes)}\0".encode("ascii") + icon_bytes).hexdigest()
+assert icon_blob_sha1 == "2c1865ee3809ae91c3bcb42d2d39275668651ab7", "packaged icon must match canonical GoreeCloud branding blob"
 
 background = (ROOT / "src/background/background.js").read_text(encoding="utf-8")
 tab_residency = (ROOT / "src/background/tab-residency.js").read_text(encoding="utf-8")
@@ -202,7 +210,7 @@ assert "Local backup and portability" in manager_html and 'id="export-backup"' i
 assert 'id="apply-import"' in manager_html and 'id="clear-import"' in manager_html
 assert "prefers-reduced-transparency" in manager_css and "forced-colors" in manager_css
 assert "browser.tabs.create" in manager_link and "src/manager/manager.html" in manager_link
-assert 'id="open-manager"' in popup_html and "0.1.12" in popup_html and 'id="metric-tabs"' in popup_html
+assert 'id="open-manager"' in popup_html and "0.1.13" in popup_html and 'id="metric-tabs"' in popup_html
 assert 'id="residency-status"' in popup_html and "summarizeTabResidency" in popup_js
 assert "source candidate" not in popup_html.lower(), "packaged popup must be lifecycle-neutral for release signing"
 assert "development source only" not in manager_html.lower(), "packaged Manager must be lifecycle-neutral for release signing"
@@ -228,7 +236,7 @@ assert 'sourceVersion: "0.1.11"' not in large_session_qualification, "large-sess
 assert "representative Firefox rendered/runtime performance remains separate" in large_session_qualification
 
 assert 'EXPECTED_ADDON_ID = "advanced-tab-manager@goreecloud.com"' in runtime_smoke
-assert 'EXPECTED_VERSION = "0.1.12"' in runtime_smoke
+assert 'EXPECTED_VERSION = "0.1.13"' in runtime_smoke
 assert "gBrowser.addTrustedTab" in runtime_smoke and "--allow-system-access" in runtime_smoke
 assert "tabContextMenu" in runtime_smoke and "Rename tab title…" in runtime_smoke, "real-Firefox smoke must verify the native tab context menu item is visible"
 assert "tab-title-rename-restore-reload-restricted" in runtime_smoke, "real-Firefox smoke must exercise rename, same-document persistence, reload reapplication, restore, and restricted-page failure"
@@ -323,9 +331,8 @@ assert '"docs"' in package_script and "EXCLUDE_PARTS" in package_script, "shared
 assert 'GLAZE_VERSION = "1.6.0"' in glaze_script
 assert 'GLAZE_AUTHORITY_REPOSITORY = "GoreeCloud/glaze-ui"' in glaze_script
 assert 'GLAZE_STABLE_SOURCE = "a7180679ea851389e0f3004515f9a25f420e716d"' in glaze_script
-assert '"status": "accepted-v1"' in glaze_script
-assert '"consumerRegistryAccepted": True' in glaze_script
-assert 'GLAZE_CONSUMER_REGISTRY_ACCEPTANCE = "b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb"' in glaze_script
+assert '"status": "adoption-required"' in glaze_script
+assert '"consumerRegistryAccepted": False' in glaze_script
 assert "b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb" in glaze_adoption
 assert "sharedPerformanceAcceptanceInherited" in glaze_script and "False" in glaze_script
 assert "fetch-depth: 0" in release_workflow
@@ -379,4 +386,4 @@ assert "NoRedirect" in amo_recovery and "/api/v4/file/" in amo_recovery
 assert '"Authorization": f"JWT {token}"' in amo_recovery
 assert 'mirror_request = Request(location, headers={"User-Agent": USER_AGENT})' in amo_recovery
 
-print("Validated Advanced Tab Manager Stable 0.1.12 while preserving historical Stable 0.1.11 release evidence.")
+print("Validated Advanced Tab Manager 0.1.13 source candidate while preserving accepted Stable 0.1.12 release evidence.")

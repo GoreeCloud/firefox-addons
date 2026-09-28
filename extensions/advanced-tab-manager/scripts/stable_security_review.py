@@ -18,6 +18,8 @@ EXPECTED_VERSION = str(
 )
 EXPECTED_ID = "advanced-tab-manager@goreecloud.com"
 EXPECTED_PERMISSIONS = {"activeTab", "alarms", "menus", "scripting", "sessions", "storage", "tabGroups", "tabs"}
+EXPECTED_ICON_PATH = "icons/advanced-tab-manager.svg"
+EXPECTED_ICON_GIT_BLOB_SHA1 = "2c1865ee3809ae91c3bcb42d2d39275668651ab7"
 
 SECRET_PATTERNS = {
     "private-key": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
@@ -65,6 +67,9 @@ def validate_manifest(manifest: dict) -> None:
     require("content_scripts" not in manifest, "declarative content scripts are forbidden for this release candidate")
     require(manifest.get("incognito") == "not_allowed", "private browsing must remain disabled")
     require("unlimitedStorage" not in manifest.get("permissions", []), "unlimitedStorage is forbidden")
+    expected_icons = {size: EXPECTED_ICON_PATH for size in ("16", "32", "48", "64", "96", "128")}
+    require(manifest.get("icons") == expected_icons, "Firefox extension icon map is missing or noncanonical")
+    require(manifest.get("action", {}).get("default_icon") == EXPECTED_ICON_PATH, "Firefox action icon is missing or noncanonical")
 
 
 def scan_text(label: str, text: str, patterns: dict[str, re.Pattern[str]]) -> None:
@@ -75,7 +80,7 @@ def scan_text(label: str, text: str, patterns: dict[str, re.Pattern[str]]) -> No
 def runtime_files() -> list[Path]:
     files = [ROOT / "manifest.json"]
     files.extend(sorted((ROOT / "src").rglob("*")))
-    return [path for path in files if path.is_file() and path.suffix.lower() in {".json", ".js", ".html", ".css"}]
+    return [path for path in files if path.is_file() and path.suffix.lower() in {".json", ".js", ".html", ".css", ".svg"}]
 
 
 def scan_runtime_source() -> int:
@@ -126,6 +131,10 @@ def inspect_xpi(path: Path) -> tuple[int, dict]:
         require("manifest.json" in names, "candidate XPI is missing manifest.json")
         manifest = read_manifest_bytes(archive.read("manifest.json"))
         validate_manifest(manifest)
+        require(EXPECTED_ICON_PATH in names, "candidate XPI is missing the Advanced Tab Manager icon")
+        icon_bytes = archive.read(EXPECTED_ICON_PATH)
+        icon_blob_sha1 = hashlib.sha1(f"blob {len(icon_bytes)}\0".encode("ascii") + icon_bytes).hexdigest()
+        require(icon_blob_sha1 == EXPECTED_ICON_GIT_BLOB_SHA1, "candidate XPI icon does not match canonical branding blob")
         for name in names:
             normalized = name.lower()
             require(not normalized.startswith(("tests/", "scripts/", "docs/", ".github/")), f"maintenance file leaked into XPI: {name}")

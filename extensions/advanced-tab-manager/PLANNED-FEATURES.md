@@ -2,7 +2,7 @@
 
 > **Authority:** Component-scoped repository-native planned-feature record under `extensions/advanced-tab-manager/`. The former Drive roadmap is retired after verified migration.
 
-**Lifecycle:** Development 0.1.12 · Accepted Stable: 0.1.11  
+**Lifecycle:** Development 0.1.13 · Accepted Stable: 0.1.12  
 **Authoritative project record:** `GoreeCloud/Project Specifications/Project Specification — Advanced Tab Manager.docx`
 
 | ID | Obligation | Priority | State |
@@ -11,12 +11,12 @@
 | ATM-002 | Reconstruct authoritative live Firefox tab/window/native-group state after background cold starts. | High | Implemented and source-verified |
 | ATM-003 | Provide accessible sidebar and popup foundations with safe tab actions. | High | Implemented and source-verified |
 | ATM-004 | Add durable tree relationships and restoration behavior. | High | Accepted in Stable 0.1.11 |
-| ATM-004A | Add tree drag-and-drop, branch move/close/discard operations, and richer manual reparenting UX. | Medium | Branch close/discard plus guarded Move branch to new window are implemented in 0.1.12 Development. All branch actions require the whole branch to be visible and use two-snapshot drift rejection; discard has active/pinned/audible guards, while move is limited to non-private, unpinned, ungrouped, non-Split-View branches with post-move verification and rollback attempts. Drag-and-drop and richer reparenting remain planned. |
+| ATM-004A | Add tree drag-and-drop, branch move/close/discard operations, and richer manual reparenting UX. | Medium | Branch close/discard plus guarded Move branch to new window are accepted in Stable 0.1.12. All branch actions require the whole branch to be visible and use two-snapshot drift rejection; discard has active/pinned/audible guards, while move is limited to non-private, unpinned, ungrouped, non-Split-View branches with post-move verification and rollback attempts. Drag-and-drop and richer reparenting remain planned. |
 | ATM-005 | Add persistent Tab Sets and transactional stashing. | High | Accepted in Stable 0.1.11 |
 | ATM-006 | Add duplicate review and policy-controlled cleanup. | Medium | Accepted in Stable 0.1.11 with exact-URL review and guarded cleanup |
-| ATM-006A | Add optional conservative normalized-URL matching and durable protected-tab cleanup exclusions. | Medium | Opt-in tracking-normalized review/cleanup implemented in 0.1.12 Development with exact URL still default, a bounded tracking-parameter allowlist, explicit keeper/confirmation, fresh-state recheck, and existing cleanup guards. Durable protected-tab cleanup exclusions remain planned. |
+| ATM-006A | Add optional conservative normalized-URL matching and durable protected-tab cleanup exclusions. | Medium | Opt-in tracking-normalized review/cleanup accepted in Stable 0.1.12 with exact URL still default, a bounded tracking-parameter allowlist, explicit keeper/confirmation, fresh-state recheck, and existing cleanup guards. Durable protected-tab cleanup exclusions remain planned. |
 | ATM-007 | Add restart-safe snoozing and deadline reconstruction. | High | Accepted in Stable 0.1.11 with one-shot local deadlines, restart alarm reconstruction, rescheduling, and source-preserving restore |
-| ATM-007A | Add richer arbitrary-date/time snooze scheduling, Later today/Tomorrow/Next week presets, explicit cancellation, and optional recurring schedules only after a separate policy/UX design. | Medium | Arbitrary future date/time, +1 hour, Later today, tomorrow morning, Next week, rescheduling, early restore, and explicit cancellation implemented in 0.1.12 Development; recurring schedules remain planned pending separate repeat-policy/UX design. |
+| ATM-007A | Add richer arbitrary-date/time snooze scheduling, Later today/Tomorrow/Next week presets, explicit cancellation, and optional recurring schedules only after a separate policy/UX design. | Medium | Arbitrary future date/time, +1 hour, Later today, tomorrow morning, Next week, rescheduling, early restore, and explicit cancellation accepted in Stable 0.1.12; recurring schedules remain planned pending separate repeat-policy/UX design. |
 | ATM-008 | Add rule engine, command palette, full manager, import/export, and large-session performance qualification. | Medium | Stable 0.1.11 release slice accepted — implemented rules/actions, command palette, manager diagnostics, portability, retained session snapshots, deterministic core-scale qualification, exact-candidate Firefox runtime, Glaze 1.5.1, security, signing, and restart gates passed; broader optional feature expansion remains planned |
 | ATM-008A | Add explicit rule-action execution and user-facing rule management after separate mutation-safety and UX acceptance. | Medium | Accepted in Stable 0.1.11 |
 | ATM-008B | Add a keyboard-first command-palette foundation without widening browser authority. | Medium | Accepted in Stable 0.1.11 |

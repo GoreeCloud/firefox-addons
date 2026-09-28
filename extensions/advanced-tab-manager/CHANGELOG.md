@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.13 — Source candidate
+
+- Added the approved GoreeCloud Advanced Tab Manager product icon as a byte-identical consumer derivative of `GoreeCloud/branding-assets/products/advanced-tab-manager/app-icon.svg` (canonical Git blob `2c1865ee3809ae91c3bcb42d2d39275668651ab7`).
+- Declared Firefox top-level `icons` metadata at 16, 32, 48, 64, 96, and 128 logical sizes and set `action.default_icon`, correcting the generic puzzle-piece identity shown in Add-ons Manager and toolbar surfaces when icon metadata is absent.
+- Added source/package validation that pins the packaged SVG to the canonical branding blob and requires the icon manifest mappings.
+- Advanced the exact-source Firefox runtime and human target-review contracts to 0.1.13, including an explicit Firefox extension-icon surface review gate.
+- Added no permission, host permission, content script, remote dependency, telemetry, or browser-authority expansion.
+- Stable 0.1.12 remains the accepted Mozilla-signed release; 0.1.13 does not inherit Stable or exact-revision GLAZE UI consumer acceptance.
+
 ## 0.1.12 — Stable
 
 - Corrected the Manifest V3 event-page lifecycle for the native tab rename menu after owner Firefox 156.0.1 evidence showed the distributed candidate had no **Rename tab title…** entry. The item is now created from `runtime.onInstalled` and is no longer removed/recreated on ordinary background startup; the real-Firefox smoke opens the native tab context menu and verifies the item is present.

@@ -1,5 +1,10 @@
 # GoreeCloud Advanced Tab Manager — Features
 
+## Current 0.1.13 source-candidate delta
+
+- Firefox extension identity packaging now includes the approved canonical GoreeCloud Advanced Tab Manager icon through manifest `icons` and `action.default_icon`, so Firefox can render the product identity in Add-ons Manager and toolbar surfaces instead of a generic puzzle-piece placeholder.
+- No tab-management capability, permission, host authority, content-script scope, telemetry behavior, or private-browsing boundary changes in this candidate. Accepted Stable feature behavior remains 0.1.12 until the new exact package completes its release gates.
+
 ## Implemented in Stable 0.1.12
 
 - Firefox tab-title renaming: right-click any eligible ordinary HTTP(S) Firefox tab and choose **Rename tab title…** to assign a local custom label. The flow uses the clicked tab's temporary `activeTab` authority plus `scripting`, stores the custom name with Firefox session tab metadata, continuously reapplies it against same-document title changes, and provides Restore page title. No broad host permission or declarative content script is requested; protected Firefox/Mozilla pages fail closed, and navigation/reload can require explicit reapplication.

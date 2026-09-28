@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Real-Firefox release smoke for GoreeCloud Advanced Tab Manager 0.1.12.
+"""Real-Firefox release smoke for GoreeCloud Advanced Tab Manager 0.1.13.
 
 The test installs the deterministic unsigned candidate temporarily in a clean
 headless Firefox profile, opens the extension's real Manager document, and
@@ -32,7 +32,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
 EXPECTED_ADDON_ID = "advanced-tab-manager@goreecloud.com"
-EXPECTED_VERSION = "0.1.12"
+EXPECTED_VERSION = "0.1.13"
 FIXED_EXTENSION_UUID = "4c974aa1-e177-4e73-a1e5-a0ee28ad4b61"
 
 

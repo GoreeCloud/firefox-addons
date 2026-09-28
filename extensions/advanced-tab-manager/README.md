@@ -4,9 +4,9 @@ GoreeCloud Advanced Tab Manager is a local-first Firefox WebExtension for high-s
 
 ## Current source state
 
-- Version: `0.1.12`
-- Source state: `stable`
-- Product lifecycle: Stable
+- Version: `0.1.13`
+- Source state: `source-candidate`
+- Product lifecycle: Development
 - Component class: Browser extension
 - Firefox add-on ID: `advanced-tab-manager@goreecloud.com`
 - Minimum Firefox version: `139.0`
@@ -21,6 +21,12 @@ The current source implements live Firefox tab/window/native-group reconstructio
 Firefox runtime tab/group IDs remain transient. Tree relationships use extension-owned logical IDs. Tab Set/stash, snooze, and rule data remain in separate versioned local records so one capability does not silently reinterpret another capability's saved state.
 
 The restorable URL boundary is `http:`, `https:`, and `about:blank`. Privileged or executable schemes are not persisted for reconstruction.
+
+### Extension icon packaging correction — 0.1.13
+
+Version 0.1.13 is a source candidate that corrects Firefox product-identity packaging without changing tab-management authority or permissions. It vendors the approved canonical Advanced Tab Manager SVG from `GoreeCloud/branding-assets/products/advanced-tab-manager/app-icon.svg` (canonical Git blob `2c1865ee3809ae91c3bcb42d2d39275668651ab7`) and declares it through the manifest's top-level `icons` map and `action.default_icon`.
+
+This corrects the generic puzzle-piece placeholder shown by Firefox when an extension does not declare packaged icon metadata. Stable 0.1.12 remains the accepted signed release until the exact 0.1.13 package completes its independent review, Mozilla signing, persistent-install/restart, Glaze consumer-acceptance, and Stable-promotion gates.
 
 ### Interface refinement — 0.1.12
 

@@ -2,8 +2,8 @@
 
 ## Status
 
-**Product:** GoreeCloud Advanced Tab Manager 0.1.12  
-**Lifecycle:** Stable  
+**Product:** GoreeCloud Advanced Tab Manager 0.1.13 source candidate  
+**Lifecycle:** Development  
 **Accepted product Stable:** 0.1.12  
 **Platform:** Firefox browser extension  
 **Required shared target:** GLAZE UI V1.6 / machine version 1.6.0  
@@ -17,6 +17,8 @@ GLAZE UI V1.6 / 1.6.0 is the current shared GoreeCloud adoption target. V1.5.1 i
 
 ## Adoption boundary
 
+The exact 0.1.13 runtime revision is not yet accepted in the authoritative Glaze consumer registry. Stable 0.1.12 acceptance remains current-release evidence and does not transfer automatically to this new package. Current 0.1.13 machine evidence therefore reports `status: adoption-required` until fresh product-specific acceptance is established.
+
 Advanced Tab Manager uses repository-local Firefox HTML/CSS/JavaScript presentation rather than embedding the shared Glaze runtime package. V1.6 adoption therefore means mapping the applicable Glaze contracts into the product's own constrained browser surfaces and proving those mappings at an exact consumer revision.
 
 The shared V1.6 Stable release does not grant Advanced Tab Manager consumer acceptance, product Stable status, production eligibility, signing acceptance, or deployment acceptance automatically.
@@ -25,7 +27,7 @@ Current machine evidence reports `status: accepted-v1` only after product-specif
 
 ## Applicable V1.6 source mapping
 
-The current 0.1.12 source maps the following applicable V1.6 principles:
+The current 0.1.13 source candidate maps the following applicable V1.6 principles:
 
 - a shared repository-local `src/shared/glaze.css` surface/token layer consumed by the sidebar, popup, Manager, and tab-title rename dialog so material hierarchy, geometry, focus treatment, and product lockup presentation remain consistent without a remote runtime dependency;
 - semantic system colors and protected state meaning;

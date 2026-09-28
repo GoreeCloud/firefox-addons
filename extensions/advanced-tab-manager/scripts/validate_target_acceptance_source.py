@@ -6,7 +6,7 @@ REPOSITORY_ROOT = ROOT.parents[1]
 
 tool = (ROOT / "scripts/target_acceptance.py").read_text(encoding="utf-8")
 tests = (ROOT / "scripts/test_target_acceptance.py").read_text(encoding="utf-8")
-record = (ROOT / "TARGET-ACCEPTANCE-0.1.12.md").read_text(encoding="utf-8")
+record = (ROOT / "TARGET-ACCEPTANCE-0.1.13.md").read_text(encoding="utf-8")
 repository_workflow = (REPOSITORY_ROOT / ".github/workflows/firefox-repository.yml").read_text(encoding="utf-8")
 target_workflow = (REPOSITORY_ROOT / ".github/workflows/advanced-tab-manager-target-review.yml").read_text(encoding="utf-8")
 signing_workflow = (REPOSITORY_ROOT / ".github/workflows/advanced-tab-manager-mozilla-signing.yml").read_text(encoding="utf-8")
@@ -16,13 +16,13 @@ for required in (
     ROOT / "scripts/target_acceptance.py",
     ROOT / "scripts/test_target_acceptance.py",
     ROOT / "scripts/validate_target_acceptance_source.py",
-    ROOT / "TARGET-ACCEPTANCE-0.1.12.md",
+    ROOT / "TARGET-ACCEPTANCE-0.1.13.md",
     REPOSITORY_ROOT / ".github/workflows/advanced-tab-manager-target-review.yml",
 ):
     assert required.is_file(), required
 
 for marker in (
-    'EXPECTED_RELEASE = "0.1.12"',
+    'EXPECTED_RELEASE = "0.1.13"',
     'EXPECTED_ADDON_ID = "advanced-tab-manager@goreecloud.com"',
     'SCHEMA_VERSION = 1',
     'KEYBOARD_CHECKS = (',
