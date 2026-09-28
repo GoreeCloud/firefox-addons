@@ -10,7 +10,7 @@
 - Stored the custom label with Firefox session-tab metadata so the value follows supported close/restore cycles without treating runtime tab IDs as durable.
 - Hardened rename/restore persistence as a rollback-aware transaction: if Firefox session-tab metadata cannot be committed after the visible title changes, Advanced Tab Manager verifies or restores the previous session value, restores the prior title state when scripting authority remains available, suppresses the success broadcast, and reports the rollback outcome.
 - Added a specific dialog message when Firefox session-tab metadata cannot be read before a rename, so the fail-closed state is understandable instead of falling through to a generic error.
-- Added privacy-safe target-acceptance provenance tooling that can emit and validate an exact source/XPI/review-record digest envelope only from fully accepted local human evidence; the complete human review remains local and the Mozilla-signing workflow stays pinned to Stable 0.1.11 until a separate governed 0.1.12 signing change.
+- Added privacy-safe target-acceptance provenance tooling that emits and validates an exact source/XPI/review-record digest envelope only from fully accepted local human evidence; the complete human review remains local. After the owner completed all governed human checks, the 0.1.12 signing path was authorized to consume that provenance and exact candidate digest while keeping Stable promotion separate.
 - Added `activeTab`, `menus`, and `scripting` as narrowly scoped permissions. No host permission or declarative content script is added.
 - Restricted pages fail closed; navigation/reload can restore the website title and requires explicit user reapplication rather than broad background injection.
 - Added deterministic unit/source validation for eligibility, session metadata, injected targeting, restore behavior, menu registration, and no-host-permission posture.
@@ -20,7 +20,7 @@
 - Added real-Firefox appearance preflight for the rename dialog using Firefox's own document color-scheme/Forced Colors overrides plus LookAndFeel preference overrides for Reduced Transparency and Reduced Motion. The gate verifies the corresponding media states activate, material translucency/shadows are removed where required, and the dialog does not horizontally overflow. These automated checks do not replace human alternate-appearance or assistive-technology acceptance.
 - Real-Firefox qualification also exposed a pre-existing branch-window ordering defect. Descendants are now appended to a new window one at a time in verified tree order, avoiding unreliable multi-tab `index: -1` ordering while preserving rollback behavior.
 - Corrected the Forced Colors presentation of the Rename action and retained controlled appearance screenshots in CI.
-- Stable 0.1.11 remains unchanged; this material 0.1.12 Development change requires fresh exact-candidate Firefox permission/runtime/rendered/accessibility review.
+- Stable 0.1.11 remains the production baseline while 0.1.12 proceeds through provenance-bound Mozilla signing, signed-XPI parity, persistent-install/restart acceptance, and separate Stable promotion.
 
 
 ## 0.1.12 — Development
