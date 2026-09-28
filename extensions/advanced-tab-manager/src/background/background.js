@@ -6,6 +6,7 @@ import { createRuleManager } from "./rules.js";
 import { createSavedState } from "./saved-state.js";
 import { createSnoozeManager } from "./snooze.js";
 import { createTabResidencyPolicy } from "./tab-residency.js";
+import { createTabTitleRenaming } from "./tab-title-renaming.js";
 import { createTreeBranchActions } from "./tree-branch-actions.js";
 
 const CHANGE_MESSAGE = "atm:state-changed";
@@ -24,6 +25,8 @@ function registerEvent(source, reason) {
 
 const browserState = createBrowserState({ browser, broadcastChange, idFactory: newId });
 const tabResidencyPolicy = createTabResidencyPolicy({ browser });
+const tabTitleRenaming = createTabTitleRenaming({ browser, broadcastChange });
+tabTitleRenaming.register();
 const savedState = createSavedState({
   browser,
   readLiveSnapshot: browserState.readLiveSnapshot,
@@ -123,6 +126,10 @@ browser.runtime.onMessage.addListener(async (message) => {
       return savedState.readDashboardState();
     case "atm:get-manager-state":
       return managerState.readManagerState();
+    case "atm:get-tab-title-rename-state":
+      return tabTitleRenaming.readRenameState(message.tabId);
+    case "atm:set-tab-title-override":
+      return tabTitleRenaming.applyRename(message.tabId, message.title);
     case "atm:export-backup":
       return portabilityManager.exportBackup();
     case "atm:preview-import":
