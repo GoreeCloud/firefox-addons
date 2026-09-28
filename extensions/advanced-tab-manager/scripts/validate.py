@@ -119,10 +119,9 @@ assert "browser.tabs.query({})" in tab_residency and "browser.tabs.update" in ta
 assert "browser.tabs.reload" not in tab_residency, "default residency must not silently reload a user-discarded tab"
 assert "browser.scripting.executeScript" in tab_title_renaming, "tab title changes must use explicit activeTab-scoped script injection"
 assert "browser.sessions.setTabValue" in tab_title_renaming and "browser.sessions.removeTabValue" in tab_title_renaming
-assert "restoreSessionTitle" in tab_title_renaming and "restorePageTitleOverride" in tab_title_renaming and "rollbackApplied" in tab_title_renaming
 assert "restoreSessionTitle" in tab_title_renaming and "restorePageTitleOverride" in tab_title_renaming and "rollbackApplied" in tab_title_renaming, "tab-title metadata failures must attempt verified rollback"
-assert "rollbackApplied" in tab_title_js and "restored the previous tab title" in tab_title_js
-assert "session-metadata-read-failed" in tab_title_renaming and "session-metadata-read-failed" in tab_title_js, "rename dialog must report rollback outcome truthfully"
+assert "rollbackApplied" in tab_title_js and "restored the previous tab title" in tab_title_js, "rename dialog must report rollback outcome truthfully"
+assert "session-metadata-read-failed" in tab_title_renaming and "session-metadata-read-failed" in tab_title_js, "rename dialog must explain fail-closed metadata read failures"
 assert 'contexts: ["tab"]' in tab_title_renaming and 'title: "Rename tab title…"' in tab_title_renaming
 assert 'documentUrlPatterns: ["http://*/*", "https://*/*"]' in tab_title_renaming, "rename menu must be hidden on unsupported Firefox/system pages"
 assert "browser.runtime.onInstalled.addListener" in tab_title_renaming, "MV3 menu creation must be bound to runtime.onInstalled so event-page restarts cannot remove it"
@@ -130,7 +129,7 @@ assert "browser.menus.remove(" not in tab_title_renaming and "browser.menus.remo
 assert 'protocol === "http:" || protocol === "https:"' in tab_title_renaming, "rename eligibility must fail closed outside HTTP(S)"
 assert "host_permissions" not in manifest, "tab title renaming must not introduce broad host access"
 assert "Rename tab title" in tab_title_html and "atm:set-tab-title-override" in tab_title_js
-assert "rollbackApplied" in tab_title_js and "restored the previous tab title" in tab_title_js
+assert 'document.title ?? fallbackTitle ?? ""' in tab_title_renaming and 'state.pageTitle = String(document.title ?? "")' in tab_title_renaming, "tab-title restore must preserve intentionally empty website titles"
 assert "prefers-reduced-transparency" in tab_title_css and "forced-colors" in tab_title_css
 assert "@media (max-width: 360px)" in tab_title_css and "grid-template-columns: repeat(2, minmax(0, 1fr))" in tab_title_css, "rename dialog must have a narrow-width reflow fallback"
 assert "collectTreeBranchTabs" in tree_core
@@ -232,6 +231,7 @@ assert "tabContextMenu" in runtime_smoke and "Rename tab title…" in runtime_sm
 assert "tab-title-rename-restore-reload-restricted" in runtime_smoke, "real-Firefox smoke must exercise rename, same-document persistence, reload reapplication, restore, and restricted-page failure"
 assert "tab-title-keyboard-accessibility" in runtime_smoke, "real-Firefox smoke must exercise native keyboard focus, submit, restore, cancel, and semantic checks for the rename dialog"
 assert "tab-title-reflow-preflight" in runtime_smoke and "set_current_extension_zoom(driver, 2.0)" in runtime_smoke, "real-Firefox smoke must exercise rename-dialog 200 percent zoom reflow preflight"
+assert "tab-title-empty-page-title" in runtime_smoke, "real-Firefox smoke must verify Restore preserves an intentionally empty website title"
 assert "Runtime custom title" in runtime_smoke and "about:blank" in runtime_smoke, "real-Firefox rename acceptance must use controlled title data and a restricted Firefox page"
 assert "temporary=True" in runtime_smoke, "unsigned runtime gate must not masquerade as persistent signed acceptance"
 for route in (
