@@ -33,6 +33,12 @@ for marker in (
     'require_release_ready',
     'decision == "accepted"',
     'all(value is True for value in all_checks)',
+    'PROVENANCE_KEYS = {',
+    'build_provenance(',
+    'validate_provenance(',
+    'target_record_sha256',
+    'sub.add_parser("provenance"',
+    'sub.add_parser("validate-provenance"',
 ):
     assert marker in tool, f"target acceptance contract missing: {marker}"
 
@@ -45,6 +51,10 @@ for marker in (
     'test_unknown_fields_are_rejected',
     'test_record_rejects_candidate_revision_mismatch',
     'test_xpi_identity_is_fail_closed',
+    'test_release_ready_provenance_is_privacy_minimized',
+    'test_provenance_rejects_incomplete_target_record',
+    'test_provenance_validates_against_full_record',
+    'test_provenance_rejects_record_digest_mismatch',
 ):
     assert marker in tests, f"target acceptance regression missing: {marker}"
 
@@ -66,6 +76,7 @@ assert "**Human target acceptance: Pending**" in record
 assert "complete machine-readable target record remains local" in record.lower()
 assert "does not establish human acceptance" in record.lower()
 assert "GLAZE UI V1.6 / 1.6.0" in record
+assert "privacy-safe signing provenance" in record.lower()
 
 assert "ATM_RELEASE_VERSION: '0.1.11'" in signing_workflow
 assert "ATM_RELEASE_CANDIDATE_SHA256: '9c0f44926ac1d2f213fd07f82dd18fa11bd54ceebc6cd871898fe82b962a5b02'" in signing_workflow

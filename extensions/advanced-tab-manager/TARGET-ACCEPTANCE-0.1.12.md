@@ -89,3 +89,17 @@ The exact 0.1.12 candidate review must include the new **Rename tab title** work
 Automated real-Firefox preflight now covers initial focus, native label/form/live-status semantics, Enter submission, keyboard Restore, keyboard Cancel, and a 200% zoom horizontal-overflow check for the rename dialog. Those checks are regression guards only and must not be copied into the human acceptance record as proof of assistive-technology, visible-focus, or large-text/zoom acceptance.
 
 Any failure maps to the existing keyboard, assistive-technology, appearance/layout, or other-blocker categories rather than adding browsing data to the acceptance record.
+
+
+## Privacy-safe signing provenance
+
+The complete human target record remains local. After every governed check is true, blockers are empty, and the local decision is `accepted`, generate a minimal release-provenance envelope with:
+
+```bash
+python extensions/advanced-tab-manager/scripts/target_acceptance.py provenance path/to/local-target-record.json \
+  --output path/to/target-acceptance-provenance.json
+```
+
+The envelope contains only the product/version/add-on identity, exact source revision, exact unsigned XPI SHA-256, a canonical SHA-256 of the complete local target record, accepted/release-ready state, and the review timestamp. It intentionally omits browser URLs, browsing content, screenshots, operating-system details, assistive-technology details, and the individual human-review booleans.
+
+Validate the envelope before any future signing-source change with `validate-provenance`. When the complete local record is available, pass it with `--record` so the canonical target-record digest is recomputed and compared. A future 0.1.12 Mozilla-signing change must fail closed unless its source revision and rebuilt unsigned XPI digest exactly match the accepted provenance. Generating provenance does not authorize signing or Stable promotion by itself.

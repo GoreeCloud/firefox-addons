@@ -92,6 +92,20 @@ ENVIRONMENT_KEYS = {
     "reviewed_at",
 }
 
+PROVENANCE_SCHEMA_VERSION = 1
+PROVENANCE_KEYS = {
+    "schema_version",
+    "product",
+    "candidate_version",
+    "addon_id",
+    "source_revision",
+    "xpi_sha256",
+    "target_record_sha256",
+    "decision",
+    "release_ready",
+    "reviewed_at",
+}
+
 
 class AcceptanceError(ValueError):
     pass
@@ -166,6 +180,11 @@ def _xpi_sha256(xpi: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def _canonical_record_sha256(record: dict[str, Any]) -> str:
+    payload = json.dumps(record, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
 
 
 def new_record(
@@ -291,6 +310,77 @@ def validate_record(
     }
 
 
+def build_provenance(record: dict[str, Any]) -> dict[str, Any]:
+    result = validate_record(record, require_release_ready=True)
+    return {
+        "schema_version": PROVENANCE_SCHEMA_VERSION,
+        "product": PRODUCT,
+        "candidate_version": EXPECTED_RELEASE,
+        "addon_id": EXPECTED_ADDON_ID,
+        "source_revision": result["source_revision"],
+        "xpi_sha256": result["xpi_sha256"],
+        "target_record_sha256": _canonical_record_sha256(record),
+        "decision": "accepted",
+        "release_ready": True,
+        "reviewed_at": _validate_timestamp(record["environment"]["reviewed_at"]),
+    }
+
+
+def validate_provenance(
+    provenance: Any,
+    expected_source_revision: str | None = None,
+    expected_xpi_sha256: str | None = None,
+    expected_record_sha256: str | None = None,
+    record: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    if not isinstance(provenance, dict):
+        raise AcceptanceError("provenance must be an object")
+    _exact_keys(provenance, PROVENANCE_KEYS, "provenance")
+    if provenance["schema_version"] != PROVENANCE_SCHEMA_VERSION:
+        raise AcceptanceError(f"provenance schema_version must be {PROVENANCE_SCHEMA_VERSION}")
+    if provenance["product"] != PRODUCT:
+        raise AcceptanceError(f"provenance product must be {PRODUCT}")
+    if provenance["candidate_version"] != EXPECTED_RELEASE:
+        raise AcceptanceError(f"provenance candidate_version must be {EXPECTED_RELEASE}")
+    if provenance["addon_id"] != EXPECTED_ADDON_ID:
+        raise AcceptanceError(f"provenance addon_id must be {EXPECTED_ADDON_ID}")
+
+    source_revision = _require_sha(provenance["source_revision"], "provenance.source_revision")
+    xpi_sha256 = _require_sha256(provenance["xpi_sha256"], "provenance.xpi_sha256")
+    record_sha256 = _require_sha256(provenance["target_record_sha256"], "provenance.target_record_sha256")
+    reviewed_at = _validate_timestamp(provenance["reviewed_at"])
+
+    if provenance["decision"] != "accepted" or provenance["release_ready"] is not True:
+        raise AcceptanceError("provenance must represent accepted release-ready target evidence")
+    if expected_source_revision is not None and source_revision != _require_sha(expected_source_revision, "expected_source_revision"):
+        raise AcceptanceError("provenance source revision does not match expected source revision")
+    if expected_xpi_sha256 is not None and xpi_sha256 != _require_sha256(expected_xpi_sha256, "expected_xpi_sha256"):
+        raise AcceptanceError("provenance XPI digest does not match expected XPI digest")
+    if expected_record_sha256 is not None and record_sha256 != _require_sha256(expected_record_sha256, "expected_record_sha256"):
+        raise AcceptanceError("provenance target-record digest does not match expected target-record digest")
+
+    if record is not None:
+        validated = validate_record(
+            record,
+            expected_source_revision=source_revision,
+            expected_xpi_sha256=xpi_sha256,
+            require_release_ready=True,
+        )
+        if not validated["release_ready"]:
+            raise AcceptanceError("referenced target record is not release-ready")
+        if _canonical_record_sha256(record) != record_sha256:
+            raise AcceptanceError("provenance target-record digest does not match the supplied target record")
+
+    return {
+        "source_revision": source_revision,
+        "xpi_sha256": xpi_sha256,
+        "target_record_sha256": record_sha256,
+        "decision": "accepted",
+        "release_ready": True,
+        "reviewed_at": reviewed_at,
+    }
+
+
 def _load_record(path: Path) -> dict[str, Any]:
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
@@ -353,6 +443,17 @@ def build_parser() -> argparse.ArgumentParser:
     summary.add_argument("--expected-xpi-sha256", default=None)
     summary.add_argument("--require-release-ready", action="store_true")
 
+    provenance = sub.add_parser("provenance", help="emit a privacy-safe signing provenance envelope from accepted target evidence")
+    provenance.add_argument("record", type=Path)
+    provenance.add_argument("--output", required=True, type=Path)
+
+    validate_provenance_parser = sub.add_parser("validate-provenance", help="validate a privacy-safe signing provenance envelope")
+    validate_provenance_parser.add_argument("provenance_file", type=Path)
+    validate_provenance_parser.add_argument("--record", type=Path, default=None)
+    validate_provenance_parser.add_argument("--expected-source-revision", default=None)
+    validate_provenance_parser.add_argument("--expected-xpi-sha256", default=None)
+    validate_provenance_parser.add_argument("--expected-record-sha256", default=None)
+
     return parser
 
 
@@ -373,6 +474,26 @@ def main(argv: list[str] | None = None) -> int:
             _write_record(args.output, record)
             print(f"Created incomplete target-acceptance template: {args.output}")
             print("Complete only the governed boolean checks and blocker codes; do not add URLs, screenshots, page content, or free-form notes.")
+            return 0
+
+        if args.command == "provenance":
+            record = _load_record(args.record)
+            provenance = build_provenance(record)
+            _write_record(args.output, provenance)
+            print(f"Created privacy-safe target-acceptance provenance: {args.output}")
+            return 0
+
+        if args.command == "validate-provenance":
+            provenance = _load_record(args.provenance_file)
+            record = _load_record(args.record) if args.record is not None else None
+            result = validate_provenance(
+                provenance,
+                args.expected_source_revision,
+                args.expected_xpi_sha256,
+                args.expected_record_sha256,
+                record,
+            )
+            print(json.dumps(result, sort_keys=True))
             return 0
 
         record = _load_record(args.record)

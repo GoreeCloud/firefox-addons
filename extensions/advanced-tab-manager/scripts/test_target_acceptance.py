@@ -106,6 +106,54 @@ class TargetAcceptanceTests(unittest.TestCase):
                     assistive_technology="screen-reader-reviewed",
                 )
 
+    def test_release_ready_provenance_is_privacy_minimized(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            record = accepted_record(Path(tmp))
+            provenance = ta.build_provenance(record)
+            self.assertEqual(set(provenance), ta.PROVENANCE_KEYS)
+            self.assertTrue(provenance["release_ready"])
+            self.assertEqual(provenance["decision"], "accepted")
+            self.assertNotIn("environment", provenance)
+            self.assertNotIn("assistive_technology", provenance)
+            self.assertNotIn("keyboard_checks", provenance)
+
+    def test_provenance_rejects_incomplete_target_record(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            xpi = candidate_xpi(root)
+            record = ta.new_record(
+                xpi=xpi,
+                source_revision=SOURCE,
+                firefox_version="156",
+                operating_system="Linux",
+                device_class="laptop",
+                installation_mode="temporary-unsigned",
+                assistive_technology="screen-reader-reviewed",
+                reviewed_at="2026-09-27T03:00:00Z",
+            )
+            with self.assertRaises(ta.AcceptanceError):
+                ta.build_provenance(record)
+
+    def test_provenance_validates_against_full_record(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            record = accepted_record(Path(tmp))
+            provenance = ta.build_provenance(record)
+            result = ta.validate_provenance(
+                provenance,
+                expected_source_revision=SOURCE,
+                expected_xpi_sha256=record["xpi_sha256"],
+                record=record,
+            )
+            self.assertTrue(result["release_ready"])
+
+    def test_provenance_rejects_record_digest_mismatch(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            record = accepted_record(Path(tmp))
+            provenance = ta.build_provenance(record)
+            provenance["target_record_sha256"] = "0" * 64
+            with self.assertRaises(ta.AcceptanceError):
+                ta.validate_provenance(provenance, record=record)
+
     def test_rejected_decision_requires_known_blocker(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             record = accepted_record(Path(tmp))

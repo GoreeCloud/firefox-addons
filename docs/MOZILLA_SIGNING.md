@@ -65,3 +65,10 @@ python shared/scripts/package_extension.py webspaces
 ```
 
 Generated packages are written beneath `dist/` by default. `dist/` is build output and must not be treated as authoritative source.
+
+
+## Advanced Tab Manager 0.1.12 readiness boundary
+
+Advanced Tab Manager 0.1.12 remains Development and is not authorized for Mozilla signing. Its existing signing workflow must remain pinned to accepted Stable 0.1.11 until the governed 0.1.12 human target review is complete.
+
+The 0.1.12 target-acceptance tooling can emit a privacy-safe provenance envelope only from a release-ready local record. That envelope binds the exact source revision, deterministic unsigned XPI SHA-256, and canonical digest of the complete local target record without publishing the underlying human-review details. A future source change that enables 0.1.12 signing must validate that provenance and match the rebuilt candidate bytes exactly before any AMO submission. The provenance envelope is an input to signing authorization, not a substitute for the remaining signing, signed-package parity, persistent-install, restart, post-restart, or Stable-promotion gates.
