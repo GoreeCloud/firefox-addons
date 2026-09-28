@@ -343,9 +343,11 @@ def rename_appearance_state(driver: webdriver.Firefox) -> dict:
         """
         const shell = document.querySelector(".rename-shell");
         const secondary = document.querySelector("#cancel");
-        if (!shell || !secondary) return {ok: false};
+        const primary = document.querySelector("#save");
+        if (!shell || !secondary || !primary) return {ok: false};
         const shellStyle = getComputedStyle(shell);
         const secondaryStyle = getComputedStyle(secondary);
+        const primaryStyle = getComputedStyle(primary);
         return {
           ok: true,
           dark: matchMedia("(prefers-color-scheme: dark)").matches,
