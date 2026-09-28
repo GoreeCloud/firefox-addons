@@ -6,7 +6,7 @@
 
 ## GoreeCloud Advanced Tab Manager — Features
 
-## In development — 0.1.12
+## Implemented in Stable 0.1.12
 
 - Default live-tab residency: on background startup and for newly created tabs, Advanced Tab Manager sets Firefox `autoDiscardable=false` for every eligible non-private open tab so Firefox does not automatically unload background tabs. Explicit manual/rule-driven Discard remains available as a user action.
 - Residency visibility: live snapshot normalization preserves Firefox's `autoDiscardable` state so the sidebar can show an `auto-protected` count, the popup can report protection health, and the Manager can explain eligible/protected/resident/explicitly-discarded counts without exposing tab titles, URLs, or page content.
