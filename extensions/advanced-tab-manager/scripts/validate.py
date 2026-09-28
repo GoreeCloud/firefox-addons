@@ -235,6 +235,7 @@ assert "tab-title-keyboard-accessibility" in runtime_smoke, "real-Firefox smoke 
 assert "tab-title-reflow-preflight" in runtime_smoke and "set_current_extension_zoom(driver, 2.0)" in runtime_smoke, "real-Firefox smoke must exercise rename-dialog 200 percent zoom reflow preflight"
 assert "tab-title-appearance-preflight" in runtime_smoke and "prefersColorSchemeOverride" in runtime_smoke and "forcedColorsOverride" in runtime_smoke, "real-Firefox smoke must exercise dark and Forced Colors rename-dialog preflight"
 assert 'ui.prefersReducedTransparency' in runtime_smoke and 'ui.prefersReducedMotion' in runtime_smoke, "real-Firefox smoke must exercise reduced-transparency and reduced-motion preferences"
+assert "capture_appearance_screenshot" in runtime_smoke and "appearancePreflightScreenshots" in runtime_smoke, "real-Firefox smoke must retain privacy-safe appearance preflight screenshots"
 assert "Runtime custom title" in runtime_smoke and "about:blank" in runtime_smoke, "real-Firefox rename acceptance must use controlled title data and a restricted Firefox page"
 assert "temporary=True" in runtime_smoke, "unsigned runtime gate must not masquerade as persistent signed acceptance"
 for route in (
