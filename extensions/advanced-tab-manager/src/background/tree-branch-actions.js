@@ -1,4 +1,5 @@
 import { TAB_GROUP_ID_NONE, flattenTabs } from "../core/state.js";
+import { LOGICAL_ID_KEY, TREE_PARENT_LOGICAL_ID_KEY } from "./browser-state.js";
 import { collectTreeBranchTabs } from "../core/tree.js";
 
 function branchPlan(snapshot, rootTabId) {
@@ -49,6 +50,33 @@ function planSignature(plan) {
 }
 
 export function createTreeBranchActions({ browser, readLiveSnapshot, broadcastChange }) {
+  async function restoreBranchSessionMetadata(plan) {
+    let failed = false;
+
+    for (const member of plan.members) {
+      try {
+        await browser.sessions.setTabValue(member.id, LOGICAL_ID_KEY, member.logicalId);
+        if (member.treeParentLogicalId) {
+          await browser.sessions.setTabValue(member.id, TREE_PARENT_LOGICAL_ID_KEY, member.treeParentLogicalId);
+        } else {
+          await browser.sessions.removeTabValue(member.id, TREE_PARENT_LOGICAL_ID_KEY);
+        }
+
+        const [logicalId, parentLogicalId] = await Promise.all([
+          browser.sessions.getTabValue(member.id, LOGICAL_ID_KEY),
+          browser.sessions.getTabValue(member.id, TREE_PARENT_LOGICAL_ID_KEY)
+        ]);
+        if (logicalId !== member.logicalId || (parentLogicalId || null) !== member.treeParentLogicalId) {
+          failed = true;
+        }
+      } catch {
+        failed = true;
+      }
+    }
+
+    return { ok: !failed };
+  }
+
   async function verifiedPlan(rootTabId) {
     const first = branchPlan(await readLiveSnapshot(), rootTabId);
     if (!first.ok) return first;
@@ -82,6 +110,9 @@ export function createTreeBranchActions({ browser, readLiveSnapshot, broadcastCh
         // Firefox may already have closed an empty rollback window.
       }
     }
+    const metadata = await restoreBranchSessionMetadata(plan);
+    if (!metadata.ok) rollbackFailed = true;
+
     broadcastChange("tree-branch-move-rollback");
     return { rollbackFailed };
   }
@@ -151,6 +182,9 @@ export function createTreeBranchActions({ browser, readLiveSnapshot, broadcastCh
       for (const descendantId of descendantIds) {
         await browser.tabs.move(descendantId, { windowId: destinationWindowId, index: -1 });
       }
+
+      const metadata = await restoreBranchSessionMetadata(plan);
+      if (!metadata.ok) throw new Error("Firefox tab session metadata verification failed after window move");
     } catch (error) {
       const rollback = await rollbackTreeBranchMove(plan, destinationWindowId);
       return {
