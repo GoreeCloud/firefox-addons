@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "product": "GoreeCloud Advanced Tab Manager",
+  "candidate_version": "0.1.13",
+  "addon_id": "advanced-tab-manager@goreecloud.com",
+  "source_revision": "89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe",
+  "xpi_sha256": "837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5",
+  "target_record_sha256": "e590735ccd3909d164b0e3ad6802a4366ff08e8dcfa35ba8a73121749ac1307c",
+  "decision": "accepted",
+  "release_ready": true,
+  "reviewed_at": "2026-09-28T13:30:26Z"
+}
