@@ -176,7 +176,7 @@ test("tab context menu opens the dedicated rename dialog for the clicked tab", a
   assert.match(calls.windows[0].url, /src\/tab-title\/rename\.html\?tabId=42$/);
 });
 
-test("menu creation is synchronous at the API boundary and limited to Firefox tab context", async () => {
+test("menu creation is synchronous and visible only for eligible HTTP(S) Firefox tabs", async () => {
   const { browser, calls } = createMockBrowser();
   const manager = createTabTitleRenaming({ browser });
 
@@ -185,7 +185,8 @@ test("menu creation is synchronous at the API boundary and limited to Firefox ta
   assert.deepEqual(calls.createdMenus, [{
     id: TAB_TITLE_MENU_ID,
     title: "Rename tab title…",
-    contexts: ["tab"]
+    contexts: ["tab"],
+    documentUrlPatterns: ["http://*/*", "https://*/*"]
   }]);
   assert.deepEqual(await pending, {
     ok: true,
@@ -208,6 +209,7 @@ test("registering defers persistent MV3 menu creation to runtime.onInstalled", a
   assert.deepEqual(calls.createdMenus, [{
     id: TAB_TITLE_MENU_ID,
     title: "Rename tab title…",
-    contexts: ["tab"]
+    contexts: ["tab"],
+    documentUrlPatterns: ["http://*/*", "https://*/*"]
   }]);
 });

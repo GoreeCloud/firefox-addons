@@ -120,6 +120,7 @@ assert "browser.tabs.reload" not in tab_residency, "default residency must not s
 assert "browser.scripting.executeScript" in tab_title_renaming, "tab title changes must use explicit activeTab-scoped script injection"
 assert "browser.sessions.setTabValue" in tab_title_renaming and "browser.sessions.removeTabValue" in tab_title_renaming
 assert 'contexts: ["tab"]' in tab_title_renaming and 'title: "Rename tab title…"' in tab_title_renaming
+assert 'documentUrlPatterns: ["http://*/*", "https://*/*"]' in tab_title_renaming, "rename menu must be hidden on unsupported Firefox/system pages"
 assert "browser.runtime.onInstalled.addListener" in tab_title_renaming, "MV3 menu creation must be bound to runtime.onInstalled so event-page restarts cannot remove it"
 assert "browser.menus.remove(" not in tab_title_renaming and "browser.menus.removeAll(" not in tab_title_renaming, "persistent MV3 menu state must not be torn down during background startup"
 assert 'protocol === "http:" || protocol === "https:"' in tab_title_renaming, "rename eligibility must fail closed outside HTTP(S)"

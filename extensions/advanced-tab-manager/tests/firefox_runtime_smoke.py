@@ -401,22 +401,22 @@ def main() -> int:
             require(addon_id == EXPECTED_ADDON_ID, "temporary candidate installation", str(addon_id))
             passes.append("temporary-install")
 
-            wait_until(
-                lambda: "Rename tab title…" in tab_context_menu_labels(driver),
-                10,
-                "native Firefox tab context menu exposes Rename tab title…",
-            )
-            require(
-                "Rename tab title…" in tab_context_menu_labels(driver),
-                "native Firefox tab context menu exposes Rename tab title…",
-            )
-            passes.append("tab-title-context-menu")
-
             rename_source_handle = driver.current_window_handle
             rename_url = f"{base}/rename-runtime"
             driver.get(rename_url)
             WebDriverWait(driver, 10).until(lambda d: d.title == "ATM fixture /rename-runtime")
             original_fixture_title = driver.title
+
+            wait_until(
+                lambda: "Rename tab title…" in tab_context_menu_labels(driver),
+                10,
+                "native Firefox tab context menu exposes Rename tab title… on eligible HTTP(S) tabs",
+            )
+            require(
+                "Rename tab title…" in tab_context_menu_labels(driver),
+                "native Firefox tab context menu exposes Rename tab title… on eligible HTTP(S) tabs",
+            )
+            passes.append("tab-title-context-menu")
 
             source_handle, dialog_handle = invoke_tab_title_menu(driver)
             require(source_handle == rename_source_handle and dialog_handle is not None, "rename dialog targets the selected ordinary web tab")
@@ -474,7 +474,10 @@ def main() -> int:
 
             driver.get("about:blank")
             wait_until(lambda: driver.current_url == "about:blank", 10, "restricted Firefox page loaded for fail-closed rename check")
-            invoke_tab_title_menu(driver, expect_dialog=False)
+            require(
+                "Rename tab title…" not in tab_context_menu_labels(driver),
+                "restricted Firefox pages do not expose the inapplicable rename command",
+            )
             passes.append("tab-title-rename-restore-reload-restricted")
 
             navigate_extension(driver, "src/manager/manager.html")
