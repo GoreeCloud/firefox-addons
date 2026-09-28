@@ -74,6 +74,8 @@ The owner completed the governed 0.1.13 target review on September 28, 2026 and 
 
 The complete local target record remains private. Repository-visible provenance records canonical target-record SHA-256 `e590735ccd3909d164b0e3ad6802a4366ff08e8dcfa35ba8a73121749ac1307c`, decision `accepted`, and `release_ready: true`. The 0.1.13 signing workflow is bound to those exact identifiers and may submit or recover only that exact unlisted Mozilla version.
 
+PR #144 was squash-merged: reviewed head `89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe` is therefore not itself a main-line ancestor. The signing gate treats squash integration `8deabbedb7f89525396e0e94fa2c96d0664814d6` as the main-line integration proof, requires the reviewed source commit to remain resolvable, and independently rebuilds that frozen reviewed source to the accepted XPI SHA-256 before Mozilla submission. This preserves exact-artifact binding without relying on a false ancestry assumption.
+
 The signed-restart harness additionally requires the native Firefox product icon and all declared icon sizes to resolve to the canonical packaged artwork before and after the full Firefox restart. Successful signing does not itself promote 0.1.13 to Stable.
 
 
