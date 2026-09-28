@@ -2,11 +2,11 @@
 
 ## Status
 
-**Release:** 0.1.12 signed release candidate  
+**Release:** Stable 0.1.12  
 **Firefox add-on ID:** `advanced-tab-manager@goreecloud.com`  
 **Security exceptions:** None  
 **Stable Security Blockers:** Passed  
-**Stable promotion:** Pending separate metadata-only promotion
+**Stable promotion:** Accepted after all exact-candidate release gates passed
 
 This review applies the GoreeCloud Stable Release Security Blockers to the exact accepted 0.1.12 runtime candidate.
 
@@ -87,8 +87,8 @@ Governed run `36378135958` verified:
 
 The verbatim signing evidence is retained at `docs/signing-evidence-0.1.12.json`.
 
-## Stable promotion boundary
+## Stable accepted security boundary
 
-All applicable Stable Security Blockers for the exact 0.1.12 runtime candidate have passed. The remaining promotion action is metadata/lifecycle governance only and must not alter packaged runtime bytes.
+All applicable Stable Security Blockers for exact runtime revision `43f3010607550d7d4380353b97f85a4dd0186695` passed, and governed run `36378135958` verified Mozilla-signed parity, persistent installation, full Firefox restart, and post-restart release-critical behavior. Authoritative GLAZE UI V1.6 consumer acceptance is recorded at `b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb`.
 
-A final Stable-promotion change must preserve the accepted source/XPI hashes, update canonical lifecycle records, rerun exact-head qualification, and retrigger signed evidence so the canonical record can show `stablePromoted: true`.
+Stable promotion changes canonical lifecycle metadata and maintenance evidence only; it does not alter the accepted signed runtime payload. No security exception is recorded for Stable 0.1.12.
