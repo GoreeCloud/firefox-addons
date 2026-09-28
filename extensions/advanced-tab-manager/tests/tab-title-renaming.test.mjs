@@ -12,8 +12,11 @@ import {
 function createMockBrowser({
   tab = { id: 42, url: "https://example.com/research", title: "Example", incognito: false },
   storedTitle = "",
-  executionResult = { ok: true, title: "Research" }
+  executionResult = { ok: true, title: "Research" },
+  failSetValue = false,
+  failRemoveValue = false
 } = {}) {
+  let currentStoredTitle = storedTitle;
   const calls = {
     createdMenus: [],
     installedListeners: [],
@@ -37,13 +40,17 @@ function createMockBrowser({
         async getTabValue(tabId, key) {
           assert.equal(tabId, tab.id);
           assert.equal(key, TAB_TITLE_SESSION_KEY);
-          return storedTitle || undefined;
+          return currentStoredTitle || undefined;
         },
         async setTabValue(tabId, key, value) {
           calls.setValues.push({ tabId, key, value });
+          if (failSetValue) throw new Error("simulated setTabValue failure");
+          currentStoredTitle = value;
         },
         async removeTabValue(tabId, key) {
           calls.removedValues.push({ tabId, key });
+          if (failRemoveValue) throw new Error("simulated removeTabValue failure");
+          currentStoredTitle = "";
         }
       },
       scripting: {
@@ -145,6 +152,57 @@ test("restoring the page title clears only the tab title session value", async (
     tabId: 42,
     key: TAB_TITLE_SESSION_KEY
   }]);
+});
+
+test("metadata write failure rolls the page title back to the prior custom title", async () => {
+  const { browser, calls } = createMockBrowser({
+    storedTitle: "Existing label",
+    executionResult: { ok: true, title: "New label" },
+    failSetValue: true
+  });
+  const changes = [];
+  const manager = createTabTitleRenaming({
+    browser,
+    broadcastChange: (reason) => changes.push(reason)
+  });
+
+  const result = await manager.applyRename(42, "New label");
+
+  assert.deepEqual(result, {
+    ok: false,
+    reason: "session-metadata-write-failed",
+    rollbackApplied: true,
+    metadataRollbackApplied: true,
+    pageRollbackApplied: true
+  });
+  assert.equal(calls.execute.length, 2);
+  assert.deepEqual(calls.execute[1].args, [
+    "Existing label",
+    "Example",
+    MAX_CUSTOM_TAB_TITLE_LENGTH
+  ]);
+  assert.deepEqual(changes, []);
+});
+
+test("metadata remove failure reapplies the prior custom title after restore", async () => {
+  const { browser, calls } = createMockBrowser({
+    storedTitle: "Existing label",
+    executionResult: { ok: true, title: "", restoredTitle: "Example" },
+    failRemoveValue: true
+  });
+  const manager = createTabTitleRenaming({ browser });
+
+  const result = await manager.applyRename(42, "");
+
+  assert.equal(result.ok, false);
+  assert.equal(result.reason, "session-metadata-write-failed");
+  assert.equal(result.rollbackApplied, true);
+  assert.equal(calls.execute.length, 2);
+  assert.deepEqual(calls.execute[1].args, [
+    "Existing label",
+    "Example",
+    MAX_CUSTOM_TAB_TITLE_LENGTH
+  ]);
 });
 
 test("rename refuses unsupported Firefox pages before scripting", async () => {
