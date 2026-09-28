@@ -152,7 +152,7 @@ export function createTabTitleRenaming({ browser, broadcastChange = () => {} }) 
 
   function installMenu() {
     return new Promise((resolve) => {
-      const id = browser.menus.create({
+      browser.menus.create({
         id: TAB_TITLE_MENU_ID,
         title: "Rename tab title…",
         contexts: ["tab"]
@@ -167,7 +167,7 @@ export function createTabTitleRenaming({ browser, broadcastChange = () => {} }) 
           resolve({ ok: false, reason: "menu-create-failed", message });
           return;
         }
-        resolve({ ok: true, id: id ?? TAB_TITLE_MENU_ID, existing: false });
+        resolve({ ok: true, id: TAB_TITLE_MENU_ID, existing: false });
       });
     });
   }
