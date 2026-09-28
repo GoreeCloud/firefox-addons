@@ -348,6 +348,13 @@ assert 'GLAZE_AUTHORITY_REPOSITORY = "GoreeCloud/glaze-ui"' in glaze_script
 assert 'GLAZE_STABLE_SOURCE = "a7180679ea851389e0f3004515f9a25f420e716d"' in glaze_script
 assert '"status": "adoption-required"' in glaze_script
 assert '"consumerRegistryAccepted": False' in glaze_script
+assert '"applicablePresentationObligationsAccepted": True' in glaze_script
+assert '"representativeRenderedAcceptanceComplete": True' in glaze_script
+assert '"assistiveTechnologyAcceptanceComplete": True' in glaze_script
+assert '"largeTextAcceptanceComplete": True' in glaze_script
+assert 'ACCEPTED_RUNTIME_REVISION = "89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe"' in glaze_script
+assert 'ACCEPTED_UNSIGNED_XPI_SHA256 = "837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5"' in glaze_script
+assert 'TARGET_ACCEPTANCE_RECORD_SHA256 = "e590735ccd3909d164b0e3ad6802a4366ff08e8dcfa35ba8a73121749ac1307c"' in glaze_script
 assert "b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb" in glaze_adoption
 assert "sharedPerformanceAcceptanceInherited" in glaze_script and "False" in glaze_script
 assert "fetch-depth: 0" in release_workflow
@@ -372,6 +379,11 @@ assert "advanced-tab-manager-glaze-1.6.0-acceptance.json" in signing_workflow
 assert "workflowRevision" in signing_workflow and "sourceRevision" in signing_workflow
 assert "dist/target-acceptance-provenance.json" in signing_workflow
 assert "verify_signed_xpi.py" in signing_workflow and "signed_restart_smoke.py" in signing_workflow
+assert "EXPECTED_ICON_PATH" in signed_restart
+assert "firefox_addon_identity" in signed_restart
+assert 'checks.append(f"{phase}-native-icon")' in signed_restart
+assert "pre-restart-native-icon" not in signed_restart, "signed icon checks should remain phase-derived rather than hard-coded output"
+assert "len(checks) >= 12" in signed_restart
 assert 'git show "$GITHUB_SHA":extensions/advanced-tab-manager/tests/signed_restart_smoke.py' in signing_workflow, "signing must run the current restart harness against the frozen accepted payload"
 assert "advanced-tab-manager-signing-evidence.json" in signing_workflow
 assert "stablePromoted" in signing_workflow
