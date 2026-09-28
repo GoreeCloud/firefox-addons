@@ -175,3 +175,9 @@ The 0.1.12 Development line now adds an opt-in **Ignore tracking parameters** mo
 This changes the Duplicates-view presentation after the previously supplied normal-light screenshots. Those screenshots remain bounded evidence for the exact revisions and surfaces they actually show, but they do not establish rendered acceptance for the new matching selector, normalized URL rows, or normalized-cleanup confirmation state. Fresh exact-candidate rendering of the Duplicates view is required before this UI state is visually accepted.
 
 Automated source/unit/real-Firefox qualification may establish the bounded matching and cleanup behavior, but it does not substitute for that rendered review or the still-pending accessibility/alternate-environment gates. Stable remains `0.1.11`.
+
+## Tab-title rename dialog delta — pending rendered acceptance
+
+The current 0.1.12 Development source adds a new **Rename tab title** dialog launched from Firefox's native tab context menu. No screenshot set previously recorded in this document includes that dialog or its Restore page title/error states.
+
+Earlier screenshots therefore remain bounded evidence only for the exact surfaces and revisions they actually show. They do not establish normal-light, alternate-appearance, large-text, keyboard, or assistive-technology acceptance for the new dialog. Fresh exact-candidate rendered review must also confirm that the Firefox tab-strip title visibly changes on an eligible HTTP(S) page and that restricted pages fail without misleading success state. Stable remains `0.1.11`.

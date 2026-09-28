@@ -1,5 +1,22 @@
 # GoreeCloud Advanced Tab Manager — Security
 
+## Tab-title rename security boundary
+
+Tab-title renaming uses the least-privilege path available for changing Firefox's visible tab label:
+
+- no broad host permission is declared;
+- `menus` exposes a native tab-context action;
+- Firefox grants `activeTab` only after the user explicitly selects that action for a tab;
+- `scripting.executeScript` targets only that tab ID and only after the request;
+- eligibility is limited to non-private HTTP(S) tabs;
+- Firefox-restricted pages and domains fail closed when script injection is unavailable;
+- custom labels are limited to 160 characters and stored through Firefox `sessions` metadata;
+- the injected code only reads/writes `document.title` and observes the document head for title changes;
+- no remote code, `eval`, dynamic script download, page-body inspection, credential access, or host-permission escalation is introduced.
+
+The saved label is not treated as browser authority. A navigation or reload can reset the site's title, and the extension does not attempt to bypass that boundary with persistent all-sites injection.
+
+
 ## Current boundary
 
 - No host permissions, content scripts, remote code, telemetry, credential/cookie/token storage, or private-browsing access.

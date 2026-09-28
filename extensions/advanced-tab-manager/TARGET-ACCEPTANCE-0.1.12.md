@@ -73,3 +73,17 @@ The repository test suite validates the evidence schema itself. That automated v
 The existing Advanced Tab Manager Mozilla-signing workflow remains deliberately pinned to accepted Stable 0.1.11 while this target acceptance is pending. A future 0.1.12 signing change must be a separate governed source change that binds signing to accepted target-review provenance and the exact reviewed unsigned XPI bytes.
 
 Stable 0.1.11 remains the rollback/production baseline until all 0.1.12 gates pass.
+
+## Tab-title rename acceptance addition
+
+The exact 0.1.12 candidate review must include the new **Rename tab title** workflow without expanding the evidence schema beyond its privacy-minimized booleans:
+
+- invoke **Rename tab title…** from Firefox's native tab context menu on an eligible ordinary HTTP(S) tab;
+- verify the dialog is keyboard reachable, has visible focus, readable labels/instructions, and meaningful assistive-technology announcements;
+- verify Rename changes the Firefox tab-strip label and same-document site title changes do not immediately overwrite it;
+- verify Restore page title returns the current page-provided title;
+- verify a Firefox-restricted/non-scriptable page fails closed without claiming success;
+- verify the dialog remains usable in normal light, dark appearance, Forced Colors, Reduced Transparency, and the governed large-text/zoom condition;
+- verify permission review records the candidate's `activeTab`, `menus`, and `scripting` additions while host permissions remain none.
+
+Any failure maps to the existing keyboard, assistive-technology, appearance/layout, or other-blocker categories rather than adding browsing data to the acceptance record.

@@ -1,5 +1,14 @@
 # GoreeCloud Advanced Tab Manager — Privacy
 
+## Tab-title rename privacy boundary
+
+The user-invoked **Rename tab title…** action stores only the custom label as Firefox session metadata for that tab. It does not add a GoreeCloud remote service, analytics event, history upload, or `storage.local` browsing record.
+
+To make Firefox's visible tab label change, the extension uses temporary `activeTab` authority granted by the user's tab-context-menu action and programmatically updates that page's `document.title`. The injected logic observes only title/head mutations needed to keep the chosen label stable inside the current document. It does not read body text, forms, cookies, credentials, authentication tokens, or application data.
+
+No broad host permission is requested. Protected Firefox pages, restricted Mozilla pages, private tabs, and other non-scriptable contexts are not renamed. Navigation or reload can end the page-level override; the locally saved custom label can be explicitly reapplied by the user.
+
+
 Version `0.1.11` remains local-first and has no remote service dependency.
 
 The source candidate requests no host permissions and injects no content scripts. It does not inspect page contents, cookies, form contents, authentication data, or network requests.

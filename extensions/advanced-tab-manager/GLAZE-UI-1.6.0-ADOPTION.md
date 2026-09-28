@@ -106,3 +106,9 @@ This refinement changes rendered sidebar, popup, and Manager presentation after 
 ATM-006A adds a native Duplicates-view selector for exact versus tracking-normalized review. Exact matching remains selected by default. The normalized state exposes the original URLs, uses textual policy copy, and preserves native focus/Forced Colors behavior through the existing sidebar control system.
 
 This is a presentation and interaction change, not a new authority grant: no permission, storage schema, remote dependency, telemetry path, page-content access, or private-browsing access is added. Fresh representative rendering and accessibility review of the new Duplicates state remain required before current V1.6 consumer acceptance can include it.
+
+## Tab-title rename dialog refinement
+
+The 0.1.12 Development line now includes a dedicated Glaze-aligned **Rename tab title** dialog reached from Firefox's native tab context menu. The dialog uses semantic native controls, visible focus, system/Firefox colors, Reduced Transparency handling, and Forced Colors border fallbacks. It deliberately explains the no-broad-host-permission boundary and the navigation/reload limitation.
+
+This feature also adds narrowly scoped `activeTab`, `menus`, and `scripting` permissions for explicit user invocation, while host permissions remain none and no declarative content script is registered. Because both the permission posture and a new rendered surface changed after prior 0.1.12 evidence, fresh exact-candidate permission/security review plus representative normal-light, dark, Forced Colors, Reduced Transparency, large-text/zoom, keyboard, and assistive-technology review of the rename dialog are required before current V1.6 consumer acceptance can include it.

@@ -11,12 +11,12 @@ GoreeCloud Advanced Tab Manager is a local-first Firefox WebExtension for high-s
 - Firefox add-on ID: `advanced-tab-manager@goreecloud.com`
 - Minimum Firefox version: `139.0`
 - Stable release: `0.1.11`
-- Permissions: `alarms`, `sessions`, `storage`, `tabGroups`, `tabs`
+- Permissions: `activeTab`, `alarms`, `menus`, `scripting`, `sessions`, `storage`, `tabGroups`, `tabs`
 - Host permissions: none
 - Content scripts: none
 - Private browsing: explicitly not allowed by manifest
 
-The current source implements live Firefox tab/window/native-group reconstruction, durable logical-ID trees, persistent Tab Sets, transactional tab stashing, reviewed exact-URL duplicate cleanup with opt-in conservative tracking-normalized review, restart-safe one-shot snoozing, deterministic local rules with bounded explicit actions, a keyboard-first command palette, the Manager/diagnostics foundation, source-preserving local backup portability, and ATM-008E retained local session snapshots.
+The current source implements live Firefox tab/window/native-group reconstruction, durable logical-ID trees, persistent Tab Sets, transactional tab stashing, reviewed exact-URL duplicate cleanup with opt-in conservative tracking-normalized review, restart-safe one-shot snoozing, deterministic local rules with bounded explicit actions, a keyboard-first command palette, explicit user-invoked Firefox tab-title renaming, the Manager/diagnostics foundation, source-preserving local backup portability, and ATM-008E retained local session snapshots.
 
 Firefox runtime tab/group IDs remain transient. Tree relationships use extension-owned logical IDs. Tab Set/stash, snooze, and rule data remain in separate versioned local records so one capability does not silently reinterpret another capability's saved state.
 
@@ -41,7 +41,8 @@ The 0.1.12 candidate:
 - keeps every eligible non-private open tab non-auto-discardable by default, including background tabs, by applying Firefox `autoDiscardable=false` at background startup and when tabs are created; explicit manual/rule-driven Discard remains available as a deliberate override;
 - makes that residency policy visible instead of implicit: normalized live tab state preserves Firefox's `autoDiscardable` flag, the sidebar shows an `auto-protected` count, the popup reports automatic-unload protection status, and the Manager explains protected/eligible, resident, and explicitly discarded counts without exposing browsing content;
 - adds guarded Tree-view branch bulk actions: close a fully visible branch or discard a fully visible eligible branch after confirmation, with two-snapshot branch-drift rejection and active/pinned/audible discard guards; drag-and-drop and richer manual reparenting remain future ATM-004A work;
-- preserves the existing permission, privacy, storage, and recovery boundaries with no new Firefox permission, host permission, content script, telemetry path, remote dependency, or private-browsing access. The bounded residency update uses the already-declared `tabs` permission.
+- adds **Rename tab title…** to Firefox's native tab context menu. The user-invoked flow uses `activeTab` plus `scripting` only for the clicked HTTP(S) tab, stores the custom name as Firefox session tab metadata, and never requests broad host permission or a persistent/declarative content script. The rename dialog includes an explicit Restore page title action. Firefox-restricted pages fail closed, and navigation/reload can restore the site's own title until the saved custom name is explicitly reapplied.
+- preserves the local-first privacy, storage, recovery, telemetry, remote-dependency, and private-browsing boundaries. The new `menus`, `activeTab`, and `scripting` permissions are narrowly scoped to explicit tab-title renaming; host permissions remain none.
 
 The default residency policy prevents Firefox's automatic tab discard, but it does not override browser-owned background timer/animation throttling or operating-system process/resource limits, and it does not silently reload a tab the user has explicitly discarded.
 

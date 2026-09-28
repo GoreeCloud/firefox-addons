@@ -15,8 +15,8 @@ This repository document describes the implemented source boundary for version `
 
 - Manifest V3 add-on ID `advanced-tab-manager@goreecloud.com`.
 - Non-persistent ES-module background scripts.
-- Permissions only: `alarms`, `sessions`, `storage`, `tabGroups`, and `tabs`.
-- No `unlimitedStorage`, host permissions, content scripts, remote telemetry, page-content inspection, or private-browsing access.
+- Permissions only: `activeTab`, `alarms`, `menus`, `scripting`, `sessions`, `storage`, `tabGroups`, and `tabs`.
+- No `unlimitedStorage`, host permissions, declarative/persistent content scripts, remote telemetry, general page-content inspection, or private-browsing access. Tab-title renaming may programmatically touch only the clicked eligible page's `document.title` under temporary `activeTab` authority.
 - Firefox remains authoritative for live tabs/windows/native groups; extension UI and automation snapshots are reconstructed from Firefox APIs.
 - Runtime Firefox tab/group IDs are not durable persistent identity.
 - Organizational state contains Tab Sets, stashed items, retained session snapshots, and snapshot-retention configuration; snooze recovery and rule definitions remain in separate versioned `storage.local` records.
@@ -71,13 +71,25 @@ This repository document describes the implemented source boundary for version `
 
 ### 0.1.12 interface-refinement boundary
 
+#### Tab-title renaming boundary
+
+- Firefox exposes no direct Tabs API setter for tab titles. Advanced Tab Manager therefore changes only the clicked eligible page's `document.title` through `browser.scripting.executeScript`.
+- The action is surfaced through Firefox's native tab context menu as **Rename tab title…**. Selecting that menu item grants temporary `activeTab` authority for the clicked tab, including an inactive clicked tab, without granting all-sites host access.
+- Eligibility is limited to non-private HTTP(S) tabs. Privileged browser pages, restricted Mozilla domains, PDF/reader/view-source surfaces, extension pages, and other non-scriptable contexts fail closed.
+- The custom title is bounded to 160 characters and stored with `browser.sessions.setTabValue` under the tab's Firefox session identity; no new `storage.local` schema is introduced.
+- The injected same-document observer watches only title/head mutations needed to preserve the custom label when a site updates its own title. It does not inspect body content, forms, cookies, credentials, or page application state.
+- **Restore page title** disconnects the observer, restores the latest observed site title for that document, and removes the session value.
+- Navigation or reload revokes the temporary scripting authority and can restore the site's own title. The saved custom label remains available to the rename dialog for explicit reapplication; persistent cross-navigation injection is deliberately not implemented because it would require broader host authority.
+- This feature reopens exact-candidate permission, rendered-dialog, keyboard/accessibility, and real-Firefox acceptance for the 0.1.12 Development line; it does not inherit Stable 0.1.11 acceptance.
+
+
 - Stable 0.1.11 remains the accepted signed rollback/production baseline while 0.1.12 is a Development/source candidate.
 - Popup, sidebar, and Manager presentation is reorganized for clearer hierarchy, density, action priority, responsive behavior, and GoreeCloud/Firefox fit without changing browser authority.
 - The Manager model no longer embeds mutable release lifecycle labels. It exposes immutable build version/component/platform information while canonical release records remain authoritative for lifecycle/signing status.
 - The Manager now renders the retained session-snapshot count already present in the privacy-minimized manager model.
 - Sidebar tab rows expose stronger keyboard/assistive semantics while preserving the established activation and action routes.
 - Semantic Firefox/system colors, visible focus, Reduced Transparency, Forced Colors, and responsive constrained-window fallbacks remain mandatory.
-- No new Firefox permission, host permission, content script, telemetry path, remote dependency, private-browsing access, or storage schema is introduced.
+- Tab-title renaming adds the narrowly scoped `activeTab`, `menus`, and `scripting` permissions for explicit user invocation. No host permission, declarative content script, telemetry path, remote dependency, private-browsing access, or extension storage schema is introduced.
 - 0.1.12 adds one bounded browser-state policy through the existing `tabs` permission: on extension/background startup and when a new tab is created, eligible non-private open tabs are updated with `autoDiscardable: false`. This prevents Firefox from automatically discarding those tabs while keeping explicit `tabs.discard` actions available when the user deliberately chooses to unload a tab.
 - ATM-004A now includes a bounded **Move branch to new window** operation. The action is exposed only when the entire branch is visible and every member is non-private, unpinned, outside a native Firefox group, and outside Firefox Split View. The background reconstructs the branch twice, creates a new Firefox window by moving the root tab, moves the verified descendants, then reconstructs the branch again to verify that every member arrived in one destination window with logical parent-child relationships intact.
 - If Firefox fails during branch movement or the post-move verification does not match the verified plan, Advanced Tab Manager attempts to move affected branch members back to their original source window/indexes and reports incomplete rollback instead of claiming success. Native-group membership, pin semantics, and Split View composition are deliberately not rewritten by this slice; grouped, pinned, or Split View branches remain blocked until a later explicit policy design. The Split View guard prevents Firefox from implicitly moving a split partner that was not part of the verified branch plan.

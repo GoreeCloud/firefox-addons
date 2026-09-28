@@ -1,5 +1,17 @@
 # GoreeCloud Advanced Tab Manager — Architecture
 
+## Explicit tab-title rename path
+
+Tab-title renaming is intentionally separated from ordinary browser-state reconstruction.
+
+- `src/background/tab-title-renaming.js` owns eligibility, the native Firefox tab context-menu action, temporary script injection, and Firefox session-tab metadata.
+- `src/tab-title/rename.html`, `.css`, and `.js` provide a dedicated small Glaze-aligned rename dialog rather than injecting form UI into websites.
+- The manifest adds `menus`, `activeTab`, and `scripting`, but no host permission. Firefox grants `activeTab` for the specific tab whose tab-strip context-menu item the user chose.
+- The injected function changes only `document.title` and observes head/title mutations so dynamic sites cannot immediately overwrite the user-selected name within the same document.
+- `sessions.setTabValue` retains the custom label with Firefox's tab-session identity. Runtime tab IDs remain non-durable.
+- Navigation/reload may end the applied override because temporary `activeTab` authority is not converted into persistent site access. Explicit reapplication is preferred over broad host authority.
+- Restricted/non-HTTP(S)/private contexts fail closed.
+
 ## Authority model
 
 Firefox owns live browser state. Advanced Tab Manager owns only extension metadata, saved organizational/recovery intent, presentation, and explicitly requested browser operations.

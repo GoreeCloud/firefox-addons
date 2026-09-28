@@ -2,8 +2,8 @@ import { buildSnapshot, flattenTabs } from "../core/state.js";
 import { wouldCreateCycle } from "../core/tree.js";
 import { persistVerifiedTabString } from "../core/tree-session.js";
 
-const LOGICAL_ID_KEY = "goreecloud.advancedTabManager.logicalId.v1";
-const TREE_PARENT_LOGICAL_ID_KEY = "goreecloud.advancedTabManager.treeParentLogicalId.v1";
+export const LOGICAL_ID_KEY = "goreecloud.advancedTabManager.logicalId.v1";
+export const TREE_PARENT_LOGICAL_ID_KEY = "goreecloud.advancedTabManager.treeParentLogicalId.v1";
 
 function presentString(value) {
   return typeof value === "string" && value.length > 0 ? value : null;

@@ -17,7 +17,7 @@ EXPECTED_VERSION = str(
     json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))["version"]
 )
 EXPECTED_ID = "advanced-tab-manager@goreecloud.com"
-EXPECTED_PERMISSIONS = {"alarms", "sessions", "storage", "tabGroups", "tabs"}
+EXPECTED_PERMISSIONS = {"activeTab", "alarms", "menus", "scripting", "sessions", "storage", "tabGroups", "tabs"}
 
 SECRET_PATTERNS = {
     "private-key": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
@@ -62,7 +62,7 @@ def validate_manifest(manifest: dict) -> None:
     )
     require(set(manifest.get("permissions", [])) == EXPECTED_PERMISSIONS, "unexpected permission set")
     require(not manifest.get("host_permissions"), "host permissions are forbidden for this release candidate")
-    require("content_scripts" not in manifest, "content scripts are forbidden for this release candidate")
+    require("content_scripts" not in manifest, "declarative content scripts are forbidden for this release candidate")
     require(manifest.get("incognito") == "not_allowed", "private browsing must remain disabled")
     require("unlimitedStorage" not in manifest.get("permissions", []), "unlimitedStorage is forbidden")
 
