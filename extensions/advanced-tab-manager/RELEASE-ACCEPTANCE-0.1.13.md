@@ -3,14 +3,15 @@
 ## Status
 
 **Version:** 0.1.13  
-**Lifecycle:** Signed release candidate; GLAZE UI V1.6 consumer-registry refresh and Stable promotion pending  
-**Accepted Stable version before promotion:** 0.1.12  
+**Lifecycle:** Stable promotion state  
+**Accepted Stable version:** 0.1.13  
 **Accepted runtime source revision:** `89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe`  
 **Accepted unsigned XPI SHA-256:** `837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5`  
 **Mozilla-signed XPI SHA-256:** `6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c`  
-**Signing/restart workflow run:** `36431225028`
+**Initial signing/restart workflow run:** `36431225028`  
+**GLAZE UI V1.6 consumer acceptance:** `937d2a31e2ff55ec1c9e4c6688899389a9323642`
 
-0.1.13 is the reviewed successor candidate to accepted Stable 0.1.12. Its bounded runtime change corrects Firefox-native extension product identity by packaging the canonical GoreeCloud Advanced Tab Manager artwork through manifest `icons` and `action.default_icon`. It does not expand the accepted permission, privacy, storage, remote-dependency, or browser-mutation boundaries of Stable 0.1.12.
+0.1.13 is the accepted Stable successor to 0.1.12. Its bounded runtime change corrects Firefox-native extension product identity by packaging the canonical GoreeCloud Advanced Tab Manager artwork through manifest `icons` and `action.default_icon`. It does not expand the accepted permission, privacy, storage, remote-dependency, or browser-mutation boundaries of Stable 0.1.12.
 
 ## Human target acceptance
 
@@ -30,78 +31,34 @@ The accepted human scope includes keyboard traversal, assistive-technology revie
 
 The packaged product icon is `extensions/advanced-tab-manager/icons/advanced-tab-manager.svg`, byte-identical to canonical branding Git blob `2c1865ee3809ae91c3bcb42d2d39275668651ab7` from `GoreeCloud/branding-assets/products/advanced-tab-manager/app-icon.svg`.
 
-The accepted manifest declares that artwork for logical sizes 16, 32, 48, 64, 96, and 128 and uses the same artwork for `action.default_icon`.
-
-Clean-profile Firefox 156.0.1 runtime qualification queried Firefox AddonManager and verified that Firefox itself resolved the installed extension's native icon metadata to the canonical packaged artwork for every declared size.
+The accepted manifest declares that artwork for logical sizes 16, 32, 48, 64, 96, and 128 and uses the same artwork for `action.default_icon`. Clean-profile Firefox 156.0.1 runtime qualification queried Firefox AddonManager and verified that Firefox itself resolved the installed extension's native icon metadata to the canonical packaged artwork for every declared size.
 
 ## Security and permission acceptance
 
-The exact unsigned candidate passed Stable Security Blockers. The permission boundary remains:
-
-- `activeTab`;
-- `alarms`;
-- `menus`;
-- `scripting`;
-- `sessions`;
-- `storage`;
-- `tabGroups`;
-- `tabs`.
+The exact unsigned candidate passed Stable Security Blockers. The permission boundary remains `activeTab`, `alarms`, `menus`, `scripting`, `sessions`, `storage`, `tabGroups`, and `tabs`.
 
 There are no host permissions, no declarative content scripts, no private-browsing authority, no `unlimitedStorage`, no telemetry path, no runtime remote-code dependency, and no automatic permission-request path.
 
 ## Mozilla signing and signed-XPI parity
 
-Governed workflow run `36431225028` submitted the exact accepted 0.1.13 candidate to Mozilla's unlisted signing channel and completed successfully.
+Governed workflow run `36431225028` submitted the exact accepted 0.1.13 candidate to Mozilla's unlisted signing channel and completed successfully. The run verified Mozilla signature metadata, exact add-on identity/version, non-manifest byte parity, governed manifest parity, and signed XPI SHA-256 `6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c`.
 
-The run verified:
-
-- Mozilla signature metadata is present;
-- signed add-on identity/version is correct;
-- non-manifest payload matches the accepted unsigned candidate byte-for-byte;
-- payload inventory is exact apart from Mozilla signature metadata;
-- governed manifest parity is accepted;
-- signed XPI SHA-256 is `6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c`;
-- signing source is `new-submission`.
-
-The verbatim machine evidence from that run is retained at `docs/signing-evidence-0.1.13.json`.
+The verbatim initial machine evidence is retained at `docs/signing-evidence-0.1.13.json`. Stable promotion changes only lifecycle/documentation/qualification authority; it does not rebuild or mutate the accepted runtime bytes.
 
 ## Persistent signed installation and full restart
 
-The same signing gate installed the Mozilla-signed 0.1.13 XPI persistently and completed a full Firefox restart without reinstalling.
+The same signing gate installed the Mozilla-signed 0.1.13 XPI persistently and completed a full Firefox restart without reinstalling. Post-restart acceptance passed for persistent extension registration, native Firefox product icon resolution before and after restart, Manager model/version identity, persisted organizational state, tree relationships, stash restore, snooze restore, duplicate cleanup, fail-closed rule defaults, session snapshot additive restore, and backup preview integrity.
 
-Post-restart acceptance passed for:
+## GLAZE UI V1.6 consumer acceptance
 
-- persistent extension registration;
-- native Firefox product icon resolution before restart;
-- persistent installation path/registry continuity;
-- native Firefox product icon resolution after restart;
-- Manager model/version identity;
-- persisted organizational state;
-- tree relationships;
-- stash restore;
-- snooze restore;
-- exact duplicate cleanup;
-- fail-closed rule default;
-- session snapshot additive restore;
-- backup export/preview integrity.
+The 0.1.13 owner review completed the product-specific rendered, keyboard, assistive-technology, alternate-appearance, large-text/reflow, constrained-layout, and native icon-surface checks for the exact accepted runtime.
 
-This directly verifies that the icon correction survives persistent installation and a full Firefox restart rather than existing only in temporary-install metadata.
+The authoritative `GoreeCloud/glaze-ui` registry accepted that exact runtime as `accepted-v1` at merge `937d2a31e2ff55ec1c9e4c6688899389a9323642`. The registry binds unsigned XPI SHA-256 `837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5`, Mozilla-signed XPI SHA-256 `6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c`, and signing/restart run `36431225028`. Glaze retains `productionEligible: false` because product lifecycle authority is separate.
 
-## GLAZE UI V1.6 consumer boundary
+## Stable promotion acceptance
 
-The 0.1.13 owner review completed the product-specific rendered, keyboard, assistive-technology, alternate-appearance, large-text/reflow, constrained-layout, and native icon-surface checks for the exact accepted candidate.
+All pre-promotion human, security, Mozilla-signing, signed-payload parity, persistent-install/full-restart, and Glaze consumer-acceptance gates completed before lifecycle promotion.
 
-The repository-local Glaze source mapping therefore has the required human evidence plus signed-runtime/restart evidence. The remaining shared Glaze step is to refresh the authoritative `GoreeCloud/glaze-ui` consumer acceptance record from Stable 0.1.12 to this exact 0.1.13 runtime revision. Until that shared registry update is merged and verified, local machine evidence must remain fail-closed with `status: adoption-required` / `consumerRegistryAccepted: false`.
+Canonical inventory records `source_state: stable` and `accepted_stable_version: 0.1.13`. The promotion introduces no packaged runtime delta and preserves the accepted runtime revision and XPI digests above. Stable 0.1.12 remains rollback provenance.
 
-## Stable promotion rule
-
-0.1.13 may be promoted only after authoritative Glaze consumer-registry acceptance is updated to this exact runtime revision. Stable promotion must remain a separate lifecycle/documentation/qualification change that:
-
-1. updates canonical extension inventory to `source_state: stable`;
-2. sets `accepted_stable_version: 0.1.13`;
-3. records authoritative GLAZE UI V1.6 consumer acceptance for this exact runtime revision;
-4. introduces no packaged runtime delta from the accepted signed 0.1.13 payload;
-5. reruns repository/release qualification at the exact promotion head;
-6. retriggers the signing/restart workflow so final evidence derives `stablePromoted: true` and `glazeConsumerAccepted: true` while preserving the same accepted runtime bytes.
-
-Until that promotion is merged and verified, 0.1.12 remains the canonical Stable lifecycle state.
+The promotion changes the signing workflow so its post-promotion run evaluates current authoritative Glaze acceptance and current lifecycle metadata while rebuilding and signing only the frozen accepted runtime source. Task closure requires that promotion-triggered run to complete successfully and derive both `stablePromoted: true` and `glazeConsumerAccepted: true` without changing accepted runtime bytes.
