@@ -81,7 +81,8 @@ This repository document is the canonical source-controlled specification for th
 - **Restore page title** disconnects the observer, restores the latest observed site title for that document, and removes the session value.
 - Navigation or reload revokes the temporary scripting authority and can restore the site's own title. The saved custom label remains available to the rename dialog for explicit reapplication; persistent cross-navigation injection is deliberately not implemented because it would require broader host authority.
 - Real-Firefox qualification must exercise the complete bounded user path against controlled local fixtures: native-menu invocation, custom-title application, same-document overwrite resistance, reload semantics with saved-label reapplication, Restore page title behavior, restricted-page menu absence, initial keyboard focus, native form/live-status semantics, keyboard submit, keyboard Restore, and keyboard Cancel.
-- Automated keyboard/semantic qualification is a preflight only. It does not substitute for the separately governed human assistive-technology, visible-focus, appearance, large-text, or zoom acceptance record.
+- The rename dialog must reflow without horizontal clipping at narrow effective widths; fixed minimum-width assumptions are not permitted. Real-Firefox qualification includes a 200% zoom horizontal-overflow preflight for the dialog and its action controls.
+- Automated keyboard/semantic/reflow qualification is a preflight only. It does not substitute for the separately governed human assistive-technology, visible-focus, appearance, large-text, or zoom acceptance record.
 - This feature reopens exact-candidate permission, rendered-dialog, keyboard/accessibility, and real-Firefox acceptance for the 0.1.12 Development line; it does not inherit Stable 0.1.11 acceptance.
 
 

@@ -1,6 +1,6 @@
 html,
 body {
-  min-width: 360px;
+  min-width: 0;
   min-height: 260px;
 }
 
@@ -13,8 +13,11 @@ body {
 
 .rename-shell {
   box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
   min-height: 100vh;
-  padding: 22px;
+  padding: clamp(14px, 5vw, 22px);
+  overflow-wrap: anywhere;
 }
 
 .rename-header {
@@ -108,6 +111,7 @@ button:focus-visible {
 
 .actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
   margin-top: 4px;
@@ -118,6 +122,8 @@ button:focus-visible {
 }
 
 button {
+  min-width: 0;
+  max-width: 100%;
   min-height: 36px;
   padding: 7px 12px;
   border: 1px solid color-mix(in srgb, CanvasText 22%, Canvas);
@@ -125,6 +131,7 @@ button {
   font: inherit;
   font-weight: 650;
   cursor: pointer;
+  white-space: normal;
 }
 
 button.primary {
@@ -141,6 +148,31 @@ button.secondary {
 button:disabled {
   cursor: default;
   opacity: 0.55;
+}
+
+@media (max-width: 360px) {
+  .rename-header {
+    margin-bottom: 14px;
+  }
+
+  .actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .action-spacer {
+    display: none;
+  }
+
+  #restore {
+    grid-column: 1 / -1;
+  }
+
+  #restore,
+  #cancel,
+  #save {
+    width: 100%;
+  }
 }
 
 @media (prefers-reduced-transparency: reduce) {
