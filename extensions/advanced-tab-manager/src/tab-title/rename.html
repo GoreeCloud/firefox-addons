@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rename tab title · GoreeCloud Advanced Tab Manager</title>
+  <link rel="stylesheet" href="../shared/glaze.css">
+  <link rel="stylesheet" href="rename.css">
+</head>
+<body>
+  <main class="rename-shell" aria-labelledby="rename-heading">
+    <header class="rename-header">
+      <p class="eyebrow">GoreeCloud Advanced Tab Manager</p>
+      <h1 id="rename-heading">Rename tab title</h1>
+      <p class="intro">Give this Firefox tab a short custom name so it is easier to identify in a crowded tab strip.</p>
+    </header>
+
+    <form id="rename-form">
+      <label for="tab-title">Custom tab title</label>
+      <input id="tab-title" name="title" type="text" maxlength="160" autocomplete="off" spellcheck="true" required>
+      <p id="page-title" class="page-title"></p>
+      <p class="privacy-note">The name is stored locally with this Firefox tab. Advanced Tab Manager does not request broad website access. A reload or navigation can restore the website title; open <strong>Rename tab title…</strong> again to reapply the saved name.</p>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+
+      <div class="actions">
+        <button id="restore" type="button" class="secondary">Restore page title</button>
+        <span class="action-spacer"></span>
+        <button id="cancel" type="button" class="secondary">Cancel</button>
+        <button id="save" type="submit" class="primary">Rename</button>
+      </div>
+    </form>
+  </main>
+  <script type="module" src="rename.js"></script>
+</body>
+</html>
