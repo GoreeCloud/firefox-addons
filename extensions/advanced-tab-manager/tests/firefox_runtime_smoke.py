@@ -198,6 +198,99 @@ def tab_context_menu_labels(driver: webdriver.Firefox) -> list[str]:
     return [str(label) for label in labels]
 
 
+def selected_tab_label(driver: webdriver.Firefox) -> str:
+    driver.set_context(driver.CONTEXT_CHROME)
+    try:
+        label = driver.execute_script(
+            """
+            if (!window.gBrowser?.selectedTab) throw new Error("selected Firefox tab unavailable");
+            return String(window.gBrowser.selectedTab.label || "");
+            """
+        )
+    finally:
+        driver.set_context(driver.CONTEXT_CONTENT)
+    return str(label)
+
+
+def invoke_tab_title_menu(driver: webdriver.Firefox, expect_dialog: bool = True) -> tuple[str, str | None]:
+    source_handle = driver.current_window_handle
+    previous_handles = set(driver.window_handles)
+
+    driver.set_context(driver.CONTEXT_CHROME)
+    try:
+        result = driver.execute_async_script(
+            """
+            const done = arguments[arguments.length - 1];
+            const menu = document.getElementById("tabContextMenu");
+            const tab = window.gBrowser?.selectedTab;
+            let settled = false;
+            let timer = null;
+            const finish = value => {
+              if (settled) return;
+              settled = true;
+              if (timer !== null) clearTimeout(timer);
+              try {
+                if (menu?.state === "open" || menu?.state === "showing") menu.hidePopup();
+              } catch {}
+              done(value);
+            };
+            if (!menu || !tab) {
+              finish({ok: false, error: "tab context menu unavailable"});
+              return;
+            }
+            menu.addEventListener("popupshown", () => {
+              const item = Array.from(menu.querySelectorAll("menuitem"))
+                .find(element => element.getAttribute("label") === "Rename tab title…");
+              if (!item) {
+                finish({ok: false, error: "rename tab menu item unavailable"});
+                return;
+              }
+              try {
+                item.click();
+                finish({ok: true});
+              } catch (error) {
+                finish({ok: false, error: String(error)});
+              }
+            }, {once: true});
+            timer = setTimeout(() => finish({ok: false, error: "tab context menu did not open"}), 5000);
+            try {
+              menu.openPopup(tab, "after_start", 0, 0, true, false);
+            } catch (error) {
+              finish({ok: false, error: String(error)});
+            }
+            """
+        )
+    finally:
+        driver.set_context(driver.CONTEXT_CONTENT)
+
+    require(isinstance(result, dict) and result.get("ok") is True, "native Firefox tab rename menu activated", repr(result))
+
+    if not expect_dialog:
+        time.sleep(0.75)
+        require(
+            set(driver.window_handles) == previous_handles,
+            "restricted Firefox page does not open the rename dialog",
+            repr(driver.window_handles),
+        )
+        driver.switch_to.window(source_handle)
+        return source_handle, None
+
+    wait_until(
+        lambda: len(set(driver.window_handles) - previous_handles) == 1,
+        10,
+        "rename dialog window opened from the native Firefox tab menu",
+    )
+    dialog_handle = list(set(driver.window_handles) - previous_handles)[0]
+    driver.switch_to.window(dialog_handle)
+    wait_until(
+        lambda: driver.current_url.startswith(extension_url("src/tab-title/rename.html?tabId=")),
+        10,
+        "rename dialog extension document loaded",
+    )
+    WebDriverWait(driver, 10).until(lambda d: d.find_element("id", "tab-title").is_enabled())
+    return source_handle, dialog_handle
+
+
 def extension_message(driver: webdriver.Firefox, message: dict) -> object:
     result = driver.execute_async_script(
         """
@@ -318,6 +411,71 @@ def main() -> int:
                 "native Firefox tab context menu exposes Rename tab title…",
             )
             passes.append("tab-title-context-menu")
+
+            rename_source_handle = driver.current_window_handle
+            rename_url = f"{base}/rename-runtime"
+            driver.get(rename_url)
+            WebDriverWait(driver, 10).until(lambda d: d.title == "ATM fixture /rename-runtime")
+            original_fixture_title = driver.title
+
+            source_handle, dialog_handle = invoke_tab_title_menu(driver)
+            require(source_handle == rename_source_handle and dialog_handle is not None, "rename dialog targets the selected ordinary web tab")
+            require(
+                driver.find_element("id", "page-title").text.strip() == f"Current page title: {original_fixture_title}",
+                "rename dialog reports the current controlled page title",
+            )
+            title_input = driver.find_element("id", "tab-title")
+            title_input.clear()
+            title_input.send_keys("Runtime custom title")
+            driver.find_element("id", "save").click()
+            wait_until(lambda: dialog_handle not in driver.window_handles, 10, "rename dialog closes after successful rename")
+            driver.switch_to.window(rename_source_handle)
+            wait_until(lambda: selected_tab_label(driver) == "Runtime custom title", 10, "Firefox tab strip reflects the custom title")
+            require(driver.title == "Runtime custom title", "controlled page document title reflects the custom title")
+
+            driver.execute_script('document.title = "ATM runtime site rewrite";')
+            wait_until(
+                lambda: selected_tab_label(driver) == "Runtime custom title" and driver.title == "Runtime custom title",
+                10,
+                "same-document site title changes do not overwrite the custom label",
+            )
+
+            driver.refresh()
+            WebDriverWait(driver, 10).until(lambda d: d.title == original_fixture_title)
+            wait_until(lambda: selected_tab_label(driver) == original_fixture_title, 10, "reload restores the page-provided title")
+
+            _, reapply_dialog = invoke_tab_title_menu(driver)
+            require(reapply_dialog is not None, "rename dialog reopens after reload")
+            require(
+                driver.find_element("id", "tab-title").get_attribute("value") == "Runtime custom title",
+                "saved local custom title remains available for explicit reapplication after reload",
+            )
+            require(
+                driver.find_element("id", "page-title").text.strip() == f"Current page title: {original_fixture_title}",
+                "rename dialog distinguishes saved custom label from the reloaded page title",
+            )
+            driver.find_element("id", "save").click()
+            wait_until(lambda: reapply_dialog not in driver.window_handles, 10, "reapply dialog closes after rename")
+            driver.switch_to.window(rename_source_handle)
+            wait_until(lambda: selected_tab_label(driver) == "Runtime custom title", 10, "saved custom title reapplies after explicit user action")
+
+            driver.execute_script('document.title = "ATM runtime restored title";')
+            wait_until(lambda: driver.title == "Runtime custom title", 10, "observer retains custom title while remembering latest site title")
+            _, restore_dialog = invoke_tab_title_menu(driver)
+            require(restore_dialog is not None, "rename dialog opens for restore")
+            driver.find_element("id", "restore").click()
+            wait_until(lambda: restore_dialog not in driver.window_handles, 10, "rename dialog closes after restore")
+            driver.switch_to.window(rename_source_handle)
+            wait_until(
+                lambda: selected_tab_label(driver) == "ATM runtime restored title" and driver.title == "ATM runtime restored title",
+                10,
+                "Restore page title returns the latest site-provided title",
+            )
+
+            driver.get("about:blank")
+            wait_until(lambda: driver.current_url == "about:blank", 10, "restricted Firefox page loaded for fail-closed rename check")
+            invoke_tab_title_menu(driver, expect_dialog=False)
+            passes.append("tab-title-rename-restore-reload-restricted")
 
             navigate_extension(driver, "src/manager/manager.html")
             WebDriverWait(driver, 15).until(
@@ -782,7 +940,7 @@ def main() -> int:
             server.shutdown()
             server.server_close()
 
-    require(len(passes) == 18, "all release-critical unsigned runtime checks passed", str(passes))
+    require(len(passes) == 19, "all release-critical unsigned runtime checks passed", str(passes))
     print("Advanced Tab Manager unsigned real-Firefox runtime acceptance passed.")
     return 0
 

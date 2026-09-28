@@ -10,6 +10,7 @@
 - Added `activeTab`, `menus`, and `scripting` as narrowly scoped permissions. No host permission or declarative content script is added.
 - Restricted pages fail closed; navigation/reload can restore the website title and requires explicit user reapplication rather than broad background injection.
 - Added deterministic unit/source validation for eligibility, session metadata, injected targeting, restore behavior, menu registration, and no-host-permission posture.
+- Expanded real-Firefox qualification to exercise the native menu through the complete user path: rename an ordinary controlled HTTP tab, resist same-document title rewrites, verify reload restores the site title while retaining the saved custom label for explicit reapplication, restore the latest site-provided title, and confirm a restricted Firefox page opens no rename dialog.
 - Real-Firefox qualification also exposed a pre-existing branch-window ordering defect. Descendants are now appended to a new window one at a time in verified tree order, avoiding unreliable multi-tab `index: -1` ordering while preserving rollback behavior.
 - Stable 0.1.11 remains unchanged; this material 0.1.12 Development change requires fresh exact-candidate Firefox permission/runtime/rendered/accessibility review.
 

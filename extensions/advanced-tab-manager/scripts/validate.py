@@ -222,6 +222,8 @@ assert 'EXPECTED_ADDON_ID = "advanced-tab-manager@goreecloud.com"' in runtime_sm
 assert 'EXPECTED_VERSION = "0.1.12"' in runtime_smoke
 assert "gBrowser.addTrustedTab" in runtime_smoke and "--allow-system-access" in runtime_smoke
 assert "tabContextMenu" in runtime_smoke and "Rename tab title…" in runtime_smoke, "real-Firefox smoke must verify the native tab context menu item is visible"
+assert "tab-title-rename-restore-reload-restricted" in runtime_smoke, "real-Firefox smoke must exercise rename, same-document persistence, reload reapplication, restore, and restricted-page failure"
+assert "Runtime custom title" in runtime_smoke and "about:blank" in runtime_smoke, "real-Firefox rename acceptance must use controlled title data and a restricted Firefox page"
 assert "temporary=True" in runtime_smoke, "unsigned runtime gate must not masquerade as persistent signed acceptance"
 for route in (
     "atm:get-manager-state", "atm:set-tree-parent", "atm:save-focused-window-tab-set",
