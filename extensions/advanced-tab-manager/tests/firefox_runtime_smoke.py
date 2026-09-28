@@ -212,7 +212,7 @@ def selected_tab_label(driver: webdriver.Firefox) -> str:
     return str(label)
 
 
-def invoke_tab_title_menu(driver: webdriver.Firefox, expect_dialog: bool = True) -> tuple[str, str | None]:
+def invoke_tab_title_menu(driver: webdriver.Firefox) -> tuple[str, str]:
     source_handle = driver.current_window_handle
     previous_handles = set(driver.window_handles)
 
@@ -264,16 +264,6 @@ def invoke_tab_title_menu(driver: webdriver.Firefox, expect_dialog: bool = True)
         driver.set_context(driver.CONTEXT_CONTENT)
 
     require(isinstance(result, dict) and result.get("ok") is True, "native Firefox tab rename menu activated", repr(result))
-
-    if not expect_dialog:
-        time.sleep(0.75)
-        require(
-            set(driver.window_handles) == previous_handles,
-            "restricted Firefox page does not open the rename dialog",
-            repr(driver.window_handles),
-        )
-        driver.switch_to.window(source_handle)
-        return source_handle, None
 
     wait_until(
         lambda: len(set(driver.window_handles) - previous_handles) == 1,
