@@ -150,17 +150,25 @@ export function createTabTitleRenaming({ browser, broadcastChange = () => {} }) 
     return { ok: true };
   }
 
-  async function installMenu() {
-    try {
-      await browser.menus.remove(TAB_TITLE_MENU_ID);
-    } catch {
-      // The item is absent on first install or after an extension reload.
-    }
-
-    browser.menus.create({
-      id: TAB_TITLE_MENU_ID,
-      title: "Rename tab title…",
-      contexts: ["tab"]
+  function installMenu() {
+    return new Promise((resolve) => {
+      const id = browser.menus.create({
+        id: TAB_TITLE_MENU_ID,
+        title: "Rename tab title…",
+        contexts: ["tab"]
+      }, () => {
+        const lastError = browser.runtime?.lastError;
+        if (lastError) {
+          const message = String(lastError.message || lastError);
+          if (/already exists|duplicate/i.test(message)) {
+            resolve({ ok: true, id: TAB_TITLE_MENU_ID, existing: true });
+            return;
+          }
+          resolve({ ok: false, reason: "menu-create-failed", message });
+          return;
+        }
+        resolve({ ok: true, id: id ?? TAB_TITLE_MENU_ID, existing: false });
+      });
     });
   }
 
@@ -173,15 +181,26 @@ export function createTabTitleRenaming({ browser, broadcastChange = () => {} }) 
     if (!browser.menus?.create || !browser.menus?.onClicked?.addListener) {
       return { ok: false, reason: "menus-api-unavailable" };
     }
+    if (!browser.runtime?.onInstalled?.addListener) {
+      return { ok: false, reason: "runtime-install-event-unavailable" };
+    }
 
-    void installMenu().catch((error) => {
-      console.warn("Advanced Tab Manager could not install the tab-title menu", error);
+    browser.runtime.onInstalled.addListener(() => {
+      void installMenu().then((result) => {
+        if (!result.ok) {
+          console.warn("Advanced Tab Manager could not install the tab-title menu", result);
+        }
+      }).catch((error) => {
+        console.warn("Advanced Tab Manager could not install the tab-title menu", error);
+      });
     });
+
     browser.menus.onClicked.addListener((info, tab) => {
       handleMenuClick(info, tab).catch((error) => {
         console.warn("Advanced Tab Manager could not open the tab-title rename dialog", error);
       });
     });
+
     return { ok: true };
   }
 
