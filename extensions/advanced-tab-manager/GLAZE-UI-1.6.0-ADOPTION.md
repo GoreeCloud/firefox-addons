@@ -27,7 +27,7 @@ Current machine evidence deliberately reports `status: adoption-required`. It ma
 
 The current 0.1.12 source maps the following applicable V1.6 principles:
 
-- a shared repository-local `src/shared/glaze.css` surface/token layer consumed by the sidebar, popup, and Manager so material hierarchy, geometry, focus treatment, and product lockup presentation remain consistent without a remote runtime dependency;
+- a shared repository-local `src/shared/glaze.css` surface/token layer consumed by the sidebar, popup, Manager, and tab-title rename dialog so material hierarchy, geometry, focus treatment, and product lockup presentation remain consistent without a remote runtime dependency;
 - semantic system colors and protected state meaning;
 - visible live-tab residency semantics that distinguish Firefox automatic-unload protection from current resident/discarded state without using color alone or manufacturing foreground-execution claims;
 - a native, explicitly labeled duplicate-matching selector whose optional tracking-normalized state remains subordinate to exact matching and explains its bounded policy in text rather than relying on color;
@@ -110,5 +110,7 @@ This is a presentation and interaction change, not a new authority grant: no per
 ## Tab-title rename dialog refinement
 
 The 0.1.12 Development line now includes a dedicated Glaze-aligned **Rename tab title** dialog reached from Firefox's native tab context menu. The dialog uses semantic native controls, visible focus, system/Firefox colors, Reduced Transparency handling, and Forced Colors border fallbacks. It deliberately explains the no-broad-host-permission boundary and the navigation/reload limitation.
+
+The dialog now also consumes the shared Glaze product mark and material tokens directly, with a layered semantic surface, accent privacy note, stronger primary-action hierarchy, narrow-width stacking, and a 200% zoom overflow preflight. These source/runtime guards improve consistency but do not replace representative human rendering in normal light, dark appearance, Forced Colors, Reduced Transparency, and large-text/zoom conditions.
 
 This feature also adds narrowly scoped `activeTab`, `menus`, and `scripting` permissions for explicit user invocation, while host permissions remain none and no declarative content script is registered. Because both the permission posture and a new rendered surface changed after prior 0.1.12 evidence, fresh exact-candidate permission/security review plus representative normal-light, dark, Forced Colors, Reduced Transparency, large-text/zoom, keyboard, and assistive-technology review of the rename dialog are required before current V1.6 consumer acceptance can include it.
