@@ -255,4 +255,10 @@ button:disabled {
   .rename-shell {
     backdrop-filter: none;
   }
+
+  button.primary {
+    color: ButtonText;
+    background: ButtonFace;
+    border-color: ButtonText;
+  }
 }
