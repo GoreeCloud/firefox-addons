@@ -55,7 +55,7 @@ required = [
     "RELEASE-ACCEPTANCE-0.1.10.md",
     "scripts/large-session-qualification.mjs", "scripts/stable_security_review.py", "scripts/glaze_consumer_qualification.py",
     "scripts/target_acceptance.py", "scripts/test_target_acceptance.py", "scripts/validate_target_acceptance_source.py",
-    "TARGET-ACCEPTANCE-0.1.12.md", "TARGET-ACCEPTANCE-0.1.13.md"
+    "TARGET-ACCEPTANCE-0.1.12.md", "TARGET-ACCEPTANCE-0.1.13.md", "docs/target-acceptance-provenance-0.1.13.json"
 ]
 for relative in required:
     assert (ROOT / relative).is_file(), f"missing required Advanced Tab Manager file: {relative}"
@@ -295,6 +295,8 @@ release_acceptance_011 = (ROOT / "RELEASE-ACCEPTANCE-0.1.11.md").read_text(encod
 security_review_012 = (ROOT / "STABLE-SECURITY-REVIEW-0.1.12.md").read_text(encoding="utf-8")
 release_acceptance_012 = (ROOT / "RELEASE-ACCEPTANCE-0.1.12.md").read_text(encoding="utf-8")
 target_acceptance_012 = (ROOT / "TARGET-ACCEPTANCE-0.1.12.md").read_text(encoding="utf-8")
+target_acceptance_013 = (ROOT / "TARGET-ACCEPTANCE-0.1.13.md").read_text(encoding="utf-8")
+target_provenance_013 = json.loads((ROOT / "docs/target-acceptance-provenance-0.1.13.json").read_text(encoding="utf-8"))
 signing_evidence_012 = json.loads((ROOT / "docs/signing-evidence-0.1.12.json").read_text(encoding="utf-8"))
 security_script = (ROOT / "scripts/stable_security_review.py").read_text(encoding="utf-8")
 package_script = (REPOSITORY_ROOT / "shared/scripts/package_extension.py").read_text(encoding="utf-8")
@@ -322,6 +324,13 @@ assert "e0f16901529cb8fa76e57d9aa056c98de9fa04e708f2232c151d5b75c1dfdb1d" in rel
 assert "36378135958" in release_acceptance_012
 assert "2e54bdf2aa312c9cfe2895fd456f6d088a58eab6d24de80339e996e3e9ae11ba" in release_acceptance_012
 assert "all remaining governed human checks PASS" in target_acceptance_012
+assert "**Human target acceptance: Accepted**" in target_acceptance_013
+assert "all governed checks PASS" in target_acceptance_013
+assert target_provenance_013["candidate_version"] == "0.1.13"
+assert target_provenance_013["source_revision"] == "89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe"
+assert target_provenance_013["xpi_sha256"] == "837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5"
+assert target_provenance_013["target_record_sha256"] == "e590735ccd3909d164b0e3ad6802a4366ff08e8dcfa35ba8a73121749ac1307c"
+assert target_provenance_013["decision"] == "accepted" and target_provenance_013["release_ready"] is True
 assert "Stable Security Blockers:** Passed" in security_review_012
 assert signing_evidence_012["githubWorkflowRunId"] == 36378135958
 assert signing_evidence_012["candidateSha256"] == "3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f"
@@ -348,11 +357,11 @@ assert "advanced-tab-manager-glaze-1.6.0-adoption.json" in release_workflow
 assert "GLAZE UI 1.6.0 source adoption state" in release_workflow
 assert "cmp \"$A\" \"$B\"" in release_workflow
 
-assert "ATM_RELEASE_VERSION: '0.1.12'" in signing_workflow
-assert "ATM_RELEASE_SOURCE_REVISION: '43f3010607550d7d4380353b97f85a4dd0186695'" in signing_workflow
-assert "ATM_RELEASE_CANDIDATE_SHA256: '3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f'" in signing_workflow
-assert "ATM_TARGET_RECORD_SHA256: '922e7f0eb1ceb3c9f0bbab23c63bfe72d99556da1661ae1abee17ab1c7ccabde'" in signing_workflow
-assert "target-acceptance-provenance-0.1.12.json" in signing_workflow
+assert "ATM_RELEASE_VERSION: '0.1.13'" in signing_workflow
+assert "ATM_RELEASE_SOURCE_REVISION: '89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe'" in signing_workflow
+assert "ATM_RELEASE_CANDIDATE_SHA256: '837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5'" in signing_workflow
+assert "ATM_TARGET_RECORD_SHA256: 'e590735ccd3909d164b0e3ad6802a4366ff08e8dcfa35ba8a73121749ac1307c'" in signing_workflow
+assert "target-acceptance-provenance-0.1.13.json" in signing_workflow
 assert "validate-provenance" in signing_workflow and "--expected-source-revision" in signing_workflow and "--expected-record-sha256" in signing_workflow
 assert "git merge-base --is-ancestor" in signing_workflow and 'git checkout --detach "$ATM_RELEASE_SOURCE_REVISION"' in signing_workflow
 assert "Bind signing to authoritative main" in signing_workflow
@@ -364,12 +373,11 @@ assert "workflowRevision" in signing_workflow and "sourceRevision" in signing_wo
 assert "dist/target-acceptance-provenance.json" in signing_workflow
 assert "verify_signed_xpi.py" in signing_workflow and "signed_restart_smoke.py" in signing_workflow
 assert 'git show "$GITHUB_SHA":extensions/advanced-tab-manager/tests/signed_restart_smoke.py' in signing_workflow, "signing must run the current restart harness against the frozen accepted payload"
-assert "Restore current Glaze acceptance harness" in signing_workflow
-assert 'git show "$GITHUB_SHA":extensions/advanced-tab-manager/scripts/glaze_consumer_qualification.py' in signing_workflow
-assert "Capture current lifecycle metadata" in signing_workflow and "dist/current-extension-inventory.json" in signing_workflow
-assert "Glaze V1.6 consumer acceptance is not authoritative" in signing_workflow
-assert "Advanced Tab Manager canonical Stable promotion is not authoritative" in signing_workflow
 assert "advanced-tab-manager-signing-evidence.json" in signing_workflow
+assert "stablePromoted" in signing_workflow
+assert "glazeConsumerAccepted" in signing_workflow
+assert "Glaze V1.6 consumer acceptance is not authoritative" not in signing_workflow
+assert "Advanced Tab Manager canonical Stable promotion is not authoritative" not in signing_workflow
 assert "statuses: write" in signing_workflow
 assert "goreecloud/advanced-tab-manager-mozilla-signing" in signing_workflow
 assert "Publish signing gate pending status" in signing_workflow
