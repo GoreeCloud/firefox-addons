@@ -1,11 +1,21 @@
 {
-  "acceptedStableVersion": "0.1.12",
+  "acceptedStableVersion": "0.1.13",
+  "amoExistingVersion": {
+    "authenticatedDownloadApi": "https://addons.mozilla.org/api/v4/file/5065747/goreecloud-advanced-tab-manager-0.1.13.xpi",
+    "channel": "unlisted",
+    "fileHash": "sha256:6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c",
+    "fileId": 5065747,
+    "fileStatus": "public",
+    "internalCertificateFlag": false,
+    "redirectTargetDigest": null,
+    "version": "0.1.13"
+  },
   "candidateSha256": "837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5",
   "firefoxAddonId": "advanced-tab-manager@goreecloud.com",
-  "githubWorkflowRunId": 36431225028,
-  "glazeConsumerAccepted": false,
+  "githubWorkflowRunId": 36436396986,
+  "glazeConsumerAccepted": true,
   "mozillaSigned": true,
-  "mozillaSigningSource": "new-submission",
+  "mozillaSigningSource": "existing-version",
   "persistentInstallRestartAccepted": true,
   "product": "GoreeCloud Advanced Tab Manager",
   "schemaVersion": 1,
@@ -53,9 +63,9 @@
     "signedSha256": "6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c"
   },
   "sourceRevision": "89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe",
-  "sourceState": "source-candidate",
-  "stablePromoted": false,
+  "sourceState": "stable",
+  "stablePromoted": true,
   "stableSecurityBlockersPassed": true,
   "version": "0.1.13",
-  "workflowRevision": "d3ba4729c81e88bf98fcb0130399986dc8673ff3"
+  "workflowRevision": "257fbeb40c4e7e3e7b1d7a9fa2ee32ec63a6621e"
 }
