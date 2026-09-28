@@ -235,6 +235,13 @@ jobs:
           python extensions/advanced-tab-manager/tests/verify_signed_xpi.py             "$ATM_VERSION" "$candidate" "$signed"
           unzip -t "dist/goreecloud-advanced-tab-manager-${ATM_VERSION}-signed.xpi"
 
+      - name: Restore current signed-restart harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          git show "$GITHUB_SHA":extensions/advanced-tab-manager/tests/signed_restart_smoke.py > extensions/advanced-tab-manager/tests/signed_restart_smoke.py
+          python -m py_compile extensions/advanced-tab-manager/tests/signed_restart_smoke.py
+
       - name: Install Selenium
         run: python -m pip install --disable-pip-version-check selenium
 

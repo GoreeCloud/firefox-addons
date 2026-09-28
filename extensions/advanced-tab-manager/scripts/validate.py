@@ -329,6 +329,7 @@ assert "advanced-tab-manager-glaze-1.6.0-acceptance.json" in signing_workflow
 assert "workflowRevision" in signing_workflow and "sourceRevision" in signing_workflow
 assert "dist/target-acceptance-provenance.json" in signing_workflow
 assert "verify_signed_xpi.py" in signing_workflow and "signed_restart_smoke.py" in signing_workflow
+assert 'git show "$GITHUB_SHA":extensions/advanced-tab-manager/tests/signed_restart_smoke.py' in signing_workflow, "signing must run the current restart harness against the frozen accepted payload"
 assert "advanced-tab-manager-signing-evidence.json" in signing_workflow
 assert "statuses: write" in signing_workflow
 assert "goreecloud/advanced-tab-manager-mozilla-signing" in signing_workflow
@@ -340,6 +341,7 @@ assert "temporary=False" in signed_restart, "signed restart acceptance must use 
 assert signed_restart.count("install_addon(") == 1, "signed restart acceptance must not reinstall after restart"
 assert "post-restart organizational state readable" in signed_restart
 assert "advanced-tab-manager-signed-restart.json" in signed_restart
+assert "textContent" in signed_restart and "source-version" in signed_restart, "signed restart harness must read the collapsed Manager build identity without requiring it to be visible"
 assert "wait_for_snapshot_url_count" in signed_restart, "signed restart duplicate acceptance must wait for reconciled live state"
 
 assert 'EXPECTED_ADDON_ID = "advanced-tab-manager@goreecloud.com"' in signed_parity

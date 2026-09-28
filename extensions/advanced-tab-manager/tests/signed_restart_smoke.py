@@ -71,7 +71,9 @@ def persistent_extension_file(profile: Path, phase: str) -> Path:
 def wait_manager_version(driver: webdriver.Firefox) -> None:
     navigate_extension(driver, "src/manager/manager.html")
     WebDriverWait(driver, 15).until(
-        lambda d: d.find_element("id", "source-version").text.strip() == EXPECTED_VERSION
+        lambda d: d.execute_script(
+            "return document.querySelector('#source-version')?.textContent?.trim() || ''"
+        ) == EXPECTED_VERSION
     )
     require(True, "Manager renders exact signed candidate version")
 

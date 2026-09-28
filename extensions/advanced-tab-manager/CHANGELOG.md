@@ -20,6 +20,7 @@
 - Added real-Firefox appearance preflight for the rename dialog using Firefox's own document color-scheme/Forced Colors overrides plus LookAndFeel preference overrides for Reduced Transparency and Reduced Motion. The gate verifies the corresponding media states activate, material translucency/shadows are removed where required, and the dialog does not horizontally overflow. These automated checks do not replace human alternate-appearance or assistive-technology acceptance.
 - Real-Firefox qualification also exposed a pre-existing branch-window ordering defect. Descendants are now appended to a new window one at a time in verified tree order, avoiding unreliable multi-tab `index: -1` ordering while preserving rollback behavior.
 - Corrected the Forced Colors presentation of the Rename action and retained controlled appearance screenshots in CI.
+- Corrected the signed-restart acceptance harness to read the populated Manager version from the collapsed Technical details region without requiring Selenium-visible text; the signing workflow restores this current harness after checking out the frozen accepted payload, so release-test maintenance cannot alter the reviewed XPI bytes.
 - Stable 0.1.11 remains the production baseline while 0.1.12 proceeds through provenance-bound Mozilla signing, signed-XPI parity, persistent-install/restart acceptance, and separate Stable promotion.
 
 
