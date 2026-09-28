@@ -2,6 +2,7 @@
 
 ## 0.1.12 — Development update: explicit tab-title renaming
 
+- Corrected the Manifest V3 event-page lifecycle for the native tab rename menu after owner Firefox 156.0.1 evidence showed the distributed candidate had no **Rename tab title…** entry. The item is now created from `runtime.onInstalled` and is no longer removed/recreated on ordinary background startup; the real-Firefox smoke opens the native tab context menu and verifies the item is present.
 - Added **Rename tab title…** to Firefox's tab context menu for eligible non-private HTTP(S) tabs.
 - Added a dedicated Glaze-aligned rename dialog with Restore page title, 160-character validation, keyboard focus treatment, Reduced Transparency, and Forced Colors fallbacks.
 - Added a same-document title observer so dynamic sites cannot immediately overwrite the custom label.

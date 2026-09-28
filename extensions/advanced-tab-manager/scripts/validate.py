@@ -120,6 +120,8 @@ assert "browser.tabs.reload" not in tab_residency, "default residency must not s
 assert "browser.scripting.executeScript" in tab_title_renaming, "tab title changes must use explicit activeTab-scoped script injection"
 assert "browser.sessions.setTabValue" in tab_title_renaming and "browser.sessions.removeTabValue" in tab_title_renaming
 assert 'contexts: ["tab"]' in tab_title_renaming and 'title: "Rename tab title…"' in tab_title_renaming
+assert "browser.runtime.onInstalled.addListener" in tab_title_renaming, "MV3 menu creation must be bound to runtime.onInstalled so event-page restarts cannot remove it"
+assert "browser.menus.remove(" not in tab_title_renaming and "browser.menus.removeAll(" not in tab_title_renaming, "persistent MV3 menu state must not be torn down during background startup"
 assert 'protocol === "http:" || protocol === "https:"' in tab_title_renaming, "rename eligibility must fail closed outside HTTP(S)"
 assert "host_permissions" not in manifest, "tab title renaming must not introduce broad host access"
 assert "Rename tab title" in tab_title_html and "atm:set-tab-title-override" in tab_title_js
@@ -219,6 +221,7 @@ assert "representative Firefox rendered/runtime performance remains separate" in
 assert 'EXPECTED_ADDON_ID = "advanced-tab-manager@goreecloud.com"' in runtime_smoke
 assert 'EXPECTED_VERSION = "0.1.12"' in runtime_smoke
 assert "gBrowser.addTrustedTab" in runtime_smoke and "--allow-system-access" in runtime_smoke
+assert "tabContextMenu" in runtime_smoke and "Rename tab title…" in runtime_smoke, "real-Firefox smoke must verify the native tab context menu item is visible"
 assert "temporary=True" in runtime_smoke, "unsigned runtime gate must not masquerade as persistent signed acceptance"
 for route in (
     "atm:get-manager-state", "atm:set-tree-parent", "atm:save-focused-window-tab-set",

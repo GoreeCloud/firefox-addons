@@ -152,6 +152,52 @@ def grid_shape(driver: webdriver.Firefox, selector: str) -> tuple[int, int]:
     return columns, rows
 
 
+def tab_context_menu_labels(driver: webdriver.Firefox) -> list[str]:
+    driver.set_context(driver.CONTEXT_CHROME)
+    try:
+        result = driver.execute_async_script(
+            """
+            const done = arguments[arguments.length - 1];
+            const menu = document.getElementById("tabContextMenu");
+            const tab = window.gBrowser?.selectedTab;
+            let settled = false;
+            let timer = null;
+            const finish = value => {
+              if (settled) return;
+              settled = true;
+              if (timer !== null) clearTimeout(timer);
+              try {
+                if (menu?.state === "open" || menu?.state === "showing") menu.hidePopup();
+              } catch {}
+              done(value);
+            };
+            if (!menu || !tab) {
+              finish({ok: false, error: "tab context menu unavailable"});
+              return;
+            }
+            menu.addEventListener("popupshown", () => {
+              const labels = Array.from(menu.querySelectorAll("menuitem, menu"))
+                .map(element => element.getAttribute("label") || "")
+                .filter(Boolean);
+              finish({ok: true, labels});
+            }, {once: true});
+            timer = setTimeout(() => finish({ok: false, error: "tab context menu did not open"}), 5000);
+            try {
+              menu.openPopup(tab, "after_start", 0, 0, true, false);
+            } catch (error) {
+              finish({ok: false, error: String(error)});
+            }
+            """
+        )
+    finally:
+        driver.set_context(driver.CONTEXT_CONTENT)
+
+    require(isinstance(result, dict) and result.get("ok") is True, "native Firefox tab context menu opened", repr(result))
+    labels = result.get("labels")
+    require(isinstance(labels, list), "native Firefox tab context menu labels enumerated", repr(result))
+    return [str(label) for label in labels]
+
+
 def extension_message(driver: webdriver.Firefox, message: dict) -> object:
     result = driver.execute_async_script(
         """
@@ -261,6 +307,17 @@ def main() -> int:
             addon_id = driver.install_addon(str(xpi), temporary=True)
             require(addon_id == EXPECTED_ADDON_ID, "temporary candidate installation", str(addon_id))
             passes.append("temporary-install")
+
+            wait_until(
+                lambda: "Rename tab title…" in tab_context_menu_labels(driver),
+                10,
+                "native Firefox tab context menu exposes Rename tab title…",
+            )
+            require(
+                "Rename tab title…" in tab_context_menu_labels(driver),
+                "native Firefox tab context menu exposes Rename tab title…",
+            )
+            passes.append("tab-title-context-menu")
 
             navigate_extension(driver, "src/manager/manager.html")
             WebDriverWait(driver, 15).until(
@@ -725,7 +782,7 @@ def main() -> int:
             server.shutdown()
             server.server_close()
 
-    require(len(passes) == 17, "all release-critical unsigned runtime checks passed", str(passes))
+    require(len(passes) == 18, "all release-critical unsigned runtime checks passed", str(passes))
     print("Advanced Tab Manager unsigned real-Firefox runtime acceptance passed.")
     return 0
 
