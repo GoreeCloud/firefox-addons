@@ -19,6 +19,7 @@
 - Removed the rename dialog's fixed 360px minimum width, added a narrow-width stacked action layout, and added a real-Firefox 200% zoom horizontal-overflow preflight. This is an automated reflow guard, not a substitute for the governed human large-text/zoom review.
 - Added real-Firefox appearance preflight for the rename dialog using Firefox's own document color-scheme/Forced Colors overrides plus LookAndFeel preference overrides for Reduced Transparency and Reduced Motion. The gate verifies the corresponding media states activate, material translucency/shadows are removed where required, and the dialog does not horizontally overflow. These automated checks do not replace human alternate-appearance or assistive-technology acceptance.
 - Real-Firefox qualification also exposed a pre-existing branch-window ordering defect. Descendants are now appended to a new window one at a time in verified tree order, avoiding unreliable multi-tab `index: -1` ordering while preserving rollback behavior.
+- Corrected the Forced Colors presentation of the Rename action and retained controlled appearance screenshots in CI.
 - Stable 0.1.11 remains unchanged; this material 0.1.12 Development change requires fresh exact-candidate Firefox permission/runtime/rendered/accessibility review.
 
 
