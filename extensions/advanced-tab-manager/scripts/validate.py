@@ -224,6 +224,7 @@ assert 'EXPECTED_VERSION = "0.1.12"' in runtime_smoke
 assert "gBrowser.addTrustedTab" in runtime_smoke and "--allow-system-access" in runtime_smoke
 assert "tabContextMenu" in runtime_smoke and "Rename tab title…" in runtime_smoke, "real-Firefox smoke must verify the native tab context menu item is visible"
 assert "tab-title-rename-restore-reload-restricted" in runtime_smoke, "real-Firefox smoke must exercise rename, same-document persistence, reload reapplication, restore, and restricted-page failure"
+assert "tab-title-keyboard-accessibility" in runtime_smoke, "real-Firefox smoke must exercise native keyboard focus, submit, restore, cancel, and semantic checks for the rename dialog"
 assert "Runtime custom title" in runtime_smoke and "about:blank" in runtime_smoke, "real-Firefox rename acceptance must use controlled title data and a restricted Firefox page"
 assert "temporary=True" in runtime_smoke, "unsigned runtime gate must not masquerade as persistent signed acceptance"
 for route in (

@@ -212,7 +212,7 @@ def selected_tab_label(driver: webdriver.Firefox) -> str:
     return str(label)
 
 
-def invoke_tab_title_menu(driver: webdriver.Firefox, expect_dialog: bool = True) -> tuple[str, str | None]:
+def invoke_tab_title_menu(driver: webdriver.Firefox) -> tuple[str, str]:
     source_handle = driver.current_window_handle
     previous_handles = set(driver.window_handles)
 
@@ -264,16 +264,6 @@ def invoke_tab_title_menu(driver: webdriver.Firefox, expect_dialog: bool = True)
         driver.set_context(driver.CONTEXT_CONTENT)
 
     require(isinstance(result, dict) and result.get("ok") is True, "native Firefox tab rename menu activated", repr(result))
-
-    if not expect_dialog:
-        time.sleep(0.75)
-        require(
-            set(driver.window_handles) == previous_handles,
-            "restricted Firefox page does not open the rename dialog",
-            repr(driver.window_handles),
-        )
-        driver.switch_to.window(source_handle)
-        return source_handle, None
 
     wait_until(
         lambda: len(set(driver.window_handles) - previous_handles) == 1,
@@ -424,11 +414,33 @@ def main() -> int:
                 driver.find_element("id", "page-title").text.strip() == f"Current page title: {original_fixture_title}",
                 "rename dialog reports the current controlled page title",
             )
+            require(
+                driver.switch_to.active_element.get_attribute("id") == "tab-title",
+                "rename dialog moves initial keyboard focus to the custom title field",
+            )
+            rename_semantics = driver.execute_script(
+                """
+                const main = document.querySelector("main");
+                const heading = document.querySelector("#rename-heading");
+                const label = document.querySelector('label[for="tab-title"]');
+                const input = document.querySelector("#tab-title");
+                const status = document.querySelector("#status");
+                return Boolean(
+                  main?.getAttribute("aria-labelledby") === "rename-heading"
+                  && heading?.textContent.trim() === "Rename tab title"
+                  && label?.textContent.trim() === "Custom tab title"
+                  && input?.required
+                  && input?.maxLength === 160
+                  && status?.getAttribute("role") === "status"
+                  && status?.getAttribute("aria-live") === "polite"
+                );
+                """
+            )
+            require(rename_semantics is True, "rename dialog exposes bounded native form and polite status semantics")
             title_input = driver.find_element("id", "tab-title")
             title_input.clear()
-            title_input.send_keys("Runtime custom title")
-            driver.find_element("id", "save").click()
-            wait_until(lambda: dialog_handle not in driver.window_handles, 10, "rename dialog closes after successful rename")
+            title_input.send_keys("Runtime custom title", Keys.ENTER)
+            wait_until(lambda: dialog_handle not in driver.window_handles, 10, "Enter submits rename and closes the dialog")
             driver.switch_to.window(rename_source_handle)
             wait_until(lambda: selected_tab_label(driver) == "Runtime custom title", 10, "Firefox tab strip reflects the custom title")
             require(driver.title == "Runtime custom title", "controlled page document title reflects the custom title")
@@ -463,14 +475,44 @@ def main() -> int:
             wait_until(lambda: driver.title == "Runtime custom title", 10, "observer retains custom title while remembering latest site title")
             _, restore_dialog = invoke_tab_title_menu(driver)
             require(restore_dialog is not None, "rename dialog opens for restore")
-            driver.find_element("id", "restore").click()
-            wait_until(lambda: restore_dialog not in driver.window_handles, 10, "rename dialog closes after restore")
+            require(
+                driver.switch_to.active_element.get_attribute("id") == "tab-title",
+                "restore dialog returns initial focus to the custom title field",
+            )
+            driver.switch_to.active_element.send_keys(Keys.TAB)
+            require(
+                driver.switch_to.active_element.get_attribute("id") == "restore",
+                "Restore page title is the next keyboard-reachable action after the title field",
+            )
+            driver.switch_to.active_element.send_keys(Keys.ENTER)
+            wait_until(lambda: restore_dialog not in driver.window_handles, 10, "keyboard restore closes the rename dialog")
             driver.switch_to.window(rename_source_handle)
             wait_until(
                 lambda: selected_tab_label(driver) == "ATM runtime restored title" and driver.title == "ATM runtime restored title",
                 10,
                 "Restore page title returns the latest site-provided title",
             )
+
+            _, cancel_dialog = invoke_tab_title_menu(driver)
+            require(cancel_dialog is not None, "rename dialog opens for keyboard cancellation")
+            require(
+                driver.switch_to.active_element.get_attribute("id") == "tab-title",
+                "cancel dialog begins at the title field",
+            )
+            driver.switch_to.active_element.send_keys(Keys.TAB)
+            driver.switch_to.active_element.send_keys(Keys.TAB)
+            require(
+                driver.switch_to.active_element.get_attribute("id") == "cancel",
+                "Cancel is keyboard reachable in native tab order",
+            )
+            driver.switch_to.active_element.send_keys(Keys.ENTER)
+            wait_until(lambda: cancel_dialog not in driver.window_handles, 10, "keyboard Cancel closes the rename dialog")
+            driver.switch_to.window(rename_source_handle)
+            require(
+                selected_tab_label(driver) == "ATM runtime restored title",
+                "keyboard cancellation leaves the restored tab title unchanged",
+            )
+            passes.append("tab-title-keyboard-accessibility")
 
             driver.get("about:blank")
             wait_until(lambda: driver.current_url == "about:blank", 10, "restricted Firefox page loaded for fail-closed rename check")
@@ -943,7 +985,7 @@ def main() -> int:
             server.shutdown()
             server.server_close()
 
-    require(len(passes) == 19, "all release-critical unsigned runtime checks passed", str(passes))
+    require(len(passes) == 20, "all release-critical unsigned runtime checks passed", str(passes))
     print("Advanced Tab Manager unsigned real-Firefox runtime acceptance passed.")
     return 0
 
