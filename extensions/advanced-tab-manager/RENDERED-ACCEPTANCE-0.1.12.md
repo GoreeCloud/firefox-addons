@@ -230,3 +230,12 @@ Fresh owner-supplied Firefox/Linux screenshots were reviewed after the Forced Co
 The screenshots show the current sidebar, popup, Manager, and refined Rename tab title dialog rendering without visible clipping or overlap in normal light. The rename dialog shows visible input focus and all three actions, and a later screenshot shows the Firefox tab-strip label changed to **Tab Manager**.
 
 This closes the fresh current-candidate normal-light rendered subset reopened by the Forced Colors correction. Human dark, Forced Colors, Reduced Transparency, Reduced Motion, 200%/large-text reflow, constrained layout, assistive-technology, and full keyboard-traversal review remain separate. Stable remains `0.1.11`.
+
+
+## Owner final human review — September 27, 2026
+
+After the fresh current-candidate normal-light review, the owner explicitly reported **all remaining human review gates PASS** for the same exact 0.1.12 candidate.
+
+This closes the outstanding dark-appearance, Forced Colors, Reduced Transparency, Reduced Motion, 200%/large-text reflow, constrained/narrow layout, complete keyboard traversal, and assistive-technology human-review subsets for target acceptance.
+
+The automated Firefox captures and runtime checks remain regression evidence; the owner's PASS declaration is the human acceptance decision. Stable status still depends on successful provenance-bound Mozilla signing, signed-XPI parity, persistent installation, full Firefox restart acceptance, and the separate Stable-promotion change.
