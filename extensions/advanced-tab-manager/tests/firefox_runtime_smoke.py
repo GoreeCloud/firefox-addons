@@ -25,6 +25,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 from selenium import webdriver
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.common.keys import Keys
@@ -104,6 +105,20 @@ def wait_until(predicate, timeout: float, message: str) -> None:
             last = f"{type(exc).__name__}: {exc}"
         time.sleep(0.1)
     raise AssertionError(f"FAIL {message}: {last}")
+
+
+def click_fresh(driver: webdriver.Firefox, selector: str, timeout: float = 15) -> None:
+    def attempt(current: webdriver.Firefox) -> bool:
+        try:
+            element = current.find_element("css selector", selector)
+            if not element.is_displayed() or not element.is_enabled():
+                return False
+            element.click()
+            return True
+        except StaleElementReferenceException:
+            return False
+
+    WebDriverWait(driver, timeout).until(attempt)
 
 
 def navigate_extension(driver: webdriver.Firefox, path: str) -> None:
@@ -343,9 +358,11 @@ def rename_appearance_state(driver: webdriver.Firefox) -> dict:
         """
         const shell = document.querySelector(".rename-shell");
         const secondary = document.querySelector("#cancel");
-        if (!shell || !secondary) return {ok: false};
+        const primary = document.querySelector("#save");
+        if (!shell || !secondary || !primary) return {ok: false};
         const shellStyle = getComputedStyle(shell);
         const secondaryStyle = getComputedStyle(secondary);
+        const primaryStyle = getComputedStyle(primary);
         return {
           ok: true,
           dark: matchMedia("(prefers-color-scheme: dark)").matches,
@@ -355,12 +372,25 @@ def rename_appearance_state(driver: webdriver.Firefox) -> dict:
           shellBackdropFilter: shellStyle.getPropertyValue("backdrop-filter").trim(),
           shellBoxShadow: shellStyle.boxShadow,
           secondaryBoxShadow: secondaryStyle.boxShadow,
+          primaryColor: primaryStyle.color,
+          primaryBackgroundColor: primaryStyle.backgroundColor,
+          primaryText: primary.textContent.trim(),
           animationCount: document.getAnimations().length
         };
         """
     )
     require(isinstance(result, dict) and result.get("ok") is True, "rename dialog appearance state available", repr(result))
     return result
+
+
+def capture_appearance_screenshot(driver: webdriver.Firefox, name: str) -> str:
+    output_dir = Path("dist/advanced-tab-manager-appearance-preflight")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output = output_dir / f"{name}.png"
+    shell = driver.find_element("css selector", ".rename-shell")
+    saved = shell.screenshot(str(output))
+    require(saved and output.is_file() and output.stat().st_size > 0, f"appearance screenshot retained: {name}")
+    return output.name
 
 
 def set_current_extension_zoom(driver: webdriver.Firefox, zoom: float) -> float:
@@ -587,6 +617,7 @@ def main() -> int:
             )
 
             appearance_baseline = rename_appearance_state(driver)
+            appearance_screenshots = [capture_appearance_screenshot(driver, "rename-normal-light")]
 
             set_current_document_appearance(driver, "dark", "none")
             wait_until(
@@ -600,6 +631,7 @@ def main() -> int:
                 "rename dialog has no horizontal overflow in dark appearance preflight",
                 repr(dark_reflow),
             )
+            appearance_screenshots.append(capture_appearance_screenshot(driver, "rename-dark"))
             set_current_document_appearance(driver, "none", "none")
             wait_until(
                 lambda: rename_appearance_state(driver)["dark"] == appearance_baseline["dark"],
@@ -620,12 +652,15 @@ def main() -> int:
                 "rename dialog disables translucent material effects in Forced Colors",
                 repr(forced_state),
             )
+            require(forced_state["primaryText"] == "Rename", "Forced Colors keeps the Rename action label")
+            require(forced_state["primaryColor"] != forced_state["primaryBackgroundColor"], "Forced Colors keeps distinct action text and surface colors", repr(forced_state))
             forced_reflow = horizontal_reflow_metrics(driver)
             require(
                 forced_reflow["scrollWidth"] <= forced_reflow["clientWidth"] + 1,
                 "rename dialog has no horizontal overflow in Forced Colors preflight",
                 repr(forced_reflow),
             )
+            appearance_screenshots.append(capture_appearance_screenshot(driver, "rename-forced-colors"))
             set_current_document_appearance(driver, "none", "none")
             wait_until(
                 lambda: rename_appearance_state(driver)["forcedColors"] == appearance_baseline["forcedColors"],
@@ -635,9 +670,9 @@ def main() -> int:
 
             set_firefox_pref(driver, "ui.prefersReducedTransparency", 1)
             wait_until(
-                lambda: rename_appearance_state(driver)["reducedTransparency"],
+                lambda: rename_appearance_state(driver)["reducedTransparency"] and rename_appearance_state(driver)["shellBackdropFilter"] in {"", "none"},
                 5,
-                "rename dialog enters Reduced Transparency preference",
+                "rename dialog applies Reduced Transparency preference",
             )
             transparency_state = rename_appearance_state(driver)
             require(
@@ -647,6 +682,7 @@ def main() -> int:
                 "rename dialog removes material transparency and secondary shadows when transparency is reduced",
                 repr(transparency_state),
             )
+            appearance_screenshots.append(capture_appearance_screenshot(driver, "rename-reduced-transparency"))
             set_firefox_pref(driver, "ui.prefersReducedTransparency", None)
 
             set_firefox_pref(driver, "ui.prefersReducedMotion", 1)
@@ -661,6 +697,7 @@ def main() -> int:
                 "rename dialog has no active animation under Reduced Motion",
                 repr(motion_state),
             )
+            appearance_screenshots.append(capture_appearance_screenshot(driver, "rename-reduced-motion"))
             set_firefox_pref(driver, "ui.prefersReducedMotion", None)
             set_firefox_pref(driver, "layout.css.prefers-reduced-transparency.enabled", None)
             passes.append("tab-title-appearance-preflight")
@@ -683,6 +720,7 @@ def main() -> int:
                 "rename dialog actions remain within the viewport at 200% Firefox zoom",
                 repr(reflow),
             )
+            appearance_screenshots.append(capture_appearance_screenshot(driver, "rename-zoom-200"))
             set_current_extension_zoom(driver, 1.0)
             passes.append("tab-title-reflow-preflight")
 
@@ -1047,10 +1085,10 @@ def main() -> int:
             next_week_url = f"{base}/snooze-next-week"
             next_week_source = create_tab(driver, next_week_url)
             navigate_extension(driver, "src/sidebar/sidebar.html")
-            next_week_button = WebDriverWait(driver, 15).until(
-                lambda d: d.find_element("css selector", f'button[data-action="snooze"][data-tab-id="{next_week_source}"]')
+            click_fresh(
+                driver,
+                f'button[data-action="snooze"][data-tab-id="{next_week_source}"]',
             )
-            next_week_button.click()
             WebDriverWait(driver, 5).until(
                 lambda d: d.find_element("id", "snooze-dialog").get_attribute("open") is not None
             )
@@ -1224,6 +1262,7 @@ def main() -> int:
                 "installation": "temporary-unsigned-runtime-smoke",
                 "controlledLocalFixtureOnly": True,
                 "passedChecks": passes,
+                "appearancePreflightScreenshots": appearance_screenshots,
                 "signedPersistentRestartAccepted": False,
             }
             out = Path("dist/advanced-tab-manager-firefox-runtime.json")
