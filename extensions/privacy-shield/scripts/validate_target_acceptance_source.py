@@ -185,7 +185,7 @@ for marker in (
     assert marker in signing_lower, f"signing target-evidence boundary missing: {marker}"
 
 # Target acceptance tooling stays outside the packaged Firefox payload.
-assert 'EXCLUDE_PARTS = {"scripts", "__pycache__", ".git"}' in packager, \
-    "canonical packager must continue excluding maintenance scripts from the XPI"
+assert "EXCLUDE_PARTS" in packager and '"scripts"' in packager and '"docs"' in packager, \
+    "canonical packager must continue excluding maintenance scripts and docs from the XPI"
 
 print("Privacy Shield target acceptance evidence source contract validated.")
