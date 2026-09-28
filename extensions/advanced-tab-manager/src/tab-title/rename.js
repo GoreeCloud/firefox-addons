@@ -81,7 +81,7 @@ async function applyTitle(title) {
 
   if (!result?.ok) {
     setBusy(false);
-    setStatus(errorMessage(result?.reason, result?.maxLength), "error");
+    setStatus(errorMessage(result?.reason, result?.maxLength, result?.rollbackApplied), "error");
     titleInput.focus();
     return;
   }
