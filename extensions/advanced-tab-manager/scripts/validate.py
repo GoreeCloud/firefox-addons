@@ -29,6 +29,7 @@ required = [
     "README.md", "FEATURES.md", "IMPLEMENTED-FEATURES.md", "PLANNED-FEATURES.md", "CHANGELOGS.md", "SPECIFICATIONS.md", "ARCHITECTURE.md",
     "PRIVACY.md", "SECURITY.md", "CHANGELOG.md", "LICENSE",
     "GLAZE-UI-1.5.1-ADOPTION.md", "GLAZE-UI-1.6.0-ADOPTION.md", "RENDERED-ACCEPTANCE-0.1.12.md", "STABLE-SECURITY-REVIEW-0.1.11.md", "RELEASE-ACCEPTANCE-0.1.11.md",
+    "STABLE-SECURITY-REVIEW-0.1.12.md", "RELEASE-ACCEPTANCE-0.1.12.md", "docs/signing-evidence-0.1.12.json",
     "src/background/background.js", "src/background/browser-state.js", "src/background/tab-residency.js", "src/background/tab-title-renaming.js", "src/background/tree-branch-actions.js", "src/background/saved-state.js", "src/background/duplicate-cleanup.js", "src/background/snooze.js", "src/background/rules.js", "src/background/manager.js", "src/background/portability.js",
     "src/core/state.js", "src/core/tree.js", "src/core/tree-session.js", "src/core/duplicates.js",
     "src/core/persistent-state.js", "src/core/tab-sets.js", "src/core/stash-transaction.js",
@@ -277,6 +278,10 @@ glaze_adoption = (ROOT / "GLAZE-UI-1.6.0-ADOPTION.md").read_text(encoding="utf-8
 rendered_acceptance = (ROOT / "RENDERED-ACCEPTANCE-0.1.12.md").read_text(encoding="utf-8")
 security_review = (ROOT / "STABLE-SECURITY-REVIEW-0.1.11.md").read_text(encoding="utf-8")
 release_acceptance_011 = (ROOT / "RELEASE-ACCEPTANCE-0.1.11.md").read_text(encoding="utf-8")
+security_review_012 = (ROOT / "STABLE-SECURITY-REVIEW-0.1.12.md").read_text(encoding="utf-8")
+release_acceptance_012 = (ROOT / "RELEASE-ACCEPTANCE-0.1.12.md").read_text(encoding="utf-8")
+target_acceptance_012 = (ROOT / "TARGET-ACCEPTANCE-0.1.12.md").read_text(encoding="utf-8")
+signing_evidence_012 = json.loads((ROOT / "docs/signing-evidence-0.1.12.json").read_text(encoding="utf-8"))
 security_script = (ROOT / "scripts/stable_security_review.py").read_text(encoding="utf-8")
 glaze_script = (ROOT / "scripts/glaze_consumer_qualification.py").read_text(encoding="utf-8")
 release_workflow = (REPOSITORY_ROOT / ".github/workflows/advanced-tab-manager-release-qualification.yml").read_text(encoding="utf-8")
@@ -299,6 +304,17 @@ assert "full Git history" in security_review
 assert "0.1.11" in release_acceptance_011 and "**Lifecycle:** Stable" in release_acceptance_011
 assert "35350654198" in release_acceptance_011
 assert "e0f16901529cb8fa76e57d9aa056c98de9fa04e708f2232c151d5b75c1dfdb1d" in release_acceptance_011
+assert "36378135958" in release_acceptance_012
+assert "2e54bdf2aa312c9cfe2895fd456f6d088a58eab6d24de80339e996e3e9ae11ba" in release_acceptance_012
+assert "all remaining governed human checks PASS" in target_acceptance_012
+assert "Stable Security Blockers:** Passed" in security_review_012
+assert signing_evidence_012["githubWorkflowRunId"] == 36378135958
+assert signing_evidence_012["candidateSha256"] == "3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f"
+assert signing_evidence_012["signedSha256"] == "2e54bdf2aa312c9cfe2895fd456f6d088a58eab6d24de80339e996e3e9ae11ba"
+assert signing_evidence_012["mozillaSigned"] is True
+assert signing_evidence_012["persistentInstallRestartAccepted"] is True
+assert signing_evidence_012["signedNonManifestPayloadMatchesCandidateByteForByte"] is True
+assert signing_evidence_012["signedManifestGovernedParityAccepted"] is True
 assert '"git"' in security_script and '"log"' in security_script and "--full-history" in security_script
 assert "manifest.json" in security_script and "EXPECTED_VERSION" in security_script
 assert 'GLAZE_VERSION = "1.6.0"' in glaze_script
