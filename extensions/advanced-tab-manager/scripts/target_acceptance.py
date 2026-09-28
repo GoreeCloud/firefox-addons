@@ -400,7 +400,7 @@ def _write_record(path: Path, record: dict[str, Any]) -> None:
 def _summary(result: dict[str, Any]) -> str:
     return "\n".join(
         [
-            "# Advanced Tab Manager 0.1.12 Target Acceptance Summary",
+            f"# {PRODUCT.removeprefix('GoreeCloud ')} {EXPECTED_RELEASE} Target Acceptance Summary",
             "",
             f"- Source revision: `{result['source_revision']}`",
             f"- XPI SHA-256: `{result['xpi_sha256']}`",

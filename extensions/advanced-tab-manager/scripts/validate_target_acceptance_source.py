@@ -43,6 +43,7 @@ for marker in (
     assert marker in tool, f"target acceptance contract missing: {marker}"
 
 for marker in (
+    'test_summary_uses_current_release_identity',
     'test_release_ready_record_passes',
     'test_accepted_record_requires_every_keyboard_check',
     'test_accepted_record_requires_every_assistive_technology_check',

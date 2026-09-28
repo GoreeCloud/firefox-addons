@@ -7,6 +7,7 @@
 - Added source/package validation that pins the packaged SVG to the canonical branding blob and requires the icon manifest mappings.
 - Expanded the clean-profile real-Firefox runtime smoke to query Firefox `AddonManager` after installation and fail unless the installed add-on resolves the canonical packaged product icon URL, giving native Firefox metadata coverage in addition to manifest/source checks.
 - Advanced the exact-source Firefox runtime and human target-review contracts to 0.1.13, including an explicit Firefox extension-icon surface review gate.
+- Corrected the privacy-safe target-acceptance summary generator so its heading derives the current candidate version instead of retaining the historical 0.1.12 label; added regression coverage to prevent another stale release identity.
 - Added no permission, host permission, content script, remote dependency, telemetry, or browser-authority expansion.
 - Stable 0.1.12 remains the accepted Mozilla-signed release; 0.1.13 does not inherit Stable or exact-revision GLAZE UI consumer acceptance.
 
