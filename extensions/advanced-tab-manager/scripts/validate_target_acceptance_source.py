@@ -37,6 +37,8 @@ for marker in (
     'build_provenance(',
     'validate_provenance(',
     'target_record_sha256',
+    'sub.add_parser("provenance"',
+    'sub.add_parser("validate-provenance"',
 ):
     assert marker in tool, f"target acceptance contract missing: {marker}"
 
@@ -74,6 +76,7 @@ assert "**Human target acceptance: Pending**" in record
 assert "complete machine-readable target record remains local" in record.lower()
 assert "does not establish human acceptance" in record.lower()
 assert "GLAZE UI V1.6 / 1.6.0" in record
+assert "privacy-safe signing provenance" in record.lower()
 
 assert "ATM_RELEASE_VERSION: '0.1.11'" in signing_workflow
 assert "ATM_RELEASE_CANDIDATE_SHA256: '9c0f44926ac1d2f213fd07f82dd18fa11bd54ceebc6cd871898fe82b962a5b02'" in signing_workflow
