@@ -18,6 +18,9 @@ GLAZE_STABLE_SOURCE = "a7180679ea851389e0f3004515f9a25f420e716d"
 GLAZE_QUALIFICATION_ANCHOR = "c7509c79256b04b0aa67cb9dd0737d7588e0ae4a"
 GLAZE_EVIDENCE_INTEGRATION = "354f5759385c28596fcfec26a3ad525e89fb1c35"
 GLAZE_STABLE_ARTIFACT_SHA256 = "687268b5eb76917eccae9d935ffa1bead333d5dee50b6098e996a3f44cee50af"
+ACCEPTED_RUNTIME_REVISION = "89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe"
+ACCEPTED_UNSIGNED_XPI_SHA256 = "837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5"
+TARGET_ACCEPTANCE_RECORD_SHA256 = "e590735ccd3909d164b0e3ad6802a4366ff08e8dcfa35ba8a73121749ac1307c"
 
 
 def require(condition: bool, message: str) -> None:
@@ -104,6 +107,9 @@ def main() -> int:
         "product": "GoreeCloud Advanced Tab Manager",
         "sourceVersion": EXPECTED_VERSION,
         "sourceRevision": args.source_revision,
+        "acceptedRuntimeRevision": ACCEPTED_RUNTIME_REVISION,
+        "acceptedUnsignedXpiSha256": ACCEPTED_UNSIGNED_XPI_SHA256,
+        "targetAcceptanceRecordSha256": TARGET_ACCEPTANCE_RECORD_SHA256,
         "supportedPlatform": "Firefox browser extension",
         "glazeTargetVersion": GLAZE_VERSION,
         "glazeAuthorityRepository": GLAZE_AUTHORITY_REPOSITORY,
@@ -114,7 +120,7 @@ def main() -> int:
         "adoptionMode": "repository-local constrained-browser V1.6 source mapping",
         "status": "adoption-required",
         "sourceMappingValidated": True,
-        "applicablePresentationObligationsAccepted": False,
+        "applicablePresentationObligationsAccepted": True,
         "authorityBoundaryPreserved": True,
         "privacyMinimizedDiagnosticsPreserved": True,
         "accessibilityPrecedenceSourceMapped": True,
@@ -122,9 +128,9 @@ def main() -> int:
         "reducedTransparencySourceMapped": True,
         "forcedColorsSourceMapped": True,
         "keyboardFocusSourceMapped": True,
-        "representativeRenderedAcceptanceComplete": False,
-        "assistiveTechnologyAcceptanceComplete": False,
-        "largeTextAcceptanceComplete": False,
+        "representativeRenderedAcceptanceComplete": True,
+        "assistiveTechnologyAcceptanceComplete": True,
+        "largeTextAcceptanceComplete": True,
         "consumerRegistryAccepted": False,
         "automaticPermissionRequest": False,
         "automaticConsequentialExecution": False,
