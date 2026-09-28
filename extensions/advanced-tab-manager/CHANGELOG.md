@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.12 — Development update: explicit tab-title renaming
+## 0.1.12 — Stable
 
 - Corrected the Manifest V3 event-page lifecycle for the native tab rename menu after owner Firefox 156.0.1 evidence showed the distributed candidate had no **Rename tab title…** entry. The item is now created from `runtime.onInstalled` and is no longer removed/recreated on ordinary background startup; the real-Firefox smoke opens the native tab context menu and verifies the item is present.
 - Added **Rename tab title…** to Firefox's tab context menu for eligible non-private HTTP(S) tabs, with menu visibility itself restricted to HTTP(S) documents so Firefox/system/extension pages do not present an inapplicable command.
@@ -21,22 +21,22 @@
 - Real-Firefox qualification also exposed a pre-existing branch-window ordering defect. Descendants are now appended to a new window one at a time in verified tree order, avoiding unreliable multi-tab `index: -1` ordering while preserving rollback behavior.
 - Corrected the Forced Colors presentation of the Rename action and retained controlled appearance screenshots in CI.
 - Corrected the signed-restart acceptance harness to read the populated Manager version from the collapsed Technical details region without requiring Selenium-visible text; the signing workflow restores this current harness after checking out the frozen accepted payload, so release-test maintenance cannot alter the reviewed XPI bytes.
-- Stable 0.1.11 remains the production baseline while 0.1.12 proceeds through provenance-bound Mozilla signing, signed-XPI parity, persistent-install/restart acceptance, and separate Stable promotion.
+- Governed signing/restart run `36378135958` accepted runtime revision `43f3010607550d7d4380353b97f85a4dd0186695`, unsigned XPI SHA-256 `3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f`, Mozilla-signed XPI SHA-256 `2e54bdf2aa312c9cfe2895fd456f6d088a58eab6d24de80339e996e3e9ae11ba`, signed parity, persistent installation, full Firefox restart, and post-restart acceptance. GLAZE UI V1.6 consumer registry acceptance is authoritative at `b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb`. Canonical lifecycle metadata is promoted to Stable without changing packaged runtime bytes.
 
 
-## 0.1.12 — Development
+## 0.1.12 — Development history
 
-- Started a new Development/source-candidate line from accepted Stable 0.1.11; Stable 0.1.11 remains the signed rollback/production baseline.
+- Started the 0.1.12 Development/source-candidate line from accepted Stable 0.1.11; this section preserves the development history leading to the accepted Stable 0.1.12 release.
 - Added a shared repository-local Glaze surface/token layer consumed by the sidebar, popup, and Manager so spacing, material depth, borders, focus behavior, and product lockup treatment use one coherent visual grammar.
 - Applied a second-stage GLAZE UI V1.6 visual polish pass after September 27 owner screenshots showed the functional 0.1.12 surfaces still looked too flat and prototype-like: the sidebar gains a stronger lockup and quieter density, the popup becomes a framed Glaze command surface, and the Manager gains a distinct hero/material hierarchy with less uniform diagnostic-card treatment.
-- The September 27 screenshots are retained as remediation evidence rather than acceptance; keyboard/assistive-technology, Forced Colors, Reduced Transparency, dark appearance, Reduced Motion, high-zoom/large-text, and fresh post-refinement rendered acceptance remain pending.
+- September 27 screenshots initially served as remediation evidence; the later governed target review completed keyboard, assistive-technology, Forced Colors, Reduced Transparency, dark appearance, Reduced Motion, high-zoom/large-text, constrained-layout, and fresh post-refinement rendered acceptance.
 - Refined the integrated Glaze pass again from post-PR #109 owner screenshots: the sidebar command trigger now uses a readable text label, tab action controls retain stronger resting contrast, the Manager status moves into the hero, decorative metric circles are removed, and secondary technical diagnostics collapse behind a native disclosure so recovery and organization remain visually primary.
 - Redesigned the toolbar popup as a compact command surface with glanceable live metrics and clearer primary/secondary action hierarchy.
 - Redesigned sidebar chrome, search/view controls, state summary, active-tab treatment, responsive density, and interaction semantics.
 - Reorganized the full Manager into overview, recovery, portability, and secondary technical-status regions with more deliberate information hierarchy.
 - Removed stale hard-coded `In Development · source-candidate` fields from the runtime Manager model so canonical release records remain authoritative for mutable lifecycle truth.
 - Corrected the Manager so retained session-snapshot count is rendered from the existing privacy-minimized model.
-- Reconciled the 0.1.12 Development line to the current shared GLAZE UI V1.6 / 1.6.0 adoption target while retaining V1.5.1 only as historical Stable 0.1.11 provenance; source mapping does not claim downstream consumer acceptance.
+- Reconciled the 0.1.12 Development line to GLAZE UI V1.6 / 1.6.0; downstream consumer acceptance later became authoritative at Glaze registry commit `b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb`.
 - Added source-only governed 0.1.12 target-review tooling: an exact-source deterministic unsigned-candidate workflow plus a closed privacy-minimized human keyboard/assistive-technology/appearance acceptance record contract. The tooling remains outside packaged runtime bytes and does not itself claim human acceptance.
 - Refactored candidate security/Glaze/release-qualification tooling to bind to the exact current manifest version while preserving historical Stable 0.1.11 release/signing evidence.
 - Added default live-tab residency using the existing `tabs` permission: eligible non-private tabs are set to `autoDiscardable=false` at background startup and on tab creation so Firefox does not automatically unload background tabs. Explicit manual/rule-driven discard remains available.
