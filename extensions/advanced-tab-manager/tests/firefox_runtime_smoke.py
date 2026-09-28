@@ -586,11 +586,20 @@ def main() -> int:
             passes.append("temporary-install")
 
             addon_identity = firefox_addon_identity(driver)
-            expected_icon_url = extension_url(EXPECTED_ICON_PATH)
+            icon_suffix = f"/{EXPECTED_ICON_PATH}"
             require(addon_identity.get("id") == EXPECTED_ADDON_ID, "Firefox AddonManager retains exact add-on ID", repr(addon_identity))
             require(addon_identity.get("name") == "GoreeCloud Advanced Tab Manager", "Firefox AddonManager retains product name", repr(addon_identity))
             require(addon_identity.get("version") == EXPECTED_VERSION, "Firefox AddonManager retains exact candidate version", repr(addon_identity))
-            require(addon_identity.get("iconURL") == expected_icon_url, "Firefox AddonManager resolves canonical packaged product icon", repr(addon_identity))
+            require(str(addon_identity.get("iconURL", "")).endswith(icon_suffix), "Firefox AddonManager resolves canonical packaged product icon", repr(addon_identity))
+            native_icons = addon_identity.get("icons")
+            expected_icon_sizes = {"16", "32", "48", "64", "96", "128"}
+            require(
+                isinstance(native_icons, dict)
+                and set(native_icons) == expected_icon_sizes
+                and all(str(value).endswith(icon_suffix) for value in native_icons.values()),
+                "Firefox AddonManager resolves every declared icon size to canonical packaged artwork",
+                repr(addon_identity),
+            )
             passes.append("native-firefox-addon-icon")
 
             rename_source_handle = driver.current_window_handle
