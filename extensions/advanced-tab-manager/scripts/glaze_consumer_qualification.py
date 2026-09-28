@@ -18,6 +18,9 @@ GLAZE_STABLE_SOURCE = "a7180679ea851389e0f3004515f9a25f420e716d"
 GLAZE_QUALIFICATION_ANCHOR = "c7509c79256b04b0aa67cb9dd0737d7588e0ae4a"
 GLAZE_EVIDENCE_INTEGRATION = "354f5759385c28596fcfec26a3ad525e89fb1c35"
 GLAZE_STABLE_ARTIFACT_SHA256 = "687268b5eb76917eccae9d935ffa1bead333d5dee50b6098e996a3f44cee50af"
+GLAZE_CONSUMER_REGISTRY_ACCEPTANCE = "b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb"
+ACCEPTED_RUNTIME_REVISION = "43f3010607550d7d4380353b97f85a4dd0186695"
+ACCEPTED_UNSIGNED_XPI_SHA256 = "3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f"
 
 
 def require(condition: bool, message: str) -> None:
@@ -99,6 +102,14 @@ def main() -> int:
     require("source candidate" not in popup_html.lower(), "release-candidate lifecycle text must not be embedded in popup runtime bytes")
     require("development source only" not in manager_html.lower(), "development lifecycle text must not be embedded in Manager runtime bytes")
 
+    adoption_record = read("GLAZE-UI-1.6.0-ADOPTION.md")
+    release_record = read("RELEASE-ACCEPTANCE-0.1.12.md")
+    require(GLAZE_CONSUMER_REGISTRY_ACCEPTANCE in adoption_record, "Glaze consumer registry acceptance commit is not recorded")
+    require("accepted-v1" in adoption_record, "Glaze consumer acceptance state is not recorded")
+    require(ACCEPTED_RUNTIME_REVISION in release_record, "accepted runtime revision is missing from release evidence")
+    require(ACCEPTED_UNSIGNED_XPI_SHA256 in release_record, "accepted unsigned XPI digest is missing from release evidence")
+    require("36378135958" in release_record, "Mozilla signed/restart acceptance run is missing from release evidence")
+
     evidence = {
         "schemaVersion": 1,
         "product": "GoreeCloud Advanced Tab Manager",
@@ -112,9 +123,12 @@ def main() -> int:
         "glazeQualificationEvidenceIntegrationCommit": GLAZE_EVIDENCE_INTEGRATION,
         "glazeStableArtifactSha256": GLAZE_STABLE_ARTIFACT_SHA256,
         "adoptionMode": "repository-local constrained-browser V1.6 source mapping",
-        "status": "adoption-required",
+        "status": "accepted-v1",
         "sourceMappingValidated": True,
-        "applicablePresentationObligationsAccepted": False,
+        "applicablePresentationObligationsAccepted": True,
+        "acceptedRuntimeRevision": ACCEPTED_RUNTIME_REVISION,
+        "acceptedUnsignedXpiSha256": ACCEPTED_UNSIGNED_XPI_SHA256,
+        "consumerRegistryAcceptanceCommit": GLAZE_CONSUMER_REGISTRY_ACCEPTANCE,
         "authorityBoundaryPreserved": True,
         "privacyMinimizedDiagnosticsPreserved": True,
         "accessibilityPrecedenceSourceMapped": True,
@@ -122,10 +136,10 @@ def main() -> int:
         "reducedTransparencySourceMapped": True,
         "forcedColorsSourceMapped": True,
         "keyboardFocusSourceMapped": True,
-        "representativeRenderedAcceptanceComplete": False,
-        "assistiveTechnologyAcceptanceComplete": False,
-        "largeTextAcceptanceComplete": False,
-        "consumerRegistryAccepted": False,
+        "representativeRenderedAcceptanceComplete": True,
+        "assistiveTechnologyAcceptanceComplete": True,
+        "largeTextAcceptanceComplete": True,
+        "consumerRegistryAccepted": True,
         "automaticPermissionRequest": False,
         "automaticConsequentialExecution": False,
         "sharedPerformanceAcceptanceInherited": False,

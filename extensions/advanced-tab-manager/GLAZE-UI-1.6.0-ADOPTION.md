@@ -3,8 +3,8 @@
 ## Status
 
 **Product:** GoreeCloud Advanced Tab Manager 0.1.12  
-**Lifecycle:** Development / source candidate  
-**Accepted product Stable:** 0.1.11  
+**Lifecycle:** Stable  
+**Accepted product Stable:** 0.1.12  
 **Platform:** Firefox browser extension  
 **Required shared target:** GLAZE UI V1.6 / machine version 1.6.0  
 **Shared authority repository:** `GoreeCloud/glaze-ui`  
@@ -21,7 +21,7 @@ Advanced Tab Manager uses repository-local Firefox HTML/CSS/JavaScript presentat
 
 The shared V1.6 Stable release does not grant Advanced Tab Manager consumer acceptance, product Stable status, production eligibility, signing acceptance, or deployment acceptance automatically.
 
-Current machine evidence deliberately reports `status: adoption-required`. It may prove source mapping and preserved authority/privacy invariants, but it must not emit `accepted-v1` until product-specific V1.6 rendered, accessibility, supported-environment, and other applicable acceptance evidence is complete.
+Current machine evidence reports `status: accepted-v1` only after product-specific V1.6 rendered/accessibility/environmental acceptance, Mozilla-signed restart acceptance, and authoritative consumer-registry acceptance are all recorded.
 
 ## Applicable V1.6 source mapping
 
@@ -57,16 +57,16 @@ The previous 0.1.12 source/machine qualification against V1.5.1 and the owner-re
 
 `dist/advanced-tab-manager-glaze-1.6.0-adoption.json`
 
-Expected evidence state before downstream acceptance:
+Accepted evidence state:
 
 - `glazeTargetVersion: 1.6.0`;
-- `status: adoption-required`;
+- `status: accepted-v1`;
 - `sourceMappingValidated: true`;
-- `applicablePresentationObligationsAccepted: false`;
-- `representativeRenderedAcceptanceComplete: false`;
-- `assistiveTechnologyAcceptanceComplete: false`;
-- `largeTextAcceptanceComplete: false`;
-- `consumerRegistryAccepted: false`;
+- `applicablePresentationObligationsAccepted: true`;
+- `representativeRenderedAcceptanceComplete: true`;
+- `assistiveTechnologyAcceptanceComplete: true`;
+- `largeTextAcceptanceComplete: true`;
+- `consumerRegistryAccepted: true`;
 - `productStableStatusImplied: false`;
 - `productionEligibilityImplied: false`.
 
@@ -74,48 +74,38 @@ Expected evidence state before downstream acceptance:
 
 `TARGET-ACCEPTANCE-0.1.12.md` and `scripts/target_acceptance.py` define a closed, privacy-minimized human-review evidence contract. The manual **Advanced Tab Manager Target Review Candidate** workflow can package one exact source revision twice, prove deterministic bytes, rerun repository/runtime/security/Glaze-source checks, and retain the exact unsigned XPI for human review. The complete human record remains local unless a later governed release step explicitly binds to a privacy-safe provenance digest.
 
-This infrastructure is preparatory evidence governance only. It does not establish keyboard, assistive-technology, alternate-appearance, or large-text acceptance.
+This infrastructure remains the governed evidence mechanism. For Stable 0.1.12, its human keyboard, assistive-technology, alternate-appearance, and large-text/reflow review is complete and bound to the accepted runtime revision.
 
-September 27 owner-rendered screenshots of the then-current 0.1.12 candidate were reviewed as remediation evidence. They confirmed that runtime surfaces were functional but still lacked the visual refinement expected for current V1.6 consumer acceptance, especially in Manager material hierarchy and cross-surface cohesion. The resulting shared-token/visual-polish source change therefore requires fresh post-change rendered review and does not inherit the earlier normal-light acceptance record.
+September 27 owner-rendered screenshots initially served as remediation evidence and drove the shared-token/visual-polish refinement. Subsequent exact-candidate owner review completed the required post-change rendering and accessibility acceptance for the runtime revision recorded below.
 
-## Remaining product acceptance
+## Completed product acceptance
 
-Before Advanced Tab Manager 0.1.12 can claim current Glaze consumer acceptance or replace Stable 0.1.11, it still requires the applicable product-specific evidence, including:
+Advanced Tab Manager 0.1.12 completed the applicable product-specific V1.6 rendered, keyboard, assistive-technology, Forced Colors, Reduced Transparency, dark-appearance, Reduced Motion, high-zoom/large-text/reflow, constrained-layout, packaging/security, Mozilla signing, persistent-install, and full-restart gates.
 
-- representative keyboard and assistive-technology acceptance;
-- Forced Colors rendered acceptance;
-- Reduced Transparency rendered acceptance;
-- dark-appearance rendered acceptance;
-- high-zoom and large-text/reflow acceptance;
-- any resulting corrections and fresh exact-head qualification;
-- product-specific packaging/security/restart/signing gates;
-- a separate governed product Stable promotion.
-
-The source-adoption record is therefore a migration/control record, not a Stable or production acceptance record.
-
+The authoritative Glaze consumer registry accepted the product as `accepted-v1` at target `1.6.0` in `GoreeCloud/glaze-ui` merge `b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb`. The registry intentionally retains `productionEligible: false` because product lifecycle authority remains independent.
 
 ## Residency visibility refinement
 
-The 0.1.12 Development candidate now preserves Firefox's `autoDiscardable` state in the privacy-minimized live snapshot so the sidebar, popup, and Manager can make the default residency policy visible. The presentation distinguishes automatic-discard protection from current resident/discarded state and keeps explicit manual Discard available.
+Stable 0.1.12 preserves Firefox's `autoDiscardable` state in the privacy-minimized live snapshot so the sidebar, popup, and Manager can make the default residency policy visible. The presentation distinguishes automatic-discard protection from current resident/discarded state and keeps explicit manual Discard available.
 
-This refinement changes rendered sidebar, popup, and Manager presentation after the post-PR #110 normal-light screenshot review. That earlier review remains bounded evidence for its exact revision and observed conditions; it is not silently inherited as rendered acceptance for the residency-visibility candidate. Fresh representative rendered review remains required after integration, alongside the already-pending accessibility and alternate-environment gates.
+The residency-visibility refinement received fresh representative rendered, accessibility, and alternate-environment review as part of the completed 0.1.12 target acceptance; earlier screenshots remain historical remediation evidence only.
 
 
 ## Normalized duplicate review refinement
 
 ATM-006A adds a native Duplicates-view selector for exact versus tracking-normalized review. Exact matching remains selected by default. The normalized state exposes the original URLs, uses textual policy copy, and preserves native focus/Forced Colors behavior through the existing sidebar control system.
 
-This is a presentation and interaction change, not a new authority grant: no permission, storage schema, remote dependency, telemetry path, page-content access, or private-browsing access is added. Fresh representative rendering and accessibility review of the new Duplicates state remain required before current V1.6 consumer acceptance can include it.
+This is a presentation and interaction change, not a new authority grant: no permission, storage schema, remote dependency, telemetry path, page-content access, or private-browsing access is added. Representative rendering and accessibility review of the Duplicates state completed in the governed 0.1.12 target acceptance.
 
 ## Tab-title rename dialog refinement
 
-The 0.1.12 Development line now includes a dedicated Glaze-aligned **Rename tab title** dialog reached from Firefox's native tab context menu. The dialog uses semantic native controls, visible focus, system/Firefox colors, Reduced Transparency handling, and Forced Colors border fallbacks. It deliberately explains the no-broad-host-permission boundary and the navigation/reload limitation.
+Stable 0.1.12 includes a dedicated Glaze-aligned **Rename tab title** dialog reached from Firefox's native tab context menu. The dialog uses semantic native controls, visible focus, system/Firefox colors, Reduced Transparency handling, and Forced Colors border fallbacks. It deliberately explains the no-broad-host-permission boundary and the navigation/reload limitation.
 
-The dialog now also consumes the shared Glaze product mark and material tokens directly, with a layered semantic surface, accent privacy note, stronger primary-action hierarchy, narrow-width stacking, and a 200% zoom overflow preflight. These source/runtime guards improve consistency but do not replace representative human rendering in normal light, dark appearance, Forced Colors, Reduced Transparency, and large-text/zoom conditions.
+The dialog now also consumes the shared Glaze product mark and material tokens directly, with a layered semantic surface, accent privacy note, stronger primary-action hierarchy, narrow-width stacking, and a 200% zoom overflow preflight. These source/runtime guards complement the completed representative human review in normal light, dark appearance, Forced Colors, Reduced Transparency, and large-text/zoom conditions.
 
-This feature also adds narrowly scoped `activeTab`, `menus`, and `scripting` permissions for explicit user invocation, while host permissions remain none and no declarative content script is registered. Because both the permission posture and a new rendered surface changed after prior 0.1.12 evidence, fresh exact-candidate permission/security review plus representative normal-light, dark, Forced Colors, Reduced Transparency, large-text/zoom, keyboard, and assistive-technology review of the rename dialog are required before current V1.6 consumer acceptance can include it.
+This feature also adds narrowly scoped `activeTab`, `menus`, and `scripting` permissions for explicit user invocation, while host permissions remain none and no declarative content script is registered. Exact-candidate permission/security review plus representative normal-light, dark, Forced Colors, Reduced Transparency, large-text/zoom, keyboard, and assistive-technology review completed before current V1.6 consumer acceptance.
 
-Fresh owner-visible normal-light screenshots now confirm the Glaze-refined dialog's product lockup, material hierarchy, visible focused input, unclipped controls, and successful visible tab-title change on the reviewed 0.1.12 candidate. That closes the rename dialog's normal-light rendered subset only. Dark appearance, Forced Colors, Reduced Transparency, large-text/zoom human review, assistive technology, and the broader product-level V1.6 consumer acceptance remain pending.
+Fresh owner-visible screenshots confirmed the Glaze-refined dialog's product lockup, material hierarchy, visible focused input, unclipped controls, and successful visible tab-title change. The owner subsequently completed the remaining dark appearance, Forced Colors, Reduced Transparency, large-text/zoom, keyboard, assistive-technology, and product-level V1.6 acceptance gates.
 
 
 ## Product acceptance completion — September 28, 2026
@@ -126,8 +116,6 @@ The completed product-specific Glaze review now covers the current V1.6-mapped s
 
 Governed Mozilla signing/restart run `36378135958` subsequently verified the same accepted runtime payload, Mozilla-signed parity, persistent installation, full Firefox restart, and post-restart release-critical behavior. The signed XPI SHA-256 is `2e54bdf2aa312c9cfe2895fd456f6d088a58eab6d24de80339e996e3e9ae11ba`.
 
-At this point the repository-local product evidence needed for current Glaze V1.6 consumer acceptance is complete. The remaining Glaze step is updating the authoritative `GoreeCloud/glaze-ui` consumer registry from `adoption-required` to `accepted-v1` for exact product reference revision `43f3010607550d7d4380353b97f85a4dd0186695`.
+At this point the repository-local product evidence needed for current Glaze V1.6 consumer acceptance is complete. The authoritative `GoreeCloud/glaze-ui` consumer registry accepted Advanced Tab Manager as `accepted-v1` for exact reviewed runtime revision `43f3010607550d7d4380353b97f85a4dd0186695` in merge `b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb`, backed by `acceptance/consumer-advanced-tab-manager-v1.6.0.json`.
 
-Until that registry change is authoritative, this repository's machine source-mapping script continues to emit `status: adoption-required` and `consumerRegistryAccepted: false`. That fail-closed state prevents local documentation from unilaterally claiming shared-registry acceptance.
-
-Product Stable promotion remains separate even after Glaze registry acceptance.
+Product Stable promotion is recorded separately in canonical Firefox-extension lifecycle metadata; Glaze registry acceptance does not itself grant product production eligibility.

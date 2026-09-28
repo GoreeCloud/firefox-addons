@@ -1,6 +1,6 @@
 # GoreeCloud Advanced Tab Manager — Features
 
-## In development — 0.1.12
+## Implemented in Stable 0.1.12
 
 - Firefox tab-title renaming: right-click any eligible ordinary HTTP(S) Firefox tab and choose **Rename tab title…** to assign a local custom label. The flow uses the clicked tab's temporary `activeTab` authority plus `scripting`, stores the custom name with Firefox session tab metadata, continuously reapplies it against same-document title changes, and provides Restore page title. No broad host permission or declarative content script is requested; protected Firefox/Mozilla pages fail closed, and navigation/reload can require explicit reapplication.
 
@@ -19,8 +19,8 @@
 - Added an opt-in tracking-normalized duplicate review mode while keeping exact URL matching as the default. The normalized mode ignores only `utm_*`, `gclid`, `dclid`, `fbclid`, `msclkid`, `mc_cid`, and `mc_eid`; path, fragment, and every other query parameter remain significant.
 - Normalized cleanup uses the same active/pinned/audible/hidden/private/tree guards, requires a reviewed keeper plus explicit confirmation, and reconstructs the current live set before closing any eligible tab. Durable user-defined protected-tab cleanup exclusions remain planned.
 - Preserved the no-host-permission/private-browsing, recovery, telemetry, and local-first boundaries while adding only `activeTab`, `menus`, and `scripting` for explicit user-invoked tab-title renaming; no declarative content script or broad host access is introduced.
-- The current shared Glaze adoption target is GLAZE UI V1.6 / 1.6.0. Version 0.1.12 now requires fresh repository-local V1.6.0 source mapping plus representative rendered/accessibility acceptance before consumer acceptance; historical V1.5.1 evidence remains provenance for Stable 0.1.11 only.
-- Stable 0.1.11 remains the accepted signed rollback/production baseline until a later release completes all required gates.
+- GLAZE UI V1.6 / 1.6.0 consumer acceptance is authoritative for exact runtime revision `43f3010607550d7d4380353b97f85a4dd0186695`; historical V1.5.1 evidence remains provenance for Stable 0.1.11.
+- Governed signing/restart run `36378135958` accepted Stable 0.1.12 for Mozilla unlisted/self-distribution; Stable 0.1.11 remains historical rollback provenance.
 
 
 ## Implemented in Stable 0.1.11
@@ -54,4 +54,4 @@
 
 ## Planned / not yet implemented
 
-Tree drag-and-drop, richer manual reparenting, normalized duplicate matching, durable protected-tab rules, recurring snoozing after a separate repeat-policy/UX design, event-driven automatic rule application, richer rule editing, optional user-enabled automatic discard policy, richer command actions, broader manager/settings workflows, Webspaces integration, optional hidden-tab Focus Mode, additional representative rendered Firefox large-session/performance coverage, and future feature expansion remain planned. Stable 0.1.11 release qualification itself is complete.
+Tree drag-and-drop, richer manual reparenting, durable protected-tab rules, recurring snoozing after a separate repeat-policy/UX design, event-driven automatic rule application, richer rule editing, optional user-enabled automatic discard policy, richer command actions, broader manager/settings workflows, Webspaces integration, optional hidden-tab Focus Mode, additional representative rendered Firefox large-session/performance coverage, and future feature expansion remain planned. Stable 0.1.12 release qualification is complete.

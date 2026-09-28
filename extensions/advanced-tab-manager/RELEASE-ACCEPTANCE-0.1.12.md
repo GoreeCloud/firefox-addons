@@ -3,14 +3,14 @@
 ## Status
 
 **Version:** 0.1.12  
-**Lifecycle:** Signed release candidate; Stable promotion pending  
-**Accepted Stable version before promotion:** 0.1.11  
+**Lifecycle:** Stable  
+**Accepted Stable version:** 0.1.12  
 **Accepted runtime source revision:** `43f3010607550d7d4380353b97f85a4dd0186695`  
 **Accepted unsigned XPI SHA-256:** `3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f`  
 **Mozilla-signed XPI SHA-256:** `2e54bdf2aa312c9cfe2895fd456f6d088a58eab6d24de80339e996e3e9ae11ba`  
 **Signing/restart workflow run:** `36378135958`
 
-0.1.12 is the reviewed successor to accepted Stable 0.1.11. It includes the Glaze UI V1.6 presentation refinement, automatic-unload visibility, normalized duplicate review, tree-branch actions, and explicit Firefox tab-title renaming while retaining the product's local-first, no-host-permission privacy boundary.
+0.1.12 is the accepted Stable successor to 0.1.11. It includes the Glaze UI V1.6 presentation refinement, automatic-unload visibility, normalized duplicate review, tree-branch actions, and explicit Firefox tab-title renaming while retaining the product's local-first, no-host-permission privacy boundary.
 
 ## Human target acceptance
 
@@ -84,17 +84,10 @@ The restart run used Firefox 156.0 against controlled local fixtures.
 
 Repository-local V1.6 source mapping is complete and the owner has completed the required rendered, keyboard, assistive-technology, alternate-appearance, large-text/reflow, and constrained-layout human review.
 
-This release record authorizes updating the authoritative GLAZE UI consumer registry for Advanced Tab Manager from `adoption-required` to `accepted-v1` at target `1.6.0`, with exact product reference revision `43f3010607550d7d4380353b97f85a4dd0186695`. Glaze consumer acceptance remains separate from overall product production eligibility.
+The authoritative GLAZE UI consumer registry records Advanced Tab Manager as `accepted-v1` at target `1.6.0`, exact product reference revision `43f3010607550d7d4380353b97f85a4dd0186695`, with registry acceptance commit `b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb`. Glaze consumer acceptance remains separate from product lifecycle authority.
 
-## Stable promotion rule
+## Stable promotion acceptance
 
-All signed-runtime and human target gates required before Stable promotion are complete. Stable promotion must remain a separate metadata/documentation source change that:
+All pre-promotion human, security, Glaze, signing, parity, persistent-install, restart, and post-restart gates completed before lifecycle promotion. Canonical inventory records `source_state: stable` and `accepted_stable_version: 0.1.12`. The promotion is metadata/documentation/qualification-harness only and preserves the accepted runtime source revision and XPI hashes above.
 
-1. records GLAZE UI V1.6 consumer registry acceptance;
-2. updates canonical extension inventory to `source_state: stable`;
-3. sets `accepted_stable_version: 0.1.12`;
-4. introduces no packaged runtime delta;
-5. reruns repository/release qualification at the exact promotion head;
-6. retriggers the signing workflow so final machine evidence can derive `stablePromoted: true`.
-
-Until that promotion is merged and verified, 0.1.11 remains the canonical Stable lifecycle state.
+The promotion-triggered signing workflow must derive `stablePromoted: true` from canonical inventory and repeat the governed signed/restart evidence path without changing accepted runtime bytes. Stable 0.1.11 remains historical rollback provenance.

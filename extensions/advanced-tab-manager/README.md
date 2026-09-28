@@ -5,12 +5,12 @@ GoreeCloud Advanced Tab Manager is a local-first Firefox WebExtension for high-s
 ## Current source state
 
 - Version: `0.1.12`
-- Source state: `source-candidate`
-- Product lifecycle: Development
+- Source state: `stable`
+- Product lifecycle: Stable
 - Component class: Browser extension
 - Firefox add-on ID: `advanced-tab-manager@goreecloud.com`
 - Minimum Firefox version: `139.0`
-- Stable release: `0.1.11`
+- Stable release: `0.1.12`
 - Permissions: `activeTab`, `alarms`, `menus`, `scripting`, `sessions`, `storage`, `tabGroups`, `tabs`
 - Host permissions: none
 - Content scripts: none
@@ -24,9 +24,9 @@ The restorable URL boundary is `http:`, `https:`, and `about:blank`. Privileged 
 
 ### Interface refinement — 0.1.12
 
-Version 0.1.12 starts a new Development/source-candidate line from the accepted Stable 0.1.11 baseline. The accepted 0.1.11 signed artifact remains the rollback and production baseline while the new presentation is qualified.
+Version 0.1.12 is the accepted Stable successor to 0.1.11. Its runtime payload is frozen to accepted source revision `43f3010607550d7d4380353b97f85a4dd0186695`; Stable promotion changes lifecycle metadata, release records, and qualification harnesses without changing the accepted signed runtime bytes.
 
-The 0.1.12 candidate:
+The Stable 0.1.12 release:
 
 - uses a shared repository-local Glaze surface/token layer across the sidebar, popup, and Manager to keep material hierarchy, geometry, focus treatment, and product identity consistent;
 - applies a second-stage V1.6 visual polish pass based on September 27 owner-rendered feedback, strengthening the sidebar lockup and density, framing the popup as a concise Glaze command surface, and giving the Manager a clearer hero/overview/feature/technical hierarchy rather than a uniform gray-card grid;
@@ -46,7 +46,7 @@ The 0.1.12 candidate:
 
 The default residency policy prevents Firefox's automatic tab discard, but it does not override browser-owned background timer/animation throttling or operating-system process/resource limits, and it does not silently reload a tab the user has explicitly discarded.
 
-This is a material presentation and behavior change. The current shared target is GLAZE UI V1.6 / 1.6.0; fresh exact-revision repository-local V1.6 source mapping, real-Firefox runtime acceptance, rendered visual/accessibility review, packaging, signing, and Stable promotion are separate gates. Historical V1.5.1 acceptance remains provenance for Stable 0.1.11 only. The earlier Firefox 156/Linux normal-light review remains bounded historical evidence for its exact revision and conditions. September 27 owner-rendered feedback drove the second-stage V1.6 refinement and the post-PR #110 screenshots established bounded normal-light acceptance for the then-current sidebar, Commands palette, and Manager. The residency-visibility refinement changes sidebar, popup, and Manager presentation, and the optional normalized-duplicate selector changes the Duplicates view, so fresh rendered review is required for these exact candidate states rather than inheriting the earlier screenshots. Keyboard/assistive-technology and alternate appearance/environment rendering remain pending. The candidate must not inherit 0.1.11 Stable status.
+The material 0.1.12 presentation and behavior change completed exact-revision repository/runtime/security review, owner-rendered and accessibility review, GLAZE UI V1.6 consumer acceptance, Mozilla signing, signed-XPI parity, persistent installation, full Firefox restart, and post-restart acceptance. Authoritative Glaze registry acceptance is commit `b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb`; governed signing/restart run `36378135958` accepted the signed runtime. Stable 0.1.11 remains historical rollback provenance.
 
 
 ### Source-preserving operations
@@ -103,23 +103,21 @@ CI also runs a deterministic core-scale qualification at 100, 500, and 1,000 syn
 
 Version 0.1.11 preserves the accepted 0.1.10 functional slice while advancing the manifest identity, making packaged popup/Manager lifecycle wording neutral, adding an explicit popup Forced Colors fallback, and introducing exact-revision Glaze 1.5.1 plus Stable-security qualification gates. It adds no permission and does not widen browser authority.
 
-Those exact-candidate gates subsequently passed for 0.1.11; the accepted Stable evidence is recorded below. The new 0.1.12 source candidate does not inherit that acceptance.
+Those exact-candidate gates subsequently passed for 0.1.11. Version 0.1.12 independently completed its own governed acceptance and is now the current Stable release.
 
-## Stable 0.1.11 release evidence
+## Stable 0.1.12 release evidence
 
-GoreeCloud Advanced Tab Manager 0.1.11 is the accepted Stable Firefox release for Mozilla unlisted/self-distribution.
+GoreeCloud Advanced Tab Manager 0.1.12 is the accepted Stable Firefox release for Mozilla unlisted/self-distribution.
 
-Governed signing/restart run `35350654198` accepted authoritative source revision `34c27805c3b56f3ba858794c785f6b68d1f7b8f3`, deterministic unsigned XPI SHA-256 `9c0f44926ac1d2f213fd07f82dd18fa11bd54ceebc6cd871898fe82b962a5b02`, and Mozilla-signed XPI SHA-256 `e0f16901529cb8fa76e57d9aa056c98de9fa04e708f2232c151d5b75c1dfdb1d`.
+Accepted runtime source revision: `43f3010607550d7d4380353b97f85a4dd0186695`. Deterministic unsigned XPI SHA-256: `3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f`. Mozilla-signed XPI SHA-256: `2e54bdf2aa312c9cfe2895fd456f6d088a58eab6d24de80339e996e3e9ae11ba`.
 
-The governed gate re-ran repository validation, deterministic tests, 100/500/1,000-tab core-scale qualification, Stable Security Blockers, and GLAZE UI 1.5.1 consumer qualification; verified Mozilla signature metadata and governed signed-payload parity; installed the signed XPI persistently; fully restarted Firefox without reinstalling; verified persisted organizational state; and repeated release-critical Manager/tree/stash/snooze/duplicate/rule/session-snapshot/backup acceptance after restart.
-
-This lifecycle promotion changes release metadata and documentation only. The accepted signed runtime payload is unchanged.
+Governed signing/restart run `36378135958` verified signed payload parity, persistent installation, full Firefox restart, and post-restart release-critical behavior. GLAZE UI V1.6 consumer acceptance is authoritative in `GoreeCloud/glaze-ui` at `b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb`. This Stable promotion changes lifecycle metadata and documentation only; accepted packaged runtime bytes are unchanged.
 
 ## GoreeCloud platform dependency posture
 
 Required GoreeCloud runtime dependencies: none. Core tab management remains local and Firefox-native.
 
-Stable 0.1.11 retains its historical GLAZE UI V1.5.1 consumer acceptance. The current shared adoption target is GLAZE UI V1.6 / 1.6.0, so the material 0.1.12 presentation change requires fresh repository-local V1.6 source mapping through `scripts/glaze_consumer_qualification.py` plus downstream rendered/accessibility acceptance; shared Glaze acceptance is not inherited. Webspaces integration and other platform-system integrations remain optional/planned and are not represented as implemented.
+Stable 0.1.12 has authoritative GLAZE UI V1.6 / 1.6.0 consumer acceptance for exact runtime revision `43f3010607550d7d4380353b97f85a4dd0186695`. Historical V1.5.1 / Stable 0.1.11 evidence remains rollback provenance. Webspaces integration and other platform-system integrations remain optional/planned and are not represented as implemented.
 
 ## Development validation
 
@@ -134,8 +132,8 @@ python shared/scripts/package_extension.py advanced-tab-manager
 python -m py_compile extensions/advanced-tab-manager/tests/firefox_runtime_smoke.py
 ```
 
-The permanent **Advanced Tab Manager Firefox Runtime** workflow packages the exact candidate and exercises release-critical paths in a clean real Firefox profile against controlled local fixtures. That workflow is an unsigned temporary-install gate; it does not substitute for Mozilla signing, persistent signed installation, full Firefox restart acceptance, current-Stable Glaze UI consumer acceptance, or Stable qualification.
+The permanent **Advanced Tab Manager Firefox Runtime** workflow packages the exact candidate and exercises release-critical paths in a clean real Firefox profile against controlled local fixtures. That workflow remains an unsigned temporary-install regression gate. Stable 0.1.12 additionally has independent Mozilla-signed persistent-install/full-restart evidence.
 
-The manual **Advanced Tab Manager Target Review Candidate** workflow prepares an exact-source, deterministic unsigned 0.1.12 XPI plus security, Glaze-source-mapping, real-Firefox runtime, and scale evidence for governed human keyboard/assistive-technology/appearance review. `TARGET-ACCEPTANCE-0.1.12.md` and `scripts/target_acceptance.py` define the fail-closed privacy-minimized record contract. This infrastructure does not itself establish human acceptance.
+The manual **Advanced Tab Manager Target Review Candidate** workflow prepares an exact-source, deterministic unsigned 0.1.12 XPI plus security, Glaze-source-mapping, real-Firefox runtime, and scale evidence for governed human keyboard/assistive-technology/appearance review. `TARGET-ACCEPTANCE-0.1.12.md` and `scripts/target_acceptance.py` define the fail-closed privacy-minimized record contract. The target-review tooling remains the governed mechanism for future material changes; the 0.1.12 human acceptance record is complete.
 
-Packaging produces a deterministic unsigned XPI under `dist/`. `RELEASE-ACCEPTANCE-0.1.11.md` and `STABLE-SECURITY-REVIEW-0.1.11.md` remain the historical accepted Stable evidence; `GLAZE-UI-1.5.1-ADOPTION.md` remains historical Stable 0.1.11 provenance; `GLAZE-UI-1.6.0-ADOPTION.md` records the current 0.1.12 V1.6 adoption boundary, and `RENDERED-ACCEPTANCE-0.1.12.md` records the scoped owner-rendered normal-light evidence that still requires current-target reconciliation before consumer acceptance.
+Packaging produces a deterministic unsigned XPI under `dist/`. `RELEASE-ACCEPTANCE-0.1.12.md`, `STABLE-SECURITY-REVIEW-0.1.12.md`, `GLAZE-UI-1.6.0-ADOPTION.md`, and `RENDERED-ACCEPTANCE-0.1.12.md` record current Stable acceptance; the 0.1.11 records remain historical rollback provenance.

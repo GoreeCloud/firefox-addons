@@ -1,15 +1,15 @@
 # GoreeCloud Advanced Tab Manager — Repository Specifications
 
-This repository document is the canonical source-controlled specification for the implemented `0.1.12` Development boundary. Legacy Drive project-specification copies are migration sources only and do not supersede repository-native specification state.
+This repository document is the canonical source-controlled specification for the accepted Stable `0.1.12` boundary. Legacy Drive project-specification copies are migration sources only and do not supersede repository-native specification state.
 
 ## Component and dependency contract
 
 - Component class: browser extension.
 - Supported platform: Firefox 139+.
-- Source state: `source-candidate`; product lifecycle: Development. Accepted Stable release: `0.1.11`.
+- Source state: `stable`; product lifecycle: Stable. Accepted Stable release: `0.1.12`.
 - Required GoreeCloud runtime dependencies: none.
 - Optional/planned integrations such as Webspaces are not implemented dependencies in 0.1.12.
-- Browser-surface presentation follows current GoreeCloud Glaze principles where practical without claiming a separate Glaze runtime-package or product-level acceptance state.
+- Browser-surface presentation has authoritative GLAZE UI V1.6 / 1.6.0 consumer acceptance for exact runtime revision `43f3010607550d7d4380353b97f85a4dd0186695`; no separate Glaze runtime package is embedded.
 
 ## Implemented source contract
 
@@ -87,10 +87,10 @@ This repository document is the canonical source-controlled specification for th
 - The dialog consumes the shared `src/shared/glaze.css` product lockup and material tokens, while semantic system colors, Reduced Transparency, Forced Colors, and native control semantics remain authoritative fallbacks.
 - Real-Firefox qualification also preflights the rename dialog under Firefox dark color-scheme override, Forced Colors override, Reduced Transparency preference, and Reduced Motion preference. It verifies media-state activation, fallback material behavior, zero active motion under Reduced Motion, and bounded horizontal reflow.
 - Automated keyboard/semantic/reflow/appearance qualification is a preflight only. It does not substitute for the separately governed human assistive-technology, visible-focus, appearance, large-text, or zoom acceptance record.
-- This feature reopens exact-candidate permission, rendered-dialog, keyboard/accessibility, and real-Firefox acceptance for the 0.1.12 Development line; it does not inherit Stable 0.1.11 acceptance.
+- The feature completed independent exact-candidate permission, rendered-dialog, keyboard/accessibility, real-Firefox, signed-restart, and Stable acceptance for 0.1.12; it does not inherit those facts from 0.1.11.
 
 
-- Stable 0.1.11 remains the accepted signed rollback/production baseline while 0.1.12 is a Development/source candidate.
+- Stable 0.1.12 is the accepted signed production baseline; 0.1.11 remains historical rollback provenance.
 - Popup, sidebar, and Manager presentation is reorganized for clearer hierarchy, density, action priority, responsive behavior, and GoreeCloud/Firefox fit without changing browser authority.
 - The Manager model no longer embeds mutable release lifecycle labels. It exposes immutable build version/component/platform information while canonical release records remain authoritative for lifecycle/signing status.
 - The Manager now renders the retained session-snapshot count already present in the privacy-minimized manager model.
@@ -104,7 +104,7 @@ This repository document is the canonical source-controlled specification for th
 - Tracking-normalized cleanup preserves the existing active/pinned/audible/hidden/private/tree guards, requires an explicitly reviewed keeper plus confirmation, and reconstructs the current live duplicate set in the background before any tab closure. Unsupported URL schemes are excluded from normalized review. Durable user-defined protected-tab cleanup exclusions remain planned and are not manufactured by this slice.
 - The live snapshot model carries the Firefox `autoDiscardable` property so residency protection can be represented truthfully in product UI. Sidebar, popup, and Manager residency summaries must distinguish automatic-discard protection from current resident/discarded state and must not serialize page content or imply foreground-equivalent scheduling.
 - The residency policy does not silently reload an already user-discarded tab and does not claim foreground-equivalent execution for background pages. Firefox remains authoritative for timer/animation throttling and operating-system process/resource constraints.
-- Tree branch bulk close/discard is a 0.1.12 Development-only ATM-004A slice. A branch is derived only from valid same-window logical parent relationships. The sidebar exposes branch actions only when the full current descendant set is visible; the background reconstructs the branch twice immediately before mutation and rejects drift. Branch close requires explicit user confirmation. Branch discard also requires confirmation and fails closed if any member is active, pinned, or audible. Drag-and-drop and richer manual reparenting remain outside this slice; branch move is implemented by the separate guarded move operation above.
+- Tree branch bulk close/discard is a bounded 0.1.12 ATM-004A slice. A branch is derived only from valid same-window logical parent relationships. The sidebar exposes branch actions only when the full current descendant set is visible; the background reconstructs the branch twice immediately before mutation and rejects drift. Branch close requires explicit user confirmation. Branch discard also requires confirmation and fails closed if any member is active, pinned, or audible. Drag-and-drop and richer manual reparenting remain outside this slice; branch move is implemented by the separate guarded move operation above.
 - One-shot snooze scheduling in 0.1.12 supports +1 hour, Later today, tomorrow morning, Next week at the local morning default, and arbitrary future local date/time selection through the native sidebar dialog. Later today selects the next bounded same-day afternoon/evening slot with at least 30 minutes of lead time and becomes unavailable when no same-day preset remains.
 - Snoozed items can be opened early, rescheduled, or explicitly cancelled. Cancellation deletes the local recovery record and clears its alarm without reopening the tab; alarm-cleanup exceptions restore the prior recovery record and alarm when possible.
 - Recurring snooze schedules are not implemented by this slice because repeat/reopen semantics require separate policy and UX definition; no recurrence behavior is inferred or silently manufactured.
@@ -113,4 +113,4 @@ This repository document is the canonical source-controlled specification for th
 
 ## Release boundary
 
-`0.1.12` is a Development/source candidate and is not Stable. Accepted Stable remains `0.1.11` for Mozilla unlisted/self-distribution. Governed run `35350654198` accepted 0.1.11 source revision `34c27805c3b56f3ba858794c785f6b68d1f7b8f3`, unsigned SHA-256 `9c0f44926ac1d2f213fd07f82dd18fa11bd54ceebc6cd871898fe82b962a5b02`, signed SHA-256 `e0f16901529cb8fa76e57d9aa056c98de9fa04e708f2232c151d5b75c1dfdb1d`, Stable Security Blockers, GLAZE UI 1.5.1 consumer acceptance, persistent signed installation, full Firefox restart, and post-restart product acceptance. Those 0.1.11 release facts are historical evidence, not acceptance of the 0.1.12 presentation delta.
+`0.1.12` is the accepted Stable release for Mozilla unlisted/self-distribution. Governed signing/restart run `36378135958` accepted exact runtime source revision `43f3010607550d7d4380353b97f85a4dd0186695`, unsigned SHA-256 `3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f`, signed SHA-256 `2e54bdf2aa312c9cfe2895fd456f6d088a58eab6d24de80339e996e3e9ae11ba`, Stable Security Blockers, GLAZE UI V1.6 consumer acceptance, persistent signed installation, full Firefox restart, and post-restart product acceptance. Stable 0.1.11 remains historical rollback evidence.

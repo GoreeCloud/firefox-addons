@@ -1,12 +1,12 @@
 # GoreeCloud Advanced Tab Manager — Implemented Features
 
-- 0.1.12 Development: native Firefox tab-context **Rename tab title…** support for eligible non-private HTTP(S) tabs, using temporary `activeTab` + `scripting` authority and Firefox session tab metadata without broad host access. The Manifest V3 event-page menu is registered from `runtime.onInstalled`, filtered to HTTP(S) documents so unsupported Firefox/system pages do not show a dead action, and real-Firefox qualification verifies both eligible visibility and restricted-page absence. Rename/Restore persistence also attempts to return both title state and session metadata to the prior value if the metadata commit fails.
+- Stable 0.1.12: native Firefox tab-context **Rename tab title…** support for eligible non-private HTTP(S) tabs, using temporary `activeTab` + `scripting` authority and Firefox session tab metadata without broad host access. The Manifest V3 event-page menu is registered from `runtime.onInstalled`, filtered to HTTP(S) documents so unsupported Firefox/system pages do not show a dead action, and real-Firefox qualification verifies both eligible visibility and restricted-page absence. Rename/Restore persistence also attempts to return both title state and session metadata to the prior value if the metadata commit fails.
 
-> **Authority:** Component-scoped repository-native implemented-feature record, seeded from existing `FEATURES.md`. Stable 0.1.11 remains the accepted rollback/production baseline unless later governed evidence establishes otherwise.
+> **Authority:** Component-scoped repository-native implemented-feature record, seeded from existing `FEATURES.md`. Stable 0.1.12 is the accepted production baseline; 0.1.11 remains historical rollback provenance.
 
 ## GoreeCloud Advanced Tab Manager — Features
 
-## In development — 0.1.12
+## Implemented in Stable 0.1.12
 
 - Default live-tab residency: on background startup and for newly created tabs, Advanced Tab Manager sets Firefox `autoDiscardable=false` for every eligible non-private open tab so Firefox does not automatically unload background tabs. Explicit manual/rule-driven Discard remains available as a user action.
 - Residency visibility: live snapshot normalization preserves Firefox's `autoDiscardable` state so the sidebar can show an `auto-protected` count, the popup can report protection health, and the Manager can explain eligible/protected/resident/explicitly-discarded counts without exposing tab titles, URLs, or page content.
@@ -23,8 +23,8 @@
 - Added an opt-in tracking-normalized duplicate review mode while keeping exact URL matching as the default. The normalized mode ignores only `utm_*`, `gclid`, `dclid`, `fbclid`, `msclkid`, `mc_cid`, and `mc_eid`; path, fragment, and every other query parameter remain significant.
 - Normalized cleanup uses the same active/pinned/audible/hidden/private/tree guards, requires a reviewed keeper plus explicit confirmation, and reconstructs the current live set before closing any eligible tab. Durable user-defined protected-tab cleanup exclusions remain planned.
 - Preserved existing Firefox permissions, host/content/private-browsing boundaries, storage schemas, recovery semantics, automation boundaries, and local-first behavior.
-- The current shared Glaze adoption target is GLAZE UI V1.6 / 1.6.0. Version 0.1.12 now requires fresh repository-local V1.6.0 source mapping plus representative rendered/accessibility acceptance before consumer acceptance; historical V1.5.1 evidence remains provenance for Stable 0.1.11 only.
-- Stable 0.1.11 remains the accepted signed rollback/production baseline until a later release completes all required gates.
+- GLAZE UI V1.6 / 1.6.0 consumer acceptance is authoritative for exact runtime revision `43f3010607550d7d4380353b97f85a4dd0186695`; historical V1.5.1 evidence remains provenance for Stable 0.1.11 only.
+- Governed signing/restart run `36378135958` completed signed-XPI parity, persistent install, full restart, and post-restart acceptance for Stable 0.1.12.
 
 
 ## Implemented in Stable 0.1.11
@@ -58,4 +58,4 @@
 
 ## Planned / not yet implemented
 
-Tree drag-and-drop, richer manual reparenting, normalized duplicate matching, durable protected-tab rules, recurring snoozing after a separate repeat-policy/UX design, event-driven automatic rule application, richer rule editing, optional user-enabled automatic discard policy, richer command actions, broader manager/settings workflows, Webspaces integration, optional hidden-tab Focus Mode, additional representative rendered Firefox large-session/performance coverage, and future feature expansion remain planned. Stable 0.1.11 release qualification itself is complete.
+Tree drag-and-drop, richer manual reparenting, durable protected-tab rules, recurring snoozing after a separate repeat-policy/UX design, event-driven automatic rule application, richer rule editing, optional user-enabled automatic discard policy, richer command actions, broader manager/settings workflows, Webspaces integration, optional hidden-tab Focus Mode, additional representative rendered Firefox large-session/performance coverage, and future feature expansion remain planned. Stable 0.1.12 release qualification is complete.
