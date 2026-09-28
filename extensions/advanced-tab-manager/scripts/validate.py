@@ -283,6 +283,7 @@ release_acceptance_012 = (ROOT / "RELEASE-ACCEPTANCE-0.1.12.md").read_text(encod
 target_acceptance_012 = (ROOT / "TARGET-ACCEPTANCE-0.1.12.md").read_text(encoding="utf-8")
 signing_evidence_012 = json.loads((ROOT / "docs/signing-evidence-0.1.12.json").read_text(encoding="utf-8"))
 security_script = (ROOT / "scripts/stable_security_review.py").read_text(encoding="utf-8")
+package_script = (REPOSITORY_ROOT / "shared/scripts/package_extension.py").read_text(encoding="utf-8")
 glaze_script = (ROOT / "scripts/glaze_consumer_qualification.py").read_text(encoding="utf-8")
 release_workflow = (REPOSITORY_ROOT / ".github/workflows/advanced-tab-manager-release-qualification.yml").read_text(encoding="utf-8")
 signing_workflow = (REPOSITORY_ROOT / ".github/workflows/advanced-tab-manager-mozilla-signing.yml").read_text(encoding="utf-8")
@@ -317,6 +318,8 @@ assert signing_evidence_012["signedNonManifestPayloadMatchesCandidateByteForByte
 assert signing_evidence_012["signedManifestGovernedParityAccepted"] is True
 assert '"git"' in security_script and '"log"' in security_script and "--full-history" in security_script
 assert "manifest.json" in security_script and "EXPECTED_VERSION" in security_script
+assert '"docs/"' in security_script, "Stable security inspection must reject extension maintenance docs in XPI"
+assert '"docs"' in package_script and "EXCLUDE_PARTS" in package_script, "shared packager must exclude extension maintenance docs"
 assert 'GLAZE_VERSION = "1.6.0"' in glaze_script
 assert 'GLAZE_AUTHORITY_REPOSITORY = "GoreeCloud/glaze-ui"' in glaze_script
 assert 'GLAZE_STABLE_SOURCE = "a7180679ea851389e0f3004515f9a25f420e716d"' in glaze_script
