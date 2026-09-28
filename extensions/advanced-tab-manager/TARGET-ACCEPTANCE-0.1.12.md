@@ -86,7 +86,7 @@ The exact 0.1.12 candidate review must include the new **Rename tab title** work
 - verify the dialog remains usable in normal light, dark appearance, Forced Colors, Reduced Transparency, and the governed large-text/zoom condition;
 - verify permission review records the candidate's `activeTab`, `menus`, and `scripting` additions while host permissions remain none.
 
-Automated real-Firefox preflight now covers initial focus, native label/form/live-status semantics, Enter submission, keyboard Restore, keyboard Cancel, and a 200% zoom horizontal-overflow check for the rename dialog. Those checks are regression guards only and must not be copied into the human acceptance record as proof of assistive-technology, visible-focus, or large-text/zoom acceptance.
+Automated real-Firefox preflight now covers initial focus, native label/form/live-status semantics, Enter submission, keyboard Restore, keyboard Cancel, a 200% zoom horizontal-overflow check, dark color-scheme override, Forced Colors override, Reduced Transparency, and Reduced Motion for the rename dialog. Those checks are regression guards only and must not be copied into the human acceptance record as proof of assistive-technology, visible-focus, alternate-appearance, or large-text/zoom acceptance.
 
 Any failure maps to the existing keyboard, assistive-technology, appearance/layout, or other-blocker categories rather than adding browsing data to the acceptance record.
 
