@@ -103,3 +103,10 @@ python extensions/advanced-tab-manager/scripts/target_acceptance.py provenance p
 The envelope contains only the product/version/add-on identity, exact source revision, exact unsigned XPI SHA-256, a canonical SHA-256 of the complete local target record, accepted/release-ready state, and the review timestamp. It intentionally omits browser URLs, browsing content, screenshots, operating-system details, assistive-technology details, and the individual human-review booleans.
 
 Validate the envelope before any future signing-source change with `validate-provenance`. When the complete local record is available, pass it with `--record` so the canonical target-record digest is recomputed and compared. A future 0.1.12 Mozilla-signing change must fail closed unless its source revision and rebuilt unsigned XPI digest exactly match the accepted provenance. Generating provenance does not authorize signing or Stable promotion by itself.
+
+
+## Current owner-visible review status — September 27, 2026
+
+Fresh owner-supplied screenshots for the post-Forced-Colors current candidate establish the normal-light rendered subset for the sidebar, popup, Manager, and Rename tab title dialog, including visible input focus and a successful visible tab-title change to **Tab Manager**.
+
+This evidence remains bounded. It does not convert automated dark, Forced Colors, Reduced Transparency, Reduced Motion, or 200%-zoom preflight into human acceptance, and it does not establish assistive-technology or complete keyboard-traversal acceptance. Those remaining checks must still be completed before release-ready provenance, 0.1.12 signing, or Stable promotion can proceed.

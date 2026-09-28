@@ -221,3 +221,12 @@ This closes the fresh **normal-light rendered review** requirement for the Glaze
 Automated Firefox appearance capture found that the primary Rename action could lose readable text under Forced Colors even though layout and focus geometry remained intact. The 0.1.12 Development candidate now maps that primary action to system `ButtonText` on `ButtonFace` in Forced Colors and retains controlled preflight screenshots for normal light, dark appearance, Forced Colors, Reduced Transparency, Reduced Motion, and 200% zoom.
 
 The corrected Forced Colors preflight now renders the Rename label visibly and the exact-head real-Firefox runtime suite passes. These CI images are controlled-fixture regression evidence, not human target acceptance. Because the packaged CSS changed after the September 27 owner normal-light screenshots, the final 0.1.12 candidate still requires fresh exact-candidate owner review before release acceptance can be complete. Stable remains `0.1.11`.
+
+
+## Current exact-candidate normal-light owner review — September 27, 2026
+
+Fresh owner-supplied Firefox/Linux screenshots were reviewed after the Forced Colors correction merged to `main` as `43f3010607550d7d4380353b97f85a4dd0186695`. The screenshots show `ATM.xpi` loaded as a temporary extension in Firefox 156.0.1 and provide owner-visible rendered/interaction evidence; package identity remains bound by repository and release-qualification records rather than by screenshots.
+
+The screenshots show the current sidebar, popup, Manager, and refined Rename tab title dialog rendering without visible clipping or overlap in normal light. The rename dialog shows visible input focus and all three actions, and a later screenshot shows the Firefox tab-strip label changed to **Tab Manager**.
+
+This closes the fresh current-candidate normal-light rendered subset reopened by the Forced Colors correction. Human dark, Forced Colors, Reduced Transparency, Reduced Motion, 200%/large-text reflow, constrained layout, assistive-technology, and full keyboard-traversal review remain separate. Stable remains `0.1.11`.
