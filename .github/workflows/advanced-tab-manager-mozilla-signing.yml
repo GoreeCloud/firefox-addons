@@ -188,6 +188,13 @@ jobs:
           candidate="$(find dist/candidate -maxdepth 1 -type f -name 'goreecloud-advanced-tab-manager-*.xpi' -print -quit)"
           python extensions/advanced-tab-manager/scripts/stable_security_review.py             --xpi "$candidate"             --source-revision "$ATM_RELEASE_SOURCE_REVISION"             --output dist/advanced-tab-manager-stable-security-review.json
 
+      - name: Restore current Glaze consumer acceptance authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          git show "$GITHUB_SHA":extensions/advanced-tab-manager/scripts/glaze_consumer_qualification.py > extensions/advanced-tab-manager/scripts/glaze_consumer_qualification.py
+          python -m py_compile extensions/advanced-tab-manager/scripts/glaze_consumer_qualification.py
+
       - name: Re-run GLAZE UI 1.6.0 consumer qualification on signing revision
         run: |
           python extensions/advanced-tab-manager/scripts/glaze_consumer_qualification.py             --source-revision "$ATM_RELEASE_SOURCE_REVISION"             --output dist/advanced-tab-manager-glaze-1.6.0-acceptance.json
@@ -259,6 +266,13 @@ jobs:
         run: |
           python extensions/advanced-tab-manager/tests/signed_restart_smoke.py             "dist/goreecloud-advanced-tab-manager-${ATM_VERSION}-signed.xpi"
 
+      - name: Capture current lifecycle metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          git show "$GITHUB_SHA":docs/extension-inventory.json > dist/current-extension-inventory.json
+          python -m json.tool dist/current-extension-inventory.json >/dev/null
+
       - name: Build signed release evidence record
         shell: bash
         run: |
@@ -277,7 +291,7 @@ jobs:
           restart = json.loads(Path('dist/advanced-tab-manager-signed-restart.json').read_text(encoding='utf-8'))
           glaze = json.loads(Path('dist/advanced-tab-manager-glaze-1.6.0-acceptance.json').read_text(encoding='utf-8'))
           security = json.loads(Path('dist/advanced-tab-manager-stable-security-review.json').read_text(encoding='utf-8'))
-          inventory = json.loads(Path('docs/extension-inventory.json').read_text(encoding='utf-8'))
+          inventory = json.loads(Path('dist/current-extension-inventory.json').read_text(encoding='utf-8'))
           entry = next((item for item in inventory.get('extensions', []) if item.get('slug') == 'advanced-tab-manager'), None)
           if entry is None or entry.get('source_version') != version:
               raise SystemExit('Advanced Tab Manager inventory/source version mismatch')
@@ -336,6 +350,7 @@ jobs:
             dist/advanced-tab-manager-stable-security-review.json
             dist/advanced-tab-manager-signing-evidence.json
             dist/target-acceptance-provenance.json
+            dist/current-extension-inventory.json
 
       - name: Publish authoritative signing gate result
         if: ${{ always() }}
