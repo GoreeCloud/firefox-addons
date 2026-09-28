@@ -7,6 +7,7 @@
 - Added a dedicated Glaze-aligned rename dialog with Restore page title, 160-character validation, keyboard focus treatment, Reduced Transparency, and Forced Colors fallbacks.
 - Added a same-document title observer so dynamic sites cannot immediately overwrite the custom label.
 - Stored the custom label with Firefox session-tab metadata so the value follows supported close/restore cycles without treating runtime tab IDs as durable.
+- Hardened rename/restore persistence as a rollback-aware transaction: if Firefox session-tab metadata cannot be committed after the visible title changes, Advanced Tab Manager verifies or restores the previous session value, restores the prior title state when scripting authority remains available, suppresses the success broadcast, and reports the rollback outcome.
 - Hardened rename/restore persistence as a rollback-aware transaction: if Firefox session-tab metadata cannot be written or removed after the visible title changes, Advanced Tab Manager verifies/restores the previous session value, restores the prior page/custom title state, suppresses success broadcast, and tells the dialog whether rollback completed.
 - Added `activeTab`, `menus`, and `scripting` as narrowly scoped permissions. No host permission or declarative content script is added.
 - Restricted pages fail closed; navigation/reload can restore the website title and requires explicit user reapplication rather than broad background injection.
