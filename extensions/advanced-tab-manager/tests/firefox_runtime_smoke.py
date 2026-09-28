@@ -25,6 +25,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 from selenium import webdriver
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.common.keys import Keys
@@ -104,6 +105,20 @@ def wait_until(predicate, timeout: float, message: str) -> None:
             last = f"{type(exc).__name__}: {exc}"
         time.sleep(0.1)
     raise AssertionError(f"FAIL {message}: {last}")
+
+
+def click_fresh(driver: webdriver.Firefox, selector: str, timeout: float = 15) -> None:
+    def attempt(current: webdriver.Firefox) -> bool:
+        try:
+            element = current.find_element("css selector", selector)
+            if not element.is_displayed() or not element.is_enabled():
+                return False
+            element.click()
+            return True
+        except StaleElementReferenceException:
+            return False
+
+    WebDriverWait(driver, timeout).until(attempt)
 
 
 def navigate_extension(driver: webdriver.Firefox, path: str) -> None:
@@ -1070,10 +1085,10 @@ def main() -> int:
             next_week_url = f"{base}/snooze-next-week"
             next_week_source = create_tab(driver, next_week_url)
             navigate_extension(driver, "src/sidebar/sidebar.html")
-            next_week_button = WebDriverWait(driver, 15).until(
-                lambda d: d.find_element("css selector", f'button[data-action="snooze"][data-tab-id="{next_week_source}"]')
+            click_fresh(
+                driver,
+                f'button[data-action="snooze"][data-tab-id="{next_week_source}"]',
             )
-            next_week_button.click()
             WebDriverWait(driver, 5).until(
                 lambda d: d.find_element("id", "snooze-dialog").get_attribute("open") is not None
             )
