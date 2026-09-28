@@ -22,6 +22,7 @@ concurrency:
 env:
   ATM_RELEASE_VERSION: '0.1.13'
   ATM_RELEASE_SOURCE_REVISION: '89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe'
+  ATM_RELEASE_INTEGRATION_REVISION: '8deabbedb7f89525396e0e94fa2c96d0664814d6'
   ATM_RELEASE_CANDIDATE_SHA256: '837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5'
   ATM_TARGET_RECORD_SHA256: 'e590735ccd3909d164b0e3ad6802a4366ff08e8dcfa35ba8a73121749ac1307c'
   ATM_TARGET_PROVENANCE: 'extensions/advanced-tab-manager/docs/target-acceptance-provenance-0.1.13.json'
@@ -103,7 +104,14 @@ jobs:
           python extensions/advanced-tab-manager/scripts/target_acceptance.py validate-provenance             "$ATM_TARGET_PROVENANCE"             --expected-source-revision "$ATM_RELEASE_SOURCE_REVISION"             --expected-xpi-sha256 "$ATM_RELEASE_CANDIDATE_SHA256"             --expected-record-sha256 "$ATM_TARGET_RECORD_SHA256"
           mkdir -p dist
           cp "$ATM_TARGET_PROVENANCE" dist/target-acceptance-provenance.json
-          git merge-base --is-ancestor "$ATM_RELEASE_SOURCE_REVISION" "$GITHUB_SHA"
+          # The reviewed runtime is the exact PR #144 head. PR #144 was squash-merged,
+          # so that head is intentionally not a Git ancestor of main. Fail closed by
+          # requiring the accepted head to exist, requiring its known squash integration
+          # to be an ancestor of current main, and later rebuilding the accepted head to
+          # the exact accepted XPI SHA-256 before Mozilla submission.
+          git cat-file -e "$ATM_RELEASE_SOURCE_REVISION^{commit}"
+          git cat-file -e "$ATM_RELEASE_INTEGRATION_REVISION^{commit}"
+          git merge-base --is-ancestor "$ATM_RELEASE_INTEGRATION_REVISION" "$GITHUB_SHA"
 
       - name: Check out accepted target source
         shell: bash
