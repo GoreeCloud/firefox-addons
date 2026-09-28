@@ -1,6 +1,6 @@
 # GoreeCloud Advanced Tab Manager — Implemented Features
 
-- 0.1.12 Development: native Firefox tab-context **Rename tab title…** support for eligible non-private HTTP(S) tabs, using temporary `activeTab` + `scripting` authority and Firefox session tab metadata without broad host access. The Manifest V3 event-page menu is registered from `runtime.onInstalled`, and real-Firefox qualification now verifies the native tab context menu actually contains the rename entry.
+- 0.1.12 Development: native Firefox tab-context **Rename tab title…** support for eligible non-private HTTP(S) tabs, using temporary `activeTab` + `scripting` authority and Firefox session tab metadata without broad host access. The Manifest V3 event-page menu is registered from `runtime.onInstalled`, filtered to HTTP(S) documents so unsupported Firefox/system pages do not show a dead action, and real-Firefox qualification verifies both eligible visibility and restricted-page absence.
 
 > **Authority:** Component-scoped repository-native implemented-feature record, seeded from existing `FEATURES.md`. Stable 0.1.11 remains the accepted rollback/production baseline unless later governed evidence establishes otherwise.
 
