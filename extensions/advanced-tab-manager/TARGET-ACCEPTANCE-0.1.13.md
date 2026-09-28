@@ -43,6 +43,8 @@ The source candidate must keep the packaged derivative byte-identical to the pin
 
 The complete machine-readable target record remains local unless a later governed release process explicitly requires a privacy-safe digest/provenance tuple. The evidence schema excludes browsing URLs, page content, credentials, screenshots, filesystem paths, and free-form notes.
 
+Automated clean-profile Firefox qualification now also queries Firefox `AddonManager` immediately after installing the exact candidate and fails unless Firefox resolves the installed add-on's native icon URL to `icons/advanced-tab-manager.svg`. This verifies Firefox consumed the packaged icon metadata in the controlled runtime environment.
+
 Automated validation does not establish human acceptance and must not be presented as proof that Firefox rendered the corrected icon on the owner's target profile.
 
 ## Privacy-safe signing provenance

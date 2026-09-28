@@ -33,6 +33,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 EXPECTED_ADDON_ID = "advanced-tab-manager@goreecloud.com"
 EXPECTED_VERSION = "0.1.13"
+EXPECTED_ICON_PATH = "icons/advanced-tab-manager.svg"
 FIXED_EXTENSION_UUID = "4c974aa1-e177-4e73-a1e5-a0ee28ad4b61"
 
 
@@ -90,6 +91,42 @@ def firefox_service() -> Service:
 
 def extension_url(path: str) -> str:
     return f"moz-extension://{FIXED_EXTENSION_UUID}/{path.lstrip('/')}"
+
+
+def firefox_addon_identity(driver: webdriver.Firefox) -> dict:
+    driver.set_context(driver.CONTEXT_CHROME)
+    try:
+        result = driver.execute_async_script(
+            """
+            const addonId = arguments[0];
+            const done = arguments[arguments.length - 1];
+            (async () => {
+              try {
+                const {AddonManager} = ChromeUtils.importESModule("resource://gre/modules/AddonManager.sys.mjs");
+                const addon = await AddonManager.getAddonByID(addonId);
+                if (!addon) {
+                  done({ok: false, error: "installed add-on unavailable"});
+                  return;
+                }
+                done({
+                  ok: true,
+                  id: addon.id,
+                  name: addon.name,
+                  version: addon.version,
+                  iconURL: addon.iconURL || "",
+                  icons: addon.icons || {}
+                });
+              } catch (error) {
+                done({ok: false, error: String(error)});
+              }
+            })();
+            """,
+            EXPECTED_ADDON_ID,
+        )
+    finally:
+        driver.set_context(driver.CONTEXT_CONTENT)
+    require(isinstance(result, dict) and result.get("ok") is True, "Firefox AddonManager identity available", repr(result))
+    return result
 
 
 def wait_until(predicate, timeout: float, message: str) -> None:
@@ -547,6 +584,23 @@ def main() -> int:
             addon_id = driver.install_addon(str(xpi), temporary=True)
             require(addon_id == EXPECTED_ADDON_ID, "temporary candidate installation", str(addon_id))
             passes.append("temporary-install")
+
+            addon_identity = firefox_addon_identity(driver)
+            icon_suffix = f"/{EXPECTED_ICON_PATH}"
+            require(addon_identity.get("id") == EXPECTED_ADDON_ID, "Firefox AddonManager retains exact add-on ID", repr(addon_identity))
+            require(addon_identity.get("name") == "GoreeCloud Advanced Tab Manager", "Firefox AddonManager retains product name", repr(addon_identity))
+            require(addon_identity.get("version") == EXPECTED_VERSION, "Firefox AddonManager retains exact candidate version", repr(addon_identity))
+            require(str(addon_identity.get("iconURL", "")).endswith(icon_suffix), "Firefox AddonManager resolves canonical packaged product icon", repr(addon_identity))
+            native_icons = addon_identity.get("icons")
+            expected_icon_sizes = {"16", "32", "48", "64", "96", "128"}
+            require(
+                isinstance(native_icons, dict)
+                and set(native_icons) == expected_icon_sizes
+                and all(str(value).endswith(icon_suffix) for value in native_icons.values()),
+                "Firefox AddonManager resolves every declared icon size to canonical packaged artwork",
+                repr(addon_identity),
+            )
+            passes.append("native-firefox-addon-icon")
 
             rename_source_handle = driver.current_window_handle
             rename_url = f"{base}/rename-runtime"
@@ -1263,6 +1317,7 @@ def main() -> int:
                 "controlledLocalFixtureOnly": True,
                 "passedChecks": passes,
                 "appearancePreflightScreenshots": appearance_screenshots,
+                "nativeFirefoxIconResolved": True,
                 "signedPersistentRestartAccepted": False,
             }
             out = Path("dist/advanced-tab-manager-firefox-runtime.json")
@@ -1275,7 +1330,7 @@ def main() -> int:
             server.shutdown()
             server.server_close()
 
-    require(len(passes) == 22, "all release-critical unsigned runtime checks passed", str(passes))
+    require(len(passes) == 23, "all release-critical unsigned runtime checks passed", str(passes))
     print("Advanced Tab Manager unsigned real-Firefox runtime acceptance passed.")
     return 0
 

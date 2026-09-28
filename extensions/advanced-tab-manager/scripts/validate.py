@@ -237,6 +237,12 @@ assert "representative Firefox rendered/runtime performance remains separate" in
 
 assert 'EXPECTED_ADDON_ID = "advanced-tab-manager@goreecloud.com"' in runtime_smoke
 assert 'EXPECTED_VERSION = "0.1.13"' in runtime_smoke
+assert 'EXPECTED_ICON_PATH = "icons/advanced-tab-manager.svg"' in runtime_smoke
+assert "def firefox_addon_identity(" in runtime_smoke
+assert "AddonManager.getAddonByID" in runtime_smoke
+assert "Firefox AddonManager resolves canonical packaged product icon" in runtime_smoke
+assert 'passes.append("native-firefox-addon-icon")' in runtime_smoke
+assert 'require(len(passes) == 23' in runtime_smoke
 assert "gBrowser.addTrustedTab" in runtime_smoke and "--allow-system-access" in runtime_smoke
 assert "tabContextMenu" in runtime_smoke and "Rename tab title…" in runtime_smoke, "real-Firefox smoke must verify the native tab context menu item is visible"
 assert "tab-title-rename-restore-reload-restricted" in runtime_smoke, "real-Firefox smoke must exercise rename, same-document persistence, reload reapplication, restore, and restricted-page failure"
