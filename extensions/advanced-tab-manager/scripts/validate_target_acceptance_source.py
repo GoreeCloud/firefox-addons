@@ -11,12 +11,15 @@ repository_workflow = (REPOSITORY_ROOT / ".github/workflows/firefox-repository.y
 target_workflow = (REPOSITORY_ROOT / ".github/workflows/advanced-tab-manager-target-review.yml").read_text(encoding="utf-8")
 signing_workflow = (REPOSITORY_ROOT / ".github/workflows/advanced-tab-manager-mozilla-signing.yml").read_text(encoding="utf-8")
 packager = (REPOSITORY_ROOT / "shared/scripts/package_extension.py").read_text(encoding="utf-8")
+provenance_path = ROOT / "docs/target-acceptance-provenance-0.1.13.json"
+provenance = provenance_path.read_text(encoding="utf-8")
 
 for required in (
     ROOT / "scripts/target_acceptance.py",
     ROOT / "scripts/test_target_acceptance.py",
     ROOT / "scripts/validate_target_acceptance_source.py",
     ROOT / "TARGET-ACCEPTANCE-0.1.13.md",
+    ROOT / "docs/target-acceptance-provenance-0.1.13.json",
     REPOSITORY_ROOT / ".github/workflows/advanced-tab-manager-target-review.yml",
 ):
     assert required.is_file(), required
@@ -73,18 +76,25 @@ assert "glaze_consumer_qualification.py" in target_workflow
 assert "actions/upload-artifact@v4" in target_workflow
 assert "AMO_JWT_" not in target_workflow and "web-ext" not in target_workflow
 
-assert "**Human target acceptance: Pending**" in record
+assert "**Human target acceptance: Accepted**" in record
 assert "complete machine-readable target record remains local" in record.lower()
 assert "does not establish human acceptance" in record.lower()
 assert "GLAZE UI V1.6 / 1.6.0" in record
 assert "privacy-safe signing provenance" in record.lower()
+assert "all governed checks PASS" in record
+assert '"candidate_version": "0.1.13"' in provenance
+assert '"source_revision": "89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe"' in provenance
+assert '"xpi_sha256": "837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5"' in provenance
+assert '"target_record_sha256": "e590735ccd3909d164b0e3ad6802a4366ff08e8dcfa35ba8a73121749ac1307c"' in provenance
+assert '"decision": "accepted"' in provenance
+assert '"release_ready": true' in provenance
 
-assert "ATM_RELEASE_VERSION: '0.1.12'" in signing_workflow
-assert "ATM_RELEASE_SOURCE_REVISION: '43f3010607550d7d4380353b97f85a4dd0186695'" in signing_workflow
-assert "ATM_RELEASE_CANDIDATE_SHA256: '3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f'" in signing_workflow
-assert "ATM_TARGET_RECORD_SHA256: '922e7f0eb1ceb3c9f0bbab23c63bfe72d99556da1661ae1abee17ab1c7ccabde'" in signing_workflow
+assert "ATM_RELEASE_VERSION: '0.1.13'" in signing_workflow
+assert "ATM_RELEASE_SOURCE_REVISION: '89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe'" in signing_workflow
+assert "ATM_RELEASE_CANDIDATE_SHA256: '837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5'" in signing_workflow
+assert "ATM_TARGET_RECORD_SHA256: 'e590735ccd3909d164b0e3ad6802a4366ff08e8dcfa35ba8a73121749ac1307c'" in signing_workflow
 assert "validate-provenance" in signing_workflow
-assert "target-acceptance-provenance-0.1.12.json" in signing_workflow
+assert "target-acceptance-provenance-0.1.13.json" in signing_workflow
 
 assert 'EXCLUDE_SUFFIXES = {".md", ".py", ".pyc"}' in packager
 assert 'EXCLUDE_PARTS.add("tests")' in packager
