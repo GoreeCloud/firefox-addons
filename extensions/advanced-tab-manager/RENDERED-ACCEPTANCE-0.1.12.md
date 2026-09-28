@@ -214,3 +214,10 @@ Observed normal-light acceptance for the refined rename path:
 - the subsequent screenshot shows the Firefox tab-strip label changed to **Tab Manager**, confirming the refined UI still completes the rename operation visibly.
 
 This closes the fresh **normal-light rendered review** requirement for the Glaze-refined rename dialog itself. It does not establish dark-appearance, Forced Colors, Reduced Transparency, large-text/200%-zoom human review, assistive-technology review, persistent signed installation, restart acceptance, or overall 0.1.12 target acceptance. Those gates remain separate. Stable remains `0.1.11`.
+
+
+## Forced Colors corrective candidate — fresh exact-candidate review pending
+
+Automated Firefox appearance capture found that the primary Rename action could lose readable text under Forced Colors even though layout and focus geometry remained intact. The 0.1.12 Development candidate now maps that primary action to system `ButtonText` on `ButtonFace` in Forced Colors and retains controlled preflight screenshots for normal light, dark appearance, Forced Colors, Reduced Transparency, Reduced Motion, and 200% zoom.
+
+The corrected Forced Colors preflight now renders the Rename label visibly and the exact-head real-Firefox runtime suite passes. These CI images are controlled-fixture regression evidence, not human target acceptance. Because the packaged CSS changed after the September 27 owner normal-light screenshots, the final 0.1.12 candidate still requires fresh exact-candidate owner review before release acceptance can be complete. Stable remains `0.1.11`.
