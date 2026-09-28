@@ -21,7 +21,7 @@ def main() -> None:
     data = json.loads(INVENTORY.read_text(encoding="utf-8"))
     if data.get("schema_version") != 2:
         fail("extension inventory must use schema_version 2")
-    if data.get("repository") != "GoreeCloud/goreecloud-firefox-extensions":
+    if data.get("repository") != "GoreeCloud/firefox-addons":
         fail("extension inventory repository authority mismatch")
 
     entries = data.get("extensions", [])
