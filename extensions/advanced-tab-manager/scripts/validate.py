@@ -22,8 +22,8 @@ assert "unlimitedStorage" not in manifest["permissions"], "bounded Stable saved 
 assert "persistent" not in manifest["background"], "Manifest V3 background must not declare unsupported persistent"
 assert manifest["background"].get("type") == "module"
 assert inventory_entry["source_version"] == "0.1.12"
-assert inventory_entry["source_state"] == "source-candidate"
-assert inventory_entry["accepted_stable_version"] == "0.1.11"
+assert inventory_entry["source_state"] == "stable"
+assert inventory_entry["accepted_stable_version"] == "0.1.12"
 
 required = [
     "README.md", "FEATURES.md", "IMPLEMENTED-FEATURES.md", "PLANNED-FEATURES.md", "CHANGELOGS.md", "SPECIFICATIONS.md", "ARCHITECTURE.md",
@@ -54,7 +54,7 @@ required = [
     "TARGET-ACCEPTANCE-0.1.12.md"
 ]
 for relative in required:
-    assert (ROOT / relative).is_file(), f"missing required source-candidate file: {relative}"
+    assert (ROOT / relative).is_file(), f"missing required Advanced Tab Manager file: {relative}"
 
 background = (ROOT / "src/background/background.js").read_text(encoding="utf-8")
 tab_residency = (ROOT / "src/background/tab-residency.js").read_text(encoding="utf-8")
@@ -323,8 +323,10 @@ assert '"docs"' in package_script and "EXCLUDE_PARTS" in package_script, "shared
 assert 'GLAZE_VERSION = "1.6.0"' in glaze_script
 assert 'GLAZE_AUTHORITY_REPOSITORY = "GoreeCloud/glaze-ui"' in glaze_script
 assert 'GLAZE_STABLE_SOURCE = "a7180679ea851389e0f3004515f9a25f420e716d"' in glaze_script
-assert '"status": "adoption-required"' in glaze_script
-assert '"consumerRegistryAccepted": False' in glaze_script
+assert '"status": "accepted-v1"' in glaze_script
+assert '"consumerRegistryAccepted": True' in glaze_script
+assert 'GLAZE_CONSUMER_REGISTRY_ACCEPTANCE = "b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb"' in glaze_script
+assert "b5362a2defb9df0bd33e3b8c5b1ba9d14ce81efb" in glaze_adoption
 assert "sharedPerformanceAcceptanceInherited" in glaze_script and "False" in glaze_script
 assert "fetch-depth: 0" in release_workflow
 assert "github.event.pull_request.head.sha || github.sha" in release_workflow
@@ -349,6 +351,11 @@ assert "workflowRevision" in signing_workflow and "sourceRevision" in signing_wo
 assert "dist/target-acceptance-provenance.json" in signing_workflow
 assert "verify_signed_xpi.py" in signing_workflow and "signed_restart_smoke.py" in signing_workflow
 assert 'git show "$GITHUB_SHA":extensions/advanced-tab-manager/tests/signed_restart_smoke.py' in signing_workflow, "signing must run the current restart harness against the frozen accepted payload"
+assert "Restore current Glaze acceptance harness" in signing_workflow
+assert 'git show "$GITHUB_SHA":extensions/advanced-tab-manager/scripts/glaze_consumer_qualification.py' in signing_workflow
+assert "Capture current lifecycle metadata" in signing_workflow and "dist/current-extension-inventory.json" in signing_workflow
+assert "Glaze V1.6 consumer acceptance is not authoritative" in signing_workflow
+assert "Advanced Tab Manager canonical Stable promotion is not authoritative" in signing_workflow
 assert "advanced-tab-manager-signing-evidence.json" in signing_workflow
 assert "statuses: write" in signing_workflow
 assert "goreecloud/advanced-tab-manager-mozilla-signing" in signing_workflow
@@ -372,4 +379,4 @@ assert "NoRedirect" in amo_recovery and "/api/v4/file/" in amo_recovery
 assert '"Authorization": f"JWT {token}"' in amo_recovery
 assert 'mirror_request = Request(location, headers={"User-Agent": USER_AGENT})' in amo_recovery
 
-print("Validated Advanced Tab Manager 0.1.12 source candidate while preserving accepted Stable 0.1.11 release evidence.")
+print("Validated Advanced Tab Manager Stable 0.1.12 while preserving historical Stable 0.1.11 release evidence.")
