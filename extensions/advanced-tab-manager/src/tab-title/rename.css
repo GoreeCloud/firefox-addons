@@ -175,8 +175,20 @@ button:disabled {
 }
 
 @media (max-width: 360px) {
+  .rename-shell {
+    max-width: calc(100% - 16px);
+    min-height: calc(100vh - 16px);
+    margin: 8px;
+    padding: 14px;
+    border-radius: 16px;
+  }
+
   .rename-header {
-    margin-bottom: 14px;
+    margin-bottom: 12px;
+  }
+
+  .rename-card {
+    padding: 11px;
   }
 
   .actions {
@@ -200,15 +212,46 @@ button:disabled {
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  .privacy-note {
+  body {
     background: Canvas;
+  }
+
+  .rename-shell,
+  .rename-card,
+  .privacy-note,
+  button.secondary {
+    background: Canvas;
+    box-shadow: none;
+  }
+
+  .rename-shell {
+    backdrop-filter: none;
+  }
+
+  button.primary {
+    box-shadow: none;
   }
 }
 
 @media (forced-colors: active) {
+  body,
+  .rename-shell,
+  .rename-card,
+  .privacy-note {
+    background: Canvas;
+  }
+
+  .rename-shell,
+  .rename-card,
   input,
   button,
-  .privacy-note {
+  .privacy-note,
+  .status[data-state="error"] {
     border: 1px solid ButtonText;
+    box-shadow: none;
+  }
+
+  .rename-shell {
+    backdrop-filter: none;
   }
 }
