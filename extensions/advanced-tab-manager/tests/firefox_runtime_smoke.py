@@ -540,8 +540,9 @@ def main() -> int:
             wait_until(lambda: driver.title == "Runtime custom title", 10, "observer retains custom title while remembering latest site title")
             _, restore_dialog = invoke_tab_title_menu(driver)
             require(restore_dialog is not None, "rename dialog opens for restore")
-            require(
-                driver.switch_to.active_element.get_attribute("id") == "tab-title",
+            wait_until(
+                lambda: driver.switch_to.active_element.get_attribute("id") == "tab-title",
+                5,
                 "restore dialog returns initial focus to the custom title field",
             )
             driver.switch_to.active_element.send_keys(Keys.TAB)
@@ -560,8 +561,9 @@ def main() -> int:
 
             _, cancel_dialog = invoke_tab_title_menu(driver)
             require(cancel_dialog is not None, "rename dialog opens for keyboard cancellation")
-            require(
-                driver.switch_to.active_element.get_attribute("id") == "tab-title",
+            wait_until(
+                lambda: driver.switch_to.active_element.get_attribute("id") == "tab-title",
+                5,
                 "cancel dialog begins at the title field",
             )
             driver.switch_to.active_element.send_keys(Keys.TAB)
