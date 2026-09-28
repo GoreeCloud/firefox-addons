@@ -129,6 +129,7 @@ assert "browser.menus.remove(" not in tab_title_renaming and "browser.menus.remo
 assert 'protocol === "http:" || protocol === "https:"' in tab_title_renaming, "rename eligibility must fail closed outside HTTP(S)"
 assert "host_permissions" not in manifest, "tab title renaming must not introduce broad host access"
 assert "Rename tab title" in tab_title_html and "atm:set-tab-title-override" in tab_title_js
+assert "rollbackApplied" in tab_title_js and "restored the previous tab title" in tab_title_js
 assert "prefers-reduced-transparency" in tab_title_css and "forced-colors" in tab_title_css
 assert "@media (max-width: 360px)" in tab_title_css and "grid-template-columns: repeat(2, minmax(0, 1fr))" in tab_title_css, "rename dialog must have a narrow-width reflow fallback"
 assert "collectTreeBranchTabs" in tree_core
