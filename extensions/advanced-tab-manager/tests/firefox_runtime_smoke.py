@@ -637,6 +637,8 @@ def main() -> int:
                 "rename dialog disables translucent material effects in Forced Colors",
                 repr(forced_state),
             )
+            require(forced_state["primaryText"] == "Rename", "Forced Colors keeps the Rename action label")
+            require(forced_state["primaryColor"] != forced_state["primaryBackgroundColor"], "Forced Colors keeps distinct action text and surface colors", repr(forced_state))
             forced_reflow = horizontal_reflow_metrics(driver)
             require(
                 forced_reflow["scrollWidth"] <= forced_reflow["clientWidth"] + 1,
