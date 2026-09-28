@@ -195,3 +195,8 @@ Source review identified a Manifest V3 event-page lifecycle defect: the candidat
 Fresh Firefox 156.0.1/Linux screenshots show the corrected unsigned 0.1.12 candidate loaded as a temporary extension. The native tab context menu contains **Rename tab title…**, selecting it opens the dedicated rename dialog without visible clipping, and applying the custom title changes the visible tab-strip label to **Rename Apps**.
 
 This resolves the previously observed missing-menu regression and records normal-light visual confirmation for menu discovery, dialog launch, dialog rendering, and a successful rename operation. Restore behavior, reload/navigation behavior, restricted-page handling, keyboard and assistive-technology review, alternate appearances, large-text/zoom review, Mozilla signing, persistent installation, restart acceptance, and Stable promotion remain separate. Stable remains `0.1.11`.
+
+
+## Tab-title rename Glaze refinement — fresh review pending
+
+The rename dialog was visually refined after the September 27 post-fix screenshots to use the shared Glaze product mark and material surface system. The prior screenshots remain historical evidence for the exact revision they show, but they do not establish rendered acceptance for this new visual source. Fresh normal-light and alternate-appearance review is required. Stable remains `0.1.11`.

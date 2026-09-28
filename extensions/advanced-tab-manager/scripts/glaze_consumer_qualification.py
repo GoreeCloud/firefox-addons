@@ -74,7 +74,7 @@ def main() -> int:
     require("@media (max-width:" in sidebar_css and "@media (max-width:" in manager_css, "responsive constrained-window rules are missing")
     require("../shared/glaze.css" in sidebar_html and "../shared/glaze.css" in popup_html and "../shared/glaze.css" in manager_html and "../shared/glaze.css" in tab_title_html,
             "all primary surfaces and the tab-title dialog must consume the shared Glaze token layer")
-    require("glz-mark" in sidebar_html and "glz-mark" in popup_html and "glz-mark" in manager_html,
+    require("glz-mark" in sidebar_html and "glz-mark" in popup_html and "glz-mark" in manager_html and "glz-mark" in tab_title_html,
             "shared product lockup treatment is incomplete")
     require("aria-live" in sidebar_html and "aria-live" in popup_html and "aria-live" in manager_html and "aria-live" in tab_title_html, "live state semantics are incomplete")
     require("aria-label" in sidebar_html and "aria-label" in manager_html, "accessible labeling is incomplete")

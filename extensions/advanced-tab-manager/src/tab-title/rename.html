@@ -10,16 +10,21 @@
 <body>
   <main class="rename-shell" aria-labelledby="rename-heading">
     <header class="rename-header">
-      <p class="eyebrow">GoreeCloud Advanced Tab Manager</p>
-      <h1 id="rename-heading">Rename tab title</h1>
-      <p class="intro">Give this Firefox tab a short custom name so it is easier to identify in a crowded tab strip.</p>
+      <div class="rename-lockup glz-lockup">
+        <span class="glz-mark" aria-hidden="true"></span>
+        <div class="glz-lockup-copy">
+          <p class="eyebrow">GoreeCloud Advanced Tab Manager</p>
+          <h1 id="rename-heading">Rename tab title</h1>
+        </div>
+      </div>
+      <p class="intro">Give this tab a short custom name that's easy to spot.</p>
     </header>
 
-    <form id="rename-form">
+    <form id="rename-form" class="rename-card">
       <label for="tab-title">Custom tab title</label>
       <input id="tab-title" name="title" type="text" maxlength="160" autocomplete="off" spellcheck="true" required>
       <p id="page-title" class="page-title"></p>
-      <p class="privacy-note">The name is stored locally with this Firefox tab. Advanced Tab Manager does not request broad website access. A reload or navigation can restore the website title; open <strong>Rename tab title…</strong> again to reapply the saved name.</p>
+      <p class="privacy-note">Saved locally with this Firefox tab. No broad site access is requested. Reload or navigation can restore the site title; reopen <strong>Rename tab title…</strong> to reapply this name.</p>
       <p id="status" class="status" role="status" aria-live="polite"></p>
 
       <div class="actions">
