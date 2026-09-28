@@ -33,6 +33,10 @@ for marker in (
     'require_release_ready',
     'decision == "accepted"',
     'all(value is True for value in all_checks)',
+    'PROVENANCE_KEYS = {',
+    'build_provenance(',
+    'validate_provenance(',
+    'target_record_sha256',
 ):
     assert marker in tool, f"target acceptance contract missing: {marker}"
 
