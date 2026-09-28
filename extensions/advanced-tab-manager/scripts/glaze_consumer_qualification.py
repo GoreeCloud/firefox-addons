@@ -21,6 +21,9 @@ GLAZE_STABLE_ARTIFACT_SHA256 = "687268b5eb76917eccae9d935ffa1bead333d5dee50b6098
 ACCEPTED_RUNTIME_REVISION = "89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe"
 ACCEPTED_UNSIGNED_XPI_SHA256 = "837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5"
 TARGET_ACCEPTANCE_RECORD_SHA256 = "e590735ccd3909d164b0e3ad6802a4366ff08e8dcfa35ba8a73121749ac1307c"
+GLAZE_CONSUMER_REGISTRY_ACCEPTANCE = "937d2a31e2ff55ec1c9e4c6688899389a9323642"
+MOZILLA_SIGNED_XPI_SHA256 = "6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c"
+MOZILLA_SIGNING_RESTART_RUN_ID = 36431225028
 
 
 def require(condition: bool, message: str) -> None:
@@ -118,7 +121,7 @@ def main() -> int:
         "glazeQualificationEvidenceIntegrationCommit": GLAZE_EVIDENCE_INTEGRATION,
         "glazeStableArtifactSha256": GLAZE_STABLE_ARTIFACT_SHA256,
         "adoptionMode": "repository-local constrained-browser V1.6 source mapping",
-        "status": "adoption-required",
+        "status": "accepted-v1",
         "sourceMappingValidated": True,
         "applicablePresentationObligationsAccepted": True,
         "authorityBoundaryPreserved": True,
@@ -131,7 +134,11 @@ def main() -> int:
         "representativeRenderedAcceptanceComplete": True,
         "assistiveTechnologyAcceptanceComplete": True,
         "largeTextAcceptanceComplete": True,
-        "consumerRegistryAccepted": False,
+        "consumerRegistryAccepted": True,
+        "consumerRegistryAcceptanceCommit": GLAZE_CONSUMER_REGISTRY_ACCEPTANCE,
+        "mozillaSignedXpiSha256": MOZILLA_SIGNED_XPI_SHA256,
+        "mozillaSigningRestartRunId": MOZILLA_SIGNING_RESTART_RUN_ID,
+        "signedRuntimeRestartAccepted": True,
         "automaticPermissionRequest": False,
         "automaticConsequentialExecution": False,
         "sharedPerformanceAcceptanceInherited": False,
