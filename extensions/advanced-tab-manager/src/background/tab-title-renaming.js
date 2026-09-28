@@ -17,7 +17,7 @@ export function applyTabTitleOverride(customTitle, fallbackTitle, maxLength = MA
   const previous = globalThis[stateKey];
   const originalPageTitle = typeof previous?.pageTitle === "string"
     ? previous.pageTitle
-    : String(document.title || fallbackTitle || "");
+    : String(document.title ?? fallbackTitle ?? "");
   const requestedTitle = String(customTitle || "").trim();
 
   if (requestedTitle.length > maxLength) {
