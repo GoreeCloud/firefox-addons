@@ -45,14 +45,17 @@ def main() -> int:
     rules_css = read("src/sidebar/rules.css")
     popup_css = read("src/popup/popup.css")
     manager_css = read("src/manager/manager.css")
+    tab_title_css = read("src/tab-title/rename.css")
     sidebar_html = read("src/sidebar/sidebar.html")
     popup_html = read("src/popup/popup.html")
     manager_html = read("src/manager/manager.html")
+    tab_title_html = read("src/tab-title/rename.html")
+    tab_title_js = read("src/tab-title/rename.js")
     palette_js = read("src/sidebar/command-palette.js")
     manager_js = read("src/manager/manager.js")
     manager_model = read("src/core/manager-model.js")
     rule_state = read("src/core/rule-state.js")
-    all_css = "\n".join((shared_css, sidebar_css, palette_css, rules_css, popup_css, manager_css))
+    all_css = "\n".join((shared_css, sidebar_css, palette_css, rules_css, popup_css, manager_css, tab_title_css))
 
     # Current V1.6 source-mapping invariants applicable to constrained Firefox surfaces.
     for token in ("Canvas", "CanvasText", "AccentColor", "AccentColorText"):
@@ -60,18 +63,20 @@ def main() -> int:
     require("prefers-reduced-transparency" in sidebar_css, "sidebar lacks Reduced Transparency fallback")
     require("prefers-reduced-transparency" in palette_css, "command palette lacks Reduced Transparency fallback")
     require("prefers-reduced-transparency" in manager_css, "Manager lacks Reduced Transparency fallback")
+    require("prefers-reduced-transparency" in tab_title_css, "tab-title dialog lacks Reduced Transparency fallback")
     require("forced-colors: active" in sidebar_css, "sidebar lacks Forced Colors handling")
     require("forced-colors: active" in palette_css, "command palette lacks Forced Colors handling")
     require("forced-colors: active" in rules_css, "rules surface lacks Forced Colors handling")
     require("forced-colors: active" in popup_css, "popup lacks Forced Colors handling")
     require("forced-colors: active" in manager_css, "Manager lacks Forced Colors handling")
+    require("forced-colors: active" in tab_title_css, "tab-title dialog lacks Forced Colors handling")
     require(":focus-visible" in all_css or ":focus-within" in all_css, "keyboard focus indication is missing")
     require("@media (max-width:" in sidebar_css and "@media (max-width:" in manager_css, "responsive constrained-window rules are missing")
-    require("../shared/glaze.css" in sidebar_html and "../shared/glaze.css" in popup_html and "../shared/glaze.css" in manager_html,
-            "all primary surfaces must consume the shared Glaze token layer")
+    require("../shared/glaze.css" in sidebar_html and "../shared/glaze.css" in popup_html and "../shared/glaze.css" in manager_html and "../shared/glaze.css" in tab_title_html,
+            "all primary surfaces and the tab-title dialog must consume the shared Glaze token layer")
     require("glz-mark" in sidebar_html and "glz-mark" in popup_html and "glz-mark" in manager_html,
             "shared product lockup treatment is incomplete")
-    require("aria-live" in sidebar_html and "aria-live" in popup_html and "aria-live" in manager_html, "live state semantics are incomplete")
+    require("aria-live" in sidebar_html and "aria-live" in popup_html and "aria-live" in manager_html and "aria-live" in tab_title_html, "live state semantics are incomplete")
     require("aria-label" in sidebar_html and "aria-label" in manager_html, "accessible labeling is incomplete")
     require("aria-modal" in palette_js and 'role=\"listbox\"' in palette_js, "command palette dialog/list semantics are missing")
     require("animation:" not in all_css and "transition:" not in all_css, "unqualified motion is not permitted in the source candidate")
@@ -83,7 +88,7 @@ def main() -> int:
             "sidebar command palette trigger must retain a readable visible label")
 
     # Authority, privacy, and fallback obligations.
-    require("browser.permissions.request" not in "\n".join((manager_js, palette_js)), "presentation layer must not request permissions")
+    require("browser.permissions.request" not in "\n".join((manager_js, palette_js, tab_title_js)), "presentation layer must not request permissions")
     require("window.confirm" in manager_js, "consequential Manager operations require explicit confirmation")
     require("tab.title" not in manager_model and "tab.url" not in manager_model, "Manager diagnostics must remain privacy-minimized")
     require("enabled: false" in rule_state, "rule automation must remain fail-closed by default")
