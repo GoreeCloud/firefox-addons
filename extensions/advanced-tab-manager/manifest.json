@@ -6,7 +6,10 @@
   "homepage_url": "https://github.com/GoreeCloud/firefox-addons",
   "incognito": "not_allowed",
   "permissions": [
+    "activeTab",
     "alarms",
+    "menus",
+    "scripting",
     "sessions",
     "storage",
     "tabGroups",
