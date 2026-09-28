@@ -281,6 +281,49 @@ def invoke_tab_title_menu(driver: webdriver.Firefox) -> tuple[str, str]:
     return source_handle, dialog_handle
 
 
+def set_current_extension_zoom(driver: webdriver.Firefox, zoom: float) -> float:
+    result = driver.execute_async_script(
+        """
+        const zoom = arguments[0];
+        const done = arguments[arguments.length - 1];
+        browser.tabs.getCurrent().then(tab => {
+          if (!tab?.id) {
+            done({ok: false, error: "current extension tab unavailable"});
+            return;
+          }
+          browser.tabs.setZoom(tab.id, zoom).then(
+            () => browser.tabs.getZoom(tab.id).then(actual => done({ok: true, actual})),
+            error => done({ok: false, error: String(error)})
+          );
+        }, error => done({ok: false, error: String(error)}));
+        """,
+        zoom,
+    )
+    require(isinstance(result, dict) and result.get("ok") is True, "extension document zoom changed", repr(result))
+    actual = float(result.get("actual", 0))
+    require(abs(actual - zoom) < 0.01, "extension document zoom reached requested factor", repr(result))
+    return actual
+
+
+def horizontal_reflow_metrics(driver: webdriver.Firefox) -> dict:
+    result = driver.execute_script(
+        """
+        const root = document.documentElement;
+        const controls = Array.from(document.querySelectorAll("#restore, #cancel, #save")).map(element => {
+          const rect = element.getBoundingClientRect();
+          return {id: element.id, left: rect.left, right: rect.right, width: rect.width};
+        });
+        return {
+          clientWidth: root.clientWidth,
+          scrollWidth: root.scrollWidth,
+          controls
+        };
+        """
+    )
+    require(isinstance(result, dict), "rename dialog reflow metrics available", repr(result))
+    return result
+
+
 def extension_message(driver: webdriver.Firefox, message: dict) -> object:
     result = driver.execute_async_script(
         """
@@ -437,6 +480,28 @@ def main() -> int:
                 """
             )
             require(rename_semantics is True, "rename dialog exposes bounded native form and polite status semantics")
+
+            set_current_extension_zoom(driver, 2.0)
+            WebDriverWait(driver, 5).until(
+                lambda d: horizontal_reflow_metrics(d)["clientWidth"] > 0
+            )
+            reflow = horizontal_reflow_metrics(driver)
+            require(
+                reflow["scrollWidth"] <= reflow["clientWidth"] + 1,
+                "rename dialog has no horizontal overflow at 200% Firefox zoom",
+                repr(reflow),
+            )
+            require(
+                all(
+                    control["left"] >= -1 and control["right"] <= reflow["clientWidth"] + 1
+                    for control in reflow["controls"]
+                ),
+                "rename dialog actions remain within the viewport at 200% Firefox zoom",
+                repr(reflow),
+            )
+            set_current_extension_zoom(driver, 1.0)
+            passes.append("tab-title-reflow-preflight")
+
             title_input = driver.find_element("id", "tab-title")
             title_input.clear()
             title_input.send_keys("Runtime custom title", Keys.ENTER)
@@ -985,7 +1050,7 @@ def main() -> int:
             server.shutdown()
             server.server_close()
 
-    require(len(passes) == 20, "all release-critical unsigned runtime checks passed", str(passes))
+    require(len(passes) == 21, "all release-critical unsigned runtime checks passed", str(passes))
     print("Advanced Tab Manager unsigned real-Firefox runtime acceptance passed.")
     return 0
 
