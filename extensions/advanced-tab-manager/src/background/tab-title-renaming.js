@@ -90,6 +90,46 @@ export function createTabTitleRenaming({ browser, broadcastChange = () => {} }) 
     };
   }
 
+  async function readSavedTitle(tabId) {
+    try {
+      return String(await browser.sessions.getTabValue(tabId, TAB_TITLE_SESSION_KEY) || "");
+    } catch {
+      return null;
+    }
+  }
+
+  async function restoreSessionTitle(tabId, previousTitle) {
+    const expected = String(previousTitle || "");
+    const observed = await readSavedTitle(tabId);
+    if (observed === expected) return true;
+
+    try {
+      if (expected) {
+        await browser.sessions.setTabValue(tabId, TAB_TITLE_SESSION_KEY, expected);
+      } else {
+        await browser.sessions.removeTabValue(tabId, TAB_TITLE_SESSION_KEY);
+      }
+    } catch {
+      // Verification below remains authoritative because a rejected API call may
+      // still race with browser persistence.
+    }
+
+    return (await readSavedTitle(tabId)) === expected;
+  }
+
+  async function restorePageTitleOverride(tabId, state) {
+    try {
+      const execution = await browser.scripting.executeScript({
+        target: { tabId },
+        func: applyTabTitleOverride,
+        args: [state.customTitle, state.pageTitle, MAX_CUSTOM_TAB_TITLE_LENGTH]
+      });
+      return Boolean(execution?.[0]?.result?.ok);
+    } catch {
+      return false;
+    }
+  }
+
   async function applyRename(tabId, requestedTitle) {
     const state = await readRenameState(tabId);
     if (!state.ok) return state;
@@ -127,7 +167,15 @@ export function createTabTitleRenaming({ browser, broadcastChange = () => {} }) 
         await browser.sessions.removeTabValue(tabId, TAB_TITLE_SESSION_KEY);
       }
     } catch {
-      return { ok: false, reason: "session-metadata-write-failed" };
+      const metadataRollbackApplied = await restoreSessionTitle(tabId, state.customTitle);
+      const pageRollbackApplied = await restorePageTitleOverride(tabId, state);
+      return {
+        ok: false,
+        reason: "session-metadata-write-failed",
+        rollbackApplied: metadataRollbackApplied && pageRollbackApplied,
+        metadataRollbackApplied,
+        pageRollbackApplied
+      };
     }
 
     broadcastChange(title ? "tab-title-renamed" : "tab-title-restored");
