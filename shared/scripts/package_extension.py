@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 EXCLUDE_NAMES = {"LICENSE", ".source-baseline"}
 EXCLUDE_SUFFIXES = {".md", ".py", ".pyc"}
-EXCLUDE_PARTS = {"scripts", "__pycache__", ".git"}
+EXCLUDE_PARTS = {"scripts", "docs", "__pycache__", ".git"}
 EXCLUDE_PARTS.add("tests")
 
 
@@ -61,7 +61,7 @@ def main() -> None:
             raise SystemExit("Package does not contain manifest.json at archive root")
         source_only = [
             name for name in names
-            if any(part in {"scripts", "tests", "__pycache__", ".git"} for part in Path(name).parts)
+            if any(part in {"scripts", "tests", "docs", "__pycache__", ".git"} for part in Path(name).parts)
             or Path(name).suffix.lower() in EXCLUDE_SUFFIXES
         ]
         if source_only:

@@ -116,3 +116,18 @@ The dialog now also consumes the shared Glaze product mark and material tokens d
 This feature also adds narrowly scoped `activeTab`, `menus`, and `scripting` permissions for explicit user invocation, while host permissions remain none and no declarative content script is registered. Because both the permission posture and a new rendered surface changed after prior 0.1.12 evidence, fresh exact-candidate permission/security review plus representative normal-light, dark, Forced Colors, Reduced Transparency, large-text/zoom, keyboard, and assistive-technology review of the rename dialog are required before current V1.6 consumer acceptance can include it.
 
 Fresh owner-visible normal-light screenshots now confirm the Glaze-refined dialog's product lockup, material hierarchy, visible focused input, unclipped controls, and successful visible tab-title change on the reviewed 0.1.12 candidate. That closes the rename dialog's normal-light rendered subset only. Dark appearance, Forced Colors, Reduced Transparency, large-text/zoom human review, assistive technology, and the broader product-level V1.6 consumer acceptance remain pending.
+
+
+## Product acceptance completion — September 28, 2026
+
+The owner completed the governed 0.1.12 target review and explicitly reported all remaining human review gates PASS for exact runtime source revision `43f3010607550d7d4380353b97f85a4dd0186695` and deterministic unsigned XPI SHA-256 `3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f`.
+
+The completed product-specific Glaze review now covers the current V1.6-mapped sidebar, popup, Manager, command palette, duplicate selector, residency presentation, and Rename tab title dialog across the governed keyboard, assistive-technology, normal-light, dark-appearance, Forced Colors, Reduced Transparency, Reduced Motion, 200%/large-text reflow, and constrained-layout conditions.
+
+Governed Mozilla signing/restart run `36378135958` subsequently verified the same accepted runtime payload, Mozilla-signed parity, persistent installation, full Firefox restart, and post-restart release-critical behavior. The signed XPI SHA-256 is `2e54bdf2aa312c9cfe2895fd456f6d088a58eab6d24de80339e996e3e9ae11ba`.
+
+At this point the repository-local product evidence needed for current Glaze V1.6 consumer acceptance is complete. The remaining Glaze step is updating the authoritative `GoreeCloud/glaze-ui` consumer registry from `adoption-required` to `accepted-v1` for exact product reference revision `43f3010607550d7d4380353b97f85a4dd0186695`.
+
+Until that registry change is authoritative, this repository's machine source-mapping script continues to emit `status: adoption-required` and `consumerRegistryAccepted: false`. That fail-closed state prevents local documentation from unilaterally claiming shared-registry acceptance.
+
+Product Stable promotion remains separate even after Glaze registry acceptance.
