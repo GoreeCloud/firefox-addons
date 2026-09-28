@@ -16,7 +16,8 @@ function createMockBrowser({
 } = {}) {
   const calls = {
     createdMenus: [],
-    removedMenus: [],
+    installedListeners: [],
+    menuClickListeners: [],
     windows: [],
     execute: [],
     setValues: [],
@@ -52,8 +53,14 @@ function createMockBrowser({
         }
       },
       runtime: {
+        lastError: null,
         getURL(path) {
           return `moz-extension://test/${path}`;
+        },
+        onInstalled: {
+          addListener(listener) {
+            calls.installedListeners.push(listener);
+          }
         }
       },
       windows: {
@@ -63,15 +70,15 @@ function createMockBrowser({
         }
       },
       menus: {
-        async remove(id) {
-          calls.removedMenus.push(id);
-        },
-        create(options) {
+        create(options, callback) {
           calls.createdMenus.push(options);
+          callback?.();
           return options.id;
         },
         onClicked: {
-          addListener() {}
+          addListener(listener) {
+            calls.menuClickListeners.push(listener);
+          }
         }
       }
     }
@@ -169,13 +176,35 @@ test("tab context menu opens the dedicated rename dialog for the clicked tab", a
   assert.match(calls.windows[0].url, /src\/tab-title\/rename\.html\?tabId=42$/);
 });
 
-test("installing the menu is idempotent and limited to Firefox tab context", async () => {
+test("menu creation is synchronous at the API boundary and limited to Firefox tab context", async () => {
   const { browser, calls } = createMockBrowser();
   const manager = createTabTitleRenaming({ browser });
 
-  await manager.installMenu();
+  const pending = manager.installMenu();
 
-  assert.deepEqual(calls.removedMenus, [TAB_TITLE_MENU_ID]);
+  assert.deepEqual(calls.createdMenus, [{
+    id: TAB_TITLE_MENU_ID,
+    title: "Rename tab title…",
+    contexts: ["tab"]
+  }]);
+  assert.deepEqual(await pending, {
+    ok: true,
+    id: TAB_TITLE_MENU_ID,
+    existing: false
+  });
+});
+
+test("registering defers persistent MV3 menu creation to runtime.onInstalled", async () => {
+  const { browser, calls } = createMockBrowser();
+  const manager = createTabTitleRenaming({ browser });
+
+  assert.deepEqual(manager.register(), { ok: true });
+  assert.equal(calls.createdMenus.length, 0);
+  assert.equal(calls.installedListeners.length, 1);
+  assert.equal(calls.menuClickListeners.length, 1);
+
+  calls.installedListeners[0]({ reason: "install", temporary: true });
+
   assert.deepEqual(calls.createdMenus, [{
     id: TAB_TITLE_MENU_ID,
     title: "Rename tab title…",
