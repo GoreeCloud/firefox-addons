@@ -16,13 +16,15 @@ concurrency:
   group: advanced-tab-manager-mozilla-signing
   cancel-in-progress: false
 
-# Stable lifecycle evidence rerun: this source-only comment intentionally changes
-# the workflow file so canonical Stable promotion on main triggers the governed
-# signing/restart path again and records stablePromoted=true without changing
-# the accepted 0.1.11 runtime payload.
+# 0.1.12 signing is bound to the owner-accepted target provenance and exact
+# deterministic unsigned candidate. The workflow itself must run from current
+# authoritative main, then checks out the accepted source revision for packaging.
 env:
-  ATM_RELEASE_VERSION: '0.1.11'
-  ATM_RELEASE_CANDIDATE_SHA256: '9c0f44926ac1d2f213fd07f82dd18fa11bd54ceebc6cd871898fe82b962a5b02'
+  ATM_RELEASE_VERSION: '0.1.12'
+  ATM_RELEASE_SOURCE_REVISION: '43f3010607550d7d4380353b97f85a4dd0186695'
+  ATM_RELEASE_CANDIDATE_SHA256: '3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f'
+  ATM_TARGET_RECORD_SHA256: '922e7f0eb1ceb3c9f0bbab23c63bfe72d99556da1661ae1abee17ab1c7ccabde'
+  ATM_TARGET_PROVENANCE: 'extensions/advanced-tab-manager/docs/target-acceptance-provenance-0.1.12.json'
 
 jobs:
   sign-and-restart:
@@ -94,6 +96,22 @@ jobs:
             exit 1
           fi
 
+      - name: Validate accepted target provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          python extensions/advanced-tab-manager/scripts/target_acceptance.py validate-provenance             "$ATM_TARGET_PROVENANCE"             --expected-source-revision "$ATM_RELEASE_SOURCE_REVISION"             --expected-xpi-sha256 "$ATM_RELEASE_CANDIDATE_SHA256"             --expected-record-sha256 "$ATM_TARGET_RECORD_SHA256"
+          mkdir -p dist
+          cp "$ATM_TARGET_PROVENANCE" dist/target-acceptance-provenance.json
+          git merge-base --is-ancestor "$ATM_RELEASE_SOURCE_REVISION" "$GITHUB_SHA"
+
+      - name: Check out accepted target source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout --detach "$ATM_RELEASE_SOURCE_REVISION"
+
+
       - name: Resolve exact release version
         id: version
         shell: bash
@@ -125,7 +143,7 @@ jobs:
           candidate="$(find dist/candidate -maxdepth 1 -type f -name 'goreecloud-advanced-tab-manager-*.xpi' -print -quit)"
           test -n "$candidate"
           mkdir -p signing-source dist/mozilla
-          python - "$candidate" "$ATM_VERSION" "$GITHUB_SHA" "$ATM_RELEASE_CANDIDATE_SHA256" <<'PY'
+          python - "$candidate" "$ATM_VERSION" "$ATM_RELEASE_SOURCE_REVISION" "$ATM_RELEASE_CANDIDATE_SHA256" <<'PY'
           import hashlib
           import json
           import sys
@@ -160,11 +178,11 @@ jobs:
       - name: Re-run Stable security qualification on signing revision
         run: |
           candidate="$(find dist/candidate -maxdepth 1 -type f -name 'goreecloud-advanced-tab-manager-*.xpi' -print -quit)"
-          python extensions/advanced-tab-manager/scripts/stable_security_review.py             --xpi "$candidate"             --source-revision "$GITHUB_SHA"             --output dist/advanced-tab-manager-stable-security-review.json
+          python extensions/advanced-tab-manager/scripts/stable_security_review.py             --xpi "$candidate"             --source-revision "$ATM_RELEASE_SOURCE_REVISION"             --output dist/advanced-tab-manager-stable-security-review.json
 
-      - name: Re-run GLAZE UI 1.5.1 consumer qualification on signing revision
+      - name: Re-run GLAZE UI 1.6.0 consumer qualification on signing revision
         run: |
-          python extensions/advanced-tab-manager/scripts/glaze_consumer_qualification.py             --source-revision "$GITHUB_SHA"             --output dist/advanced-tab-manager-glaze-1.5.1-acceptance.json
+          python extensions/advanced-tab-manager/scripts/glaze_consumer_qualification.py             --source-revision "$ATM_RELEASE_SOURCE_REVISION"             --output dist/advanced-tab-manager-glaze-1.6.0-acceptance.json
 
       - name: Require Mozilla Add-ons signing credentials
         env:
@@ -222,7 +240,7 @@ jobs:
 
       - name: Persistent signed install and full Firefox restart acceptance
         env:
-          ATM_SOURCE_REVISION: ${{ github.sha }}
+          ATM_SOURCE_REVISION: ${{ env.ATM_RELEASE_SOURCE_REVISION }}
         run: |
           python extensions/advanced-tab-manager/tests/signed_restart_smoke.py             "dist/goreecloud-advanced-tab-manager-${ATM_VERSION}-signed.xpi"
 
@@ -230,19 +248,19 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python - "$GITHUB_SHA" "$GITHUB_RUN_ID" "$ATM_VERSION" <<'PY'
+          python - "$ATM_RELEASE_SOURCE_REVISION" "$GITHUB_SHA" "$GITHUB_RUN_ID" "$ATM_VERSION" <<'PY'
           import hashlib
           import json
           import sys
           from pathlib import Path
 
-          source_revision, run_id, version = sys.argv[1:]
+          source_revision, workflow_revision, run_id, version = sys.argv[1:]
           candidate_line = Path('dist/candidate-sha256.txt').read_text(encoding='utf-8').strip()
           signed_line = Path('dist/signed-sha256.txt').read_text(encoding='utf-8').strip()
           signing_source = Path('dist/mozilla-signing-source.txt').read_text(encoding='utf-8').strip()
           parity = json.loads(Path('dist/signed-xpi-parity.json').read_text(encoding='utf-8'))
           restart = json.loads(Path('dist/advanced-tab-manager-signed-restart.json').read_text(encoding='utf-8'))
-          glaze = json.loads(Path('dist/advanced-tab-manager-glaze-1.5.1-acceptance.json').read_text(encoding='utf-8'))
+          glaze = json.loads(Path('dist/advanced-tab-manager-glaze-1.6.0-acceptance.json').read_text(encoding='utf-8'))
           security = json.loads(Path('dist/advanced-tab-manager-stable-security-review.json').read_text(encoding='utf-8'))
           inventory = json.loads(Path('docs/extension-inventory.json').read_text(encoding='utf-8'))
           entry = next((item for item in inventory.get('extensions', []) if item.get('slug') == 'advanced-tab-manager'), None)
@@ -257,6 +275,7 @@ jobs:
               'product': 'GoreeCloud Advanced Tab Manager',
               'version': version,
               'sourceRevision': source_revision,
+              'workflowRevision': workflow_revision,
               'sourceState': entry.get('source_state'),
               'acceptedStableVersion': entry.get('accepted_stable_version'),
               'githubWorkflowRunId': int(run_id),
@@ -298,9 +317,10 @@ jobs:
             dist/amo-existing-version-metadata.json
             dist/signed-xpi-parity.json
             dist/advanced-tab-manager-signed-restart.json
-            dist/advanced-tab-manager-glaze-1.5.1-acceptance.json
+            dist/advanced-tab-manager-glaze-1.6.0-acceptance.json
             dist/advanced-tab-manager-stable-security-review.json
             dist/advanced-tab-manager-signing-evidence.json
+            dist/target-acceptance-provenance.json
 
       - name: Publish authoritative signing gate result
         if: ${{ always() }}

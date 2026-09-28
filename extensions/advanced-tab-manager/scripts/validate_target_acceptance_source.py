@@ -78,8 +78,12 @@ assert "does not establish human acceptance" in record.lower()
 assert "GLAZE UI V1.6 / 1.6.0" in record
 assert "privacy-safe signing provenance" in record.lower()
 
-assert "ATM_RELEASE_VERSION: '0.1.11'" in signing_workflow
-assert "ATM_RELEASE_CANDIDATE_SHA256: '9c0f44926ac1d2f213fd07f82dd18fa11bd54ceebc6cd871898fe82b962a5b02'" in signing_workflow
+assert "ATM_RELEASE_VERSION: '0.1.12'" in signing_workflow
+assert "ATM_RELEASE_SOURCE_REVISION: '43f3010607550d7d4380353b97f85a4dd0186695'" in signing_workflow
+assert "ATM_RELEASE_CANDIDATE_SHA256: '3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f'" in signing_workflow
+assert "ATM_TARGET_RECORD_SHA256: '922e7f0eb1ceb3c9f0bbab23c63bfe72d99556da1661ae1abee17ab1c7ccabde'" in signing_workflow
+assert "validate-provenance" in signing_workflow
+assert "target-acceptance-provenance-0.1.12.json" in signing_workflow
 
 assert 'EXCLUDE_SUFFIXES = {".md", ".py", ".pyc"}' in packager
 assert 'EXCLUDE_PARTS.add("tests")' in packager
