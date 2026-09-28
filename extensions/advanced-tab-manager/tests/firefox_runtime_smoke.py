@@ -311,11 +311,13 @@ def horizontal_reflow_metrics(driver: webdriver.Firefox) -> dict:
         const root = document.documentElement;
         const controls = Array.from(document.querySelectorAll("#restore, #cancel, #save")).map(element => {
           const rect = element.getBoundingClientRect();
-          return {id: element.id, left: rect.left, right: rect.right, width: rect.width};
+          return {id: element.id, left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height};
         });
         return {
           clientWidth: root.clientWidth,
           scrollWidth: root.scrollWidth,
+          clientHeight: root.clientHeight,
+          scrollHeight: root.scrollHeight,
           controls
         };
         """
@@ -480,6 +482,26 @@ def main() -> int:
                 """
             )
             require(rename_semantics is True, "rename dialog exposes bounded native form and polite status semantics")
+
+            normal_reflow = horizontal_reflow_metrics(driver)
+            require(
+                normal_reflow["scrollWidth"] <= normal_reflow["clientWidth"] + 1,
+                "rename dialog has no horizontal overflow at default Firefox zoom",
+                repr(normal_reflow),
+            )
+            require(
+                normal_reflow["scrollHeight"] <= normal_reflow["clientHeight"] + 1,
+                "rename dialog fits its configured popup height at default Firefox zoom",
+                repr(normal_reflow),
+            )
+            require(
+                all(
+                    control["top"] >= -1 and control["bottom"] <= normal_reflow["clientHeight"] + 1
+                    for control in normal_reflow["controls"]
+                ),
+                "rename dialog actions remain visible without vertical scrolling at default Firefox zoom",
+                repr(normal_reflow),
+            )
 
             set_current_extension_zoom(driver, 2.0)
             WebDriverWait(driver, 5).until(
