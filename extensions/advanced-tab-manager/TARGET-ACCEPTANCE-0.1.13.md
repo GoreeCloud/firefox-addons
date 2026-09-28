@@ -5,11 +5,15 @@
 **Candidate:** 0.1.13 Development / source candidate  
 **Accepted Stable release:** 0.1.12  
 **Current Glaze target:** GLAZE UI V1.6 / 1.6.0  
-**Human target acceptance: Pending**  
-**Mozilla signing for 0.1.13:** Not authorized by this record  
+**Human target acceptance: Accepted**  
+**Mozilla signing for 0.1.13:** Authorized to proceed through the separate governed signing workflow  
 **Stable promotion implied:** No
 
-This record defines the governed human target-environment review required before the 0.1.13 icon-packaging candidate can claim current-target Glaze consumer acceptance or proceed to a 0.1.13 signing/promotion path. It does not establish human acceptance by itself.
+The owner completed the governed 0.1.13 target review on September 28, 2026 and explicitly reported **all governed checks PASS** for exact runtime source revision `89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe` and deterministic unsigned XPI SHA-256 `837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5`.
+
+The complete privacy-minimized local record has decision `accepted`, zero blockers, and every governed keyboard, assistive-technology, appearance, reflow, clipping, and Firefox icon-surface check set to true. Its canonical SHA-256 is `e590735ccd3909d164b0e3ad6802a4366ff08e8dcfa35ba8a73121749ac1307c`; repository-visible provenance is stored at `docs/target-acceptance-provenance-0.1.13.json`.
+
+Human target acceptance authorizes the separate 0.1.13 signing path to consume that exact provenance. It does not by itself establish Mozilla signing, Glaze consumer-registry acceptance, or Stable promotion.
 
 ## Exact-review boundary
 
@@ -47,8 +51,10 @@ Automated clean-profile Firefox qualification now also queries Firefox `AddonMan
 
 Automated validation does not establish human acceptance and must not be presented as proof that Firefox rendered the corrected icon on the owner's target profile.
 
+For the exact candidate above, owner-visible Firefox 156.0.1/Linux evidence plus the owner's final all-PASS review now establishes the required human target acceptance. Automated evidence remains supporting preflight rather than the basis of that human decision.
+
 ## Privacy-safe signing provenance
 
 After every governed check passes, blockers are empty, and the local decision is `accepted`, generate privacy-safe signing provenance with `scripts/target_acceptance.py provenance`. The provenance envelope binds the accepted review to the exact source revision and unsigned XPI digest without publishing private review details.
 
-Generating provenance does not authorize signing or Stable promotion by itself. Stable 0.1.12 remains the accepted signed release until a separate 0.1.13 Mozilla-signing, signed-payload parity, persistent-install/restart, post-restart acceptance, Glaze consumer acceptance, and Stable-promotion path completes.
+Accepted provenance has now been generated and validated for this exact candidate. Stable 0.1.12 remains the accepted signed release until the separate 0.1.13 Mozilla-signing, signed-payload parity, persistent-install/restart, post-restart acceptance, Glaze consumer acceptance, and Stable-promotion path completes.
