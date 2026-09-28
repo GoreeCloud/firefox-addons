@@ -193,7 +193,7 @@ export function createTabTitleRenaming({ browser, broadcastChange = () => {} }) 
       url,
       type: "popup",
       width: 440,
-      height: 380
+      height: 410
     });
     return { ok: true };
   }
