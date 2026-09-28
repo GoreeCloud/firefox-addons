@@ -170,6 +170,10 @@ export function createTabTitleRenaming({ browser, broadcastChange = () => {} }) 
   }
 
   function register() {
+    if (!browser.menus?.create || !browser.menus?.onClicked?.addListener) {
+      return { ok: false, reason: "menus-api-unavailable" };
+    }
+
     void installMenu().catch((error) => {
       console.warn("Advanced Tab Manager could not install the tab-title menu", error);
     });
@@ -178,6 +182,7 @@ export function createTabTitleRenaming({ browser, broadcastChange = () => {} }) 
         console.warn("Advanced Tab Manager could not open the tab-title rename dialog", error);
       });
     });
+    return { ok: true };
   }
 
   return {
