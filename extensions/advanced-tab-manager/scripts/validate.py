@@ -233,6 +233,10 @@ assert "tabContextMenu" in runtime_smoke and "Rename tab title…" in runtime_sm
 assert "tab-title-rename-restore-reload-restricted" in runtime_smoke, "real-Firefox smoke must exercise rename, same-document persistence, reload reapplication, restore, and restricted-page failure"
 assert "tab-title-keyboard-accessibility" in runtime_smoke, "real-Firefox smoke must exercise native keyboard focus, submit, restore, cancel, and semantic checks for the rename dialog"
 assert "tab-title-reflow-preflight" in runtime_smoke and "set_current_extension_zoom(driver, 2.0)" in runtime_smoke, "real-Firefox smoke must exercise rename-dialog 200 percent zoom reflow preflight"
+assert "tab-title-appearance-preflight" in runtime_smoke and "prefersColorSchemeOverride" in runtime_smoke and "forcedColorsOverride" in runtime_smoke
+assert "ui.prefersReducedTransparency" in runtime_smoke and "ui.prefersReducedMotion" in runtime_smoke
+assert "tab-title-appearance-preflight" in runtime_smoke and "prefersColorSchemeOverride" in runtime_smoke and "forcedColorsOverride" in runtime_smoke, "real-Firefox smoke must exercise dark and Forced Colors rename-dialog preflight"
+assert 'ui.prefersReducedTransparency' in runtime_smoke and 'ui.prefersReducedMotion' in runtime_smoke, "real-Firefox smoke must exercise reduced-transparency and reduced-motion preferences"
 assert "Runtime custom title" in runtime_smoke and "about:blank" in runtime_smoke, "real-Firefox rename acceptance must use controlled title data and a restricted Firefox page"
 assert "temporary=True" in runtime_smoke, "unsigned runtime gate must not masquerade as persistent signed acceptance"
 for route in (
