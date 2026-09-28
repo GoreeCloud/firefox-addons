@@ -5,8 +5,8 @@
   "addon_id": "advanced-tab-manager@goreecloud.com",
   "source_revision": "43f3010607550d7d4380353b97f85a4dd0186695",
   "xpi_sha256": "3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f",
-  "target_record_sha256": "862d449ab63ed362a2c2c5d7c76e0f540e063b1f1fe03b1171f6682d89d9f6e2",
+  "target_record_sha256": "922e7f0eb1ceb3c9f0bbab23c63bfe72d99556da1661ae1abee17ab1c7ccabde",
   "decision": "accepted",
   "release_ready": true,
-  "reviewed_at": "2026-09-28T04:11:03Z"
+  "reviewed_at": "2026-09-28T04:12:43Z"
 }
