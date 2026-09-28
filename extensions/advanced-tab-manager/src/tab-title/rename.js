@@ -29,6 +29,8 @@ function errorMessage(reason, maxLength, rollbackApplied = false) {
       return `Keep the custom tab title to ${maxLength || 160} characters or fewer.`;
     case "tab-not-found":
       return "This Firefox tab is no longer open.";
+    case "session-metadata-read-failed":
+      return "Firefox could not read the saved title metadata. Close and reopen this dialog to try again.";
     case "session-metadata-write-failed":
       return rollbackApplied
         ? "Firefox could not save the local title metadata, so Advanced Tab Manager restored the previous tab title."
