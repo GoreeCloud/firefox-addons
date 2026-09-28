@@ -1,0 +1,69 @@
+{
+  "acceptedStableVersion": "0.1.11",
+  "amoExistingVersion": {
+    "authenticatedDownloadApi": "https://addons.mozilla.org/api/v4/file/5064623/goreecloud-advanced-tab-manager-0.1.12.xpi",
+    "channel": "unlisted",
+    "fileHash": "sha256:2e54bdf2aa312c9cfe2895fd456f6d088a58eab6d24de80339e996e3e9ae11ba",
+    "fileId": 5064623,
+    "fileStatus": "public",
+    "internalCertificateFlag": false,
+    "redirectTargetDigest": null,
+    "version": "0.1.12"
+  },
+  "candidateSha256": "3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f",
+  "firefoxAddonId": "advanced-tab-manager@goreecloud.com",
+  "githubWorkflowRunId": 36378135958,
+  "glazeConsumerAccepted": false,
+  "mozillaSigned": true,
+  "mozillaSigningSource": "existing-version",
+  "persistentInstallRestartAccepted": true,
+  "product": "GoreeCloud Advanced Tab Manager",
+  "schemaVersion": 1,
+  "signedManifestGovernedParityAccepted": true,
+  "signedNonManifestPayloadMatchesCandidateByteForByte": true,
+  "signedRestartAcceptance": {
+    "controlledLocalFixtureOnly": true,
+    "firefoxVersion": "156.0",
+    "mozillaSigned": true,
+    "passedChecks": [
+      "persistent-install",
+      "pre-restart-persistence",
+      "manager-model",
+      "persistent-organizational-state",
+      "tree",
+      "stash-restore",
+      "snooze-restore",
+      "duplicate-cleanup",
+      "rule-default",
+      "session-snapshot-restore",
+      "backup-preview",
+      "post-restart-registration"
+    ],
+    "persistentInstallRestartAccepted": true,
+    "product": "GoreeCloud Advanced Tab Manager",
+    "schemaVersion": 1,
+    "sourceRevision": "43f3010607550d7d4380353b97f85a4dd0186695",
+    "version": "0.1.12"
+  },
+  "signedSha256": "2e54bdf2aa312c9cfe2895fd456f6d088a58eab6d24de80339e996e3e9ae11ba",
+  "signedXpiParity": {
+    "manifestNormalization": "json-serialization-only",
+    "nonManifestPayloadByteExact": true,
+    "payloadInventoryExact": true,
+    "schemaVersion": 1,
+    "signatureMetadataFiles": [
+      "META-INF/cose.manifest",
+      "META-INF/cose.sig",
+      "META-INF/manifest.mf",
+      "META-INF/mozilla.rsa",
+      "META-INF/mozilla.sf"
+    ],
+    "signedSha256": "2e54bdf2aa312c9cfe2895fd456f6d088a58eab6d24de80339e996e3e9ae11ba"
+  },
+  "sourceRevision": "43f3010607550d7d4380353b97f85a4dd0186695",
+  "sourceState": "source-candidate",
+  "stablePromoted": false,
+  "stableSecurityBlockersPassed": true,
+  "version": "0.1.12",
+  "workflowRevision": "43baeef22e415533f0eb53fa677f02d5fc75e71b"
+}
