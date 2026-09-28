@@ -128,7 +128,7 @@ def inspect_xpi(path: Path) -> tuple[int, dict]:
         validate_manifest(manifest)
         for name in names:
             normalized = name.lower()
-            require(not normalized.startswith(("tests/", "scripts/", ".github/")), f"maintenance file leaked into XPI: {name}")
+            require(not normalized.startswith(("tests/", "scripts/", "docs/", ".github/")), f"maintenance file leaked into XPI: {name}")
             require(not normalized.endswith((".py", ".mjs", ".md")), f"maintenance/documentation file leaked into XPI: {name}")
             if name.endswith((".js", ".html", ".css", ".json")):
                 text = archive.read(name).decode("utf-8")
