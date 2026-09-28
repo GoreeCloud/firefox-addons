@@ -287,7 +287,9 @@ def set_firefox_pref(driver: webdriver.Firefox, name: str, value: object | None)
         result = driver.execute_script(
             """
             const [name, value] = arguments;
-            const {Services} = ChromeUtils.importESModule("resource://gre/modules/Services.sys.mjs");
+            if (typeof Services === "undefined" || !Services.prefs) {
+              return {ok: false, error: "Firefox Services.prefs unavailable in chrome context"};
+            }
             if (value === null) {
               if (Services.prefs.prefHasUserValue(name)) Services.prefs.clearUserPref(name);
             } else if (typeof value === "boolean") {
@@ -584,6 +586,8 @@ def main() -> int:
                 repr(normal_reflow),
             )
 
+            appearance_baseline = rename_appearance_state(driver)
+
             set_current_document_appearance(driver, "dark", "none")
             wait_until(
                 lambda: rename_appearance_state(driver)["dark"],
@@ -598,9 +602,9 @@ def main() -> int:
             )
             set_current_document_appearance(driver, "none", "none")
             wait_until(
-                lambda: not rename_appearance_state(driver)["dark"],
+                lambda: rename_appearance_state(driver)["dark"] == appearance_baseline["dark"],
                 5,
-                "rename dialog leaves Firefox dark color-scheme override",
+                "rename dialog returns to the baseline Firefox color scheme",
             )
 
             set_current_document_appearance(driver, "none", "active")
@@ -624,9 +628,9 @@ def main() -> int:
             )
             set_current_document_appearance(driver, "none", "none")
             wait_until(
-                lambda: not rename_appearance_state(driver)["forcedColors"],
+                lambda: rename_appearance_state(driver)["forcedColors"] == appearance_baseline["forcedColors"],
                 5,
-                "rename dialog leaves Firefox Forced Colors override",
+                "rename dialog returns to the baseline Firefox Forced Colors state",
             )
 
             set_firefox_pref(driver, "ui.prefersReducedTransparency", 1)
