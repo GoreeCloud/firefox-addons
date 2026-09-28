@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "GoreeCloud Advanced Tab Manager",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Local-first Firefox tab organization with durable recovery, explainable automation, keyboard commands, diagnostics, and source-preserving local backup portability.",
   "homepage_url": "https://github.com/GoreeCloud/firefox-addons",
   "incognito": "not_allowed",
@@ -17,7 +17,8 @@
   ],
   "action": {
     "default_title": "GoreeCloud Advanced Tab Manager",
-    "default_popup": "src/popup/popup.html"
+    "default_popup": "src/popup/popup.html",
+    "default_icon": "icons/advanced-tab-manager.svg"
   },
   "sidebar_action": {
     "default_title": "GoreeCloud Advanced Tab Manager",
@@ -34,5 +35,13 @@
       "id": "advanced-tab-manager@goreecloud.com",
       "strict_min_version": "139.0"
     }
+  },
+  "icons": {
+    "16": "icons/advanced-tab-manager.svg",
+    "32": "icons/advanced-tab-manager.svg",
+    "48": "icons/advanced-tab-manager.svg",
+    "64": "icons/advanced-tab-manager.svg",
+    "96": "icons/advanced-tab-manager.svg",
+    "128": "icons/advanced-tab-manager.svg"
   }
 }
