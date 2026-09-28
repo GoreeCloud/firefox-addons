@@ -85,7 +85,8 @@ This repository document is the canonical source-controlled specification for th
 - Real-Firefox qualification must exercise the complete bounded user path against controlled local fixtures: native-menu invocation, custom-title application, same-document overwrite resistance, reload semantics with saved-label reapplication, Restore page title behavior, restricted-page menu absence, initial keyboard focus, native form/live-status semantics, keyboard submit, keyboard Restore, and keyboard Cancel.
 - The rename dialog must reflow without horizontal clipping at narrow effective widths; fixed minimum-width assumptions are not permitted. Real-Firefox qualification includes a 200% zoom horizontal-overflow preflight for the dialog and its action controls.
 - The dialog consumes the shared `src/shared/glaze.css` product lockup and material tokens, while semantic system colors, Reduced Transparency, Forced Colors, and native control semantics remain authoritative fallbacks.
-- Automated keyboard/semantic/reflow qualification is a preflight only. It does not substitute for the separately governed human assistive-technology, visible-focus, appearance, large-text, or zoom acceptance record.
+- Real-Firefox qualification also preflights the rename dialog under Firefox-controlled dark appearance, Reduced Transparency, Forced Colors, and Reduced Motion states using bounded media/computed-style checks.
+- Automated keyboard/semantic/reflow/appearance qualification is a preflight only. It does not substitute for the separately governed human assistive-technology, visible-focus, appearance, large-text, or zoom acceptance record.
 - This feature reopens exact-candidate permission, rendered-dialog, keyboard/accessibility, and real-Firefox acceptance for the 0.1.12 Development line; it does not inherit Stable 0.1.11 acceptance.
 
 
