@@ -180,7 +180,16 @@ jobs:
           candidate="$(find dist/candidate -maxdepth 1 -type f -name 'goreecloud-advanced-tab-manager-*.xpi' -print -quit)"
           python extensions/advanced-tab-manager/scripts/stable_security_review.py             --xpi "$candidate"             --source-revision "$ATM_RELEASE_SOURCE_REVISION"             --output dist/advanced-tab-manager-stable-security-review.json
 
-      - name: Re-run GLAZE UI 1.6.0 consumer qualification on signing revision
+      - name: Restore current Glaze acceptance harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          git show "$GITHUB_SHA":extensions/advanced-tab-manager/scripts/glaze_consumer_qualification.py > extensions/advanced-tab-manager/scripts/glaze_consumer_qualification.py
+          git show "$GITHUB_SHA":extensions/advanced-tab-manager/GLAZE-UI-1.6.0-ADOPTION.md > extensions/advanced-tab-manager/GLAZE-UI-1.6.0-ADOPTION.md
+          git show "$GITHUB_SHA":extensions/advanced-tab-manager/RELEASE-ACCEPTANCE-0.1.12.md > extensions/advanced-tab-manager/RELEASE-ACCEPTANCE-0.1.12.md
+          python -m py_compile extensions/advanced-tab-manager/scripts/glaze_consumer_qualification.py
+
+      - name: Re-run GLAZE UI 1.6.0 consumer qualification on accepted runtime revision
         run: |
           python extensions/advanced-tab-manager/scripts/glaze_consumer_qualification.py             --source-revision "$ATM_RELEASE_SOURCE_REVISION"             --output dist/advanced-tab-manager-glaze-1.6.0-acceptance.json
 
@@ -251,6 +260,12 @@ jobs:
         run: |
           python extensions/advanced-tab-manager/tests/signed_restart_smoke.py             "dist/goreecloud-advanced-tab-manager-${ATM_VERSION}-signed.xpi"
 
+      - name: Capture current lifecycle metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          git show "$GITHUB_SHA":docs/extension-inventory.json > dist/current-extension-inventory.json
+
       - name: Build signed release evidence record
         shell: bash
         run: |
@@ -269,7 +284,7 @@ jobs:
           restart = json.loads(Path('dist/advanced-tab-manager-signed-restart.json').read_text(encoding='utf-8'))
           glaze = json.loads(Path('dist/advanced-tab-manager-glaze-1.6.0-acceptance.json').read_text(encoding='utf-8'))
           security = json.loads(Path('dist/advanced-tab-manager-stable-security-review.json').read_text(encoding='utf-8'))
-          inventory = json.loads(Path('docs/extension-inventory.json').read_text(encoding='utf-8'))
+          inventory = json.loads(Path('dist/current-extension-inventory.json').read_text(encoding='utf-8'))
           entry = next((item for item in inventory.get('extensions', []) if item.get('slug') == 'advanced-tab-manager'), None)
           if entry is None or entry.get('source_version') != version:
               raise SystemExit('Advanced Tab Manager inventory/source version mismatch')
@@ -303,6 +318,10 @@ jobs:
           amo_metadata = Path('dist/amo-existing-version-metadata.json')
           if amo_metadata.exists():
               record['amoExistingVersion'] = json.loads(amo_metadata.read_text(encoding='utf-8'))
+          if not record['glazeConsumerAccepted']:
+              raise SystemExit('Glaze V1.6 consumer acceptance is not authoritative')
+          if not record['stablePromoted']:
+              raise SystemExit('Advanced Tab Manager canonical Stable promotion is not authoritative')
           Path('dist/advanced-tab-manager-signing-evidence.json').write_text(
               json.dumps(record, indent=2, sort_keys=True) + '\n', encoding='utf-8'
           )
@@ -328,6 +347,7 @@ jobs:
             dist/advanced-tab-manager-stable-security-review.json
             dist/advanced-tab-manager-signing-evidence.json
             dist/target-acceptance-provenance.json
+            dist/current-extension-inventory.json
 
       - name: Publish authoritative signing gate result
         if: ${{ always() }}
