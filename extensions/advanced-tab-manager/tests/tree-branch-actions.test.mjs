@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createTreeBranchActions } from "../src/background/tree-branch-actions.js";
+import { LOGICAL_ID_KEY, TREE_PARENT_LOGICAL_ID_KEY } from "../src/background/browser-state.js";
 
 function tab(id, logicalId, index, treeParentLogicalId = null, overrides = {}) {
   return {
@@ -17,6 +18,31 @@ function tab(id, logicalId, index, treeParentLogicalId = null, overrides = {}) {
     splitViewId: -1,
     incognito: false,
     ...overrides
+  };
+}
+
+function sessionApi(tabs) {
+  const values = new Map();
+  const keyFor = (tabId, key) => `${tabId}:${key}`;
+
+  for (const item of tabs) {
+    if (item.logicalId) values.set(keyFor(item.id, LOGICAL_ID_KEY), item.logicalId);
+    if (item.treeParentLogicalId) values.set(keyFor(item.id, TREE_PARENT_LOGICAL_ID_KEY), item.treeParentLogicalId);
+  }
+
+  return {
+    values,
+    api: {
+      async getTabValue(tabId, key) {
+        return values.get(keyFor(tabId, key));
+      },
+      async setTabValue(tabId, key, value) {
+        values.set(keyFor(tabId, key), value);
+      },
+      async removeTabValue(tabId, key) {
+        values.delete(keyFor(tabId, key));
+      }
+    }
   };
 }
 
@@ -117,16 +143,27 @@ test("move tree branch opens a new window and preserves the verified branch", as
     tab(3,"leaf",2,"child",{ windowId: 9 }),
     tab(4,"other",0,null,{ windowId: 1 })
   ];
+  const session = sessionApi(source);
   const manager = createTreeBranchActions({
     browser: {
+      sessions: session.api,
       windows: {
-        create: async (details) => { created.push(details); return { id: 9 }; },
+        create: async (details) => {
+          created.push(details);
+          session.values.delete(`1:${LOGICAL_ID_KEY}`);
+          session.values.delete(`1:${TREE_PARENT_LOGICAL_ID_KEY}`);
+          return { id: 9 };
+        },
         remove: async () => {}
       },
       tabs: {
         remove: async () => {},
         discard: async () => {},
-        move: async (ids, details) => moves.push({ ids, details }),
+        move: async (ids, details) => {
+          moves.push({ ids, details });
+          session.values.delete(`${ids}:${LOGICAL_ID_KEY}`);
+          session.values.delete(`${ids}:${TREE_PARENT_LOGICAL_ID_KEY}`);
+        },
         get: async () => { throw new Error("rollback should not run"); },
         query: async () => []
       }
@@ -146,6 +183,11 @@ test("move tree branch opens a new window and preserves the verified branch", as
     { ids: 3, details: { windowId: 9, index: -1 } }
   ]);
   assert.deepEqual(reasons, ["tree-branch-moved"]);
+  assert.equal(session.values.get(`1:${LOGICAL_ID_KEY}`), "root");
+  assert.equal(session.values.get(`2:${LOGICAL_ID_KEY}`), "child");
+  assert.equal(session.values.get(`2:${TREE_PARENT_LOGICAL_ID_KEY}`), "root");
+  assert.equal(session.values.get(`3:${LOGICAL_ID_KEY}`), "leaf");
+  assert.equal(session.values.get(`3:${TREE_PARENT_LOGICAL_ID_KEY}`), "child");
 });
 
 test("move tree branch rejects pinned native-group or Split View members before Firefox mutation", async () => {
@@ -177,8 +219,15 @@ test("move tree branch rejects pinned native-group or Split View members before 
 test("move tree branch rolls the root back when descendant movement fails", async () => {
   const reasons = [];
   const rollbackMoves = [];
+  const rollbackSource = [
+    tab(1,"root",0),
+    tab(2,"child",1,"root"),
+    tab(3,"leaf",2,"child")
+  ];
+  const rollbackSession = sessionApi(rollbackSource);
   const manager = createTreeBranchActions({
     browser: {
+      sessions: rollbackSession.api,
       windows: {
         create: async () => ({ id: 9 }),
         remove: async () => {}
@@ -196,11 +245,7 @@ test("move tree branch rolls the root back when descendant movement fails", asyn
         query: async () => []
       }
     },
-    readLiveSnapshot: async () => snapshot([
-      tab(1,"root",0),
-      tab(2,"child",1,"root"),
-      tab(3,"leaf",2,"child")
-    ]),
+    readLiveSnapshot: async () => snapshot(rollbackSource),
     broadcastChange: (reason) => reasons.push(reason)
   });
 
