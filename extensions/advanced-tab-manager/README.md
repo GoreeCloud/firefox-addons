@@ -5,12 +5,12 @@ GoreeCloud Advanced Tab Manager is a local-first Firefox WebExtension for high-s
 ## Current source state
 
 - Version: `0.1.13`
-- Source state: `source-candidate`
-- Product lifecycle: Development
+- Source state: `stable`
+- Product lifecycle: Stable
 - Component class: Browser extension
 - Firefox add-on ID: `advanced-tab-manager@goreecloud.com`
 - Minimum Firefox version: `139.0`
-- Stable release: `0.1.12`
+- Stable release: `0.1.13`
 - Permissions: `activeTab`, `alarms`, `menus`, `scripting`, `sessions`, `storage`, `tabGroups`, `tabs`
 - Host permissions: none
 - Content scripts: none
@@ -24,9 +24,9 @@ The restorable URL boundary is `http:`, `https:`, and `about:blank`. Privileged 
 
 ### Extension icon packaging correction — 0.1.13
 
-Version 0.1.13 is a source candidate that corrects Firefox product-identity packaging without changing tab-management authority or permissions. It vendors the approved canonical Advanced Tab Manager SVG from `GoreeCloud/branding-assets/products/advanced-tab-manager/app-icon.svg` (canonical Git blob `2c1865ee3809ae91c3bcb42d2d39275668651ab7`) and declares it through the manifest's top-level `icons` map and `action.default_icon`.
+Stable 0.1.13 corrects Firefox product-identity packaging without changing tab-management authority or permissions. It vendors the approved canonical Advanced Tab Manager SVG from `GoreeCloud/branding-assets/products/advanced-tab-manager/app-icon.svg` (canonical Git blob `2c1865ee3809ae91c3bcb42d2d39275668651ab7`) and declares it through the manifest's top-level `icons` map and `action.default_icon`.
 
-This corrects the generic puzzle-piece placeholder shown by Firefox when an extension does not declare packaged icon metadata. Stable 0.1.12 remains the accepted signed release until the exact 0.1.13 package completes its independent review, Mozilla signing, persistent-install/restart, Glaze consumer-acceptance, and Stable-promotion gates.
+This corrects the generic puzzle-piece placeholder shown by Firefox when an extension does not declare packaged icon metadata. The exact 0.1.13 runtime completed governed human target acceptance, Mozilla signing, signed-payload parity, persistent-install/full-restart acceptance, and fresh GLAZE UI V1.6 consumer acceptance before Stable lifecycle promotion. Stable 0.1.12 is retained as rollback provenance.
 
 ### Interface refinement — 0.1.12
 
