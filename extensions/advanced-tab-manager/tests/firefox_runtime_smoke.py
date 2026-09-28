@@ -653,9 +653,9 @@ def main() -> int:
 
             set_firefox_pref(driver, "ui.prefersReducedTransparency", 1)
             wait_until(
-                lambda: rename_appearance_state(driver)["reducedTransparency"],
+                lambda: rename_appearance_state(driver)["reducedTransparency"] and rename_appearance_state(driver)["shellBackdropFilter"] in {"", "none"},
                 5,
-                "rename dialog enters Reduced Transparency preference",
+                "rename dialog applies Reduced Transparency preference",
             )
             transparency_state = rename_appearance_state(driver)
             require(
