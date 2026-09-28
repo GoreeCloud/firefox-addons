@@ -331,6 +331,52 @@ def horizontal_reflow_metrics(driver: webdriver.Firefox) -> dict:
     return result
 
 
+def set_firefox_int_pref(driver: webdriver.Firefox, name: str, value: int) -> None:
+    driver.set_context(driver.CONTEXT_CHROME)
+    try:
+        result = driver.execute_script(
+            """
+            const [name, value] = arguments;
+            const {Services} = ChromeUtils.importESModule("resource://gre/modules/Services.sys.mjs");
+            Services.prefs.setIntPref(name, value);
+            return Services.prefs.getIntPref(name);
+            """,
+            name,
+            value,
+        )
+    finally:
+        driver.set_context(driver.CONTEXT_CONTENT)
+    require(result == value, f"Firefox preference {name} applied", repr(result))
+
+
+def rename_appearance_state(driver: webdriver.Firefox) -> dict:
+    result = driver.execute_script(
+        """
+        const shell = document.querySelector(".rename-shell");
+        const primary = document.querySelector("#save");
+        if (!shell || !primary) return {ok: false};
+        const shellStyle = getComputedStyle(shell);
+        const primaryStyle = getComputedStyle(primary);
+        return {
+          ok: true,
+          dark: matchMedia("(prefers-color-scheme: dark)").matches,
+          forcedColors: matchMedia("(forced-colors: active)").matches,
+          reducedTransparency: matchMedia("(prefers-reduced-transparency: reduce)").matches,
+          reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+          shellBackdropFilter: shellStyle.backdropFilter,
+          shellBoxShadow: shellStyle.boxShadow,
+          shellBorderStyle: shellStyle.borderTopStyle,
+          shellBackground: shellStyle.backgroundColor,
+          shellColor: shellStyle.color,
+          primaryAnimationName: primaryStyle.animationName,
+          primaryTransitionDuration: primaryStyle.transitionDuration
+        };
+        """
+    )
+    require(isinstance(result, dict) and result.get("ok") is True, "rename appearance state available", repr(result))
+    return result
+
+
 def extension_message(driver: webdriver.Firefox, message: dict) -> object:
     result = driver.execute_async_script(
         """
