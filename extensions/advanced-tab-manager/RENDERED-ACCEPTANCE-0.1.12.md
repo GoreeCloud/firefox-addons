@@ -200,3 +200,17 @@ This resolves the previously observed missing-menu regression and records normal
 ## Tab-title rename Glaze refinement — fresh review pending
 
 The rename dialog was visually refined after the September 27 post-fix screenshots to use the shared Glaze product mark and material surface system. The prior screenshots remain historical evidence for the exact revision they show, but they do not establish rendered acceptance for this new visual source. Fresh normal-light and alternate-appearance review is required. Stable remains `0.1.11`.
+
+
+## Glaze-refined tab-title rename normal-light review — September 27, 2026
+
+Fresh owner-supplied Firefox/Linux screenshots were reviewed after PR #132 merged the Glaze-refined rename dialog to `main` as `042ff6ce3c5d4b604f39b1f6a497b2c24b128d4f`. The reviewed distributed candidate was the qualified unsigned 0.1.12 XPI produced from the exact PR head that passed repository, release-qualification, and real-Firefox runtime checks before merge.
+
+Observed normal-light acceptance for the refined rename path:
+- the dedicated dialog visibly uses the shared GoreeCloud product mark/lockup and layered Glaze material treatment;
+- the custom-title field shows visible keyboard focus and remains fully readable;
+- current-page-title text, privacy explanation, Restore page title, Cancel, and Rename controls are simultaneously visible without clipping or overlap;
+- the dialog fits comfortably inside its Firefox popup window in the supplied default-scale view;
+- the subsequent screenshot shows the Firefox tab-strip label changed to **Tab Manager**, confirming the refined UI still completes the rename operation visibly.
+
+This closes the fresh **normal-light rendered review** requirement for the Glaze-refined rename dialog itself. It does not establish dark-appearance, Forced Colors, Reduced Transparency, large-text/200%-zoom human review, assistive-technology review, persistent signed installation, restart acceptance, or overall 0.1.12 target acceptance. Those gates remain separate. Stable remains `0.1.11`.
