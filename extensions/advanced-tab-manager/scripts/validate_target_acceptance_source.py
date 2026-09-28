@@ -49,6 +49,10 @@ for marker in (
     'test_unknown_fields_are_rejected',
     'test_record_rejects_candidate_revision_mismatch',
     'test_xpi_identity_is_fail_closed',
+    'test_release_ready_provenance_is_privacy_minimized',
+    'test_provenance_rejects_incomplete_target_record',
+    'test_provenance_validates_against_full_record',
+    'test_provenance_rejects_record_digest_mismatch',
 ):
     assert marker in tests, f"target acceptance regression missing: {marker}"
 
