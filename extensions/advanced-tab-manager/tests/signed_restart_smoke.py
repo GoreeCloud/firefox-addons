@@ -18,10 +18,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from firefox_runtime_smoke import (
     EXPECTED_ADDON_ID,
+    EXPECTED_ICON_PATH,
     EXPECTED_VERSION,
     FixtureHandler,
     create_tab,
     extension_message,
+    firefox_addon_identity,
     firefox_options,
     firefox_service,
     flatten,
@@ -66,6 +68,24 @@ def persistent_extension_file(profile: Path, phase: str) -> Path:
     existing = [path for path in candidates if path.exists()]
     require(bool(existing), f"{phase} persistent signed install exists", str(candidates))
     return existing[0]
+
+
+def assert_native_icon(driver: webdriver.Firefox, phase: str, checks: list[str]) -> None:
+    identity = firefox_addon_identity(driver)
+    icon_suffix = f"/{EXPECTED_ICON_PATH}"
+    require(identity.get("id") == EXPECTED_ADDON_ID, f"{phase} AddonManager add-on ID", repr(identity))
+    require(identity.get("version") == EXPECTED_VERSION, f"{phase} AddonManager version", repr(identity))
+    require(str(identity.get("iconURL", "")).endswith(icon_suffix), f"{phase} native product icon", repr(identity))
+    native_icons = identity.get("icons")
+    expected_icon_sizes = {"16", "32", "48", "64", "96", "128"}
+    require(
+        isinstance(native_icons, dict)
+        and set(native_icons) == expected_icon_sizes
+        and all(str(value).endswith(icon_suffix) for value in native_icons.values()),
+        f"{phase} native product icon sizes",
+        repr(identity),
+    )
+    checks.append(f"{phase}-native-icon")
 
 
 def wait_manager_version(driver: webdriver.Firefox) -> None:
@@ -194,6 +214,7 @@ def main() -> int:
             addon_id = first.install_addon(str(xpi), temporary=False)
             require(addon_id == EXPECTED_ADDON_ID, "persistent Mozilla-signed installation", str(addon_id))
             checks.append("persistent-install")
+            assert_native_icon(first, "pre-restart", checks)
 
             wait_manager_version(first)
             pre_tab = create_tab(first, f"{base}/before-restart", active=False)
@@ -216,6 +237,7 @@ def main() -> int:
             second = webdriver.Firefox(options=firefox_options(profile), service=firefox_service())
             firefox_version = str(second.capabilities.get("browserVersion", "unknown"))
             wait_manager_version(second)
+            assert_native_icon(second, "post-restart", checks)
             exercise_post_restart(second, base, checks)
             time.sleep(1.0)
             second.quit()
@@ -254,7 +276,7 @@ def main() -> int:
             server.shutdown()
             server.server_close()
 
-    require(len(checks) >= 10, "signed restart acceptance completed all required checks", str(checks))
+    require(len(checks) >= 12, "signed restart acceptance completed all required checks", str(checks))
     print("Advanced Tab Manager Mozilla-signed persistent-install/full-restart acceptance passed.")
     return 0
 
