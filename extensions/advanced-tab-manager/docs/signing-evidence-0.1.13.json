@@ -1,0 +1,61 @@
+{
+  "acceptedStableVersion": "0.1.12",
+  "candidateSha256": "837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5",
+  "firefoxAddonId": "advanced-tab-manager@goreecloud.com",
+  "githubWorkflowRunId": 36431225028,
+  "glazeConsumerAccepted": false,
+  "mozillaSigned": true,
+  "mozillaSigningSource": "new-submission",
+  "persistentInstallRestartAccepted": true,
+  "product": "GoreeCloud Advanced Tab Manager",
+  "schemaVersion": 1,
+  "signedManifestGovernedParityAccepted": true,
+  "signedNonManifestPayloadMatchesCandidateByteForByte": true,
+  "signedRestartAcceptance": {
+    "controlledLocalFixtureOnly": true,
+    "firefoxVersion": "156.0",
+    "mozillaSigned": true,
+    "passedChecks": [
+      "persistent-install",
+      "pre-restart-native-icon",
+      "pre-restart-persistence",
+      "post-restart-native-icon",
+      "manager-model",
+      "persistent-organizational-state",
+      "tree",
+      "stash-restore",
+      "snooze-restore",
+      "duplicate-cleanup",
+      "rule-default",
+      "session-snapshot-restore",
+      "backup-preview",
+      "post-restart-registration"
+    ],
+    "persistentInstallRestartAccepted": true,
+    "product": "GoreeCloud Advanced Tab Manager",
+    "schemaVersion": 1,
+    "sourceRevision": "89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe",
+    "version": "0.1.13"
+  },
+  "signedSha256": "6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c",
+  "signedXpiParity": {
+    "manifestNormalization": "json-serialization-only",
+    "nonManifestPayloadByteExact": true,
+    "payloadInventoryExact": true,
+    "schemaVersion": 1,
+    "signatureMetadataFiles": [
+      "META-INF/cose.manifest",
+      "META-INF/cose.sig",
+      "META-INF/manifest.mf",
+      "META-INF/mozilla.rsa",
+      "META-INF/mozilla.sf"
+    ],
+    "signedSha256": "6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c"
+  },
+  "sourceRevision": "89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe",
+  "sourceState": "source-candidate",
+  "stablePromoted": false,
+  "stableSecurityBlockersPassed": true,
+  "version": "0.1.13",
+  "workflowRevision": "d3ba4729c81e88bf98fcb0130399986dc8673ff3"
+}
