@@ -314,12 +314,20 @@ assert "advanced-tab-manager-glaze-1.6.0-adoption.json" in release_workflow
 assert "GLAZE UI 1.6.0 source adoption state" in release_workflow
 assert "cmp \"$A\" \"$B\"" in release_workflow
 
-assert "ATM_RELEASE_VERSION: '0.1.11'" in signing_workflow
-assert "ATM_RELEASE_CANDIDATE_SHA256: '9c0f44926ac1d2f213fd07f82dd18fa11bd54ceebc6cd871898fe82b962a5b02'" in signing_workflow
+assert "ATM_RELEASE_VERSION: '0.1.12'" in signing_workflow
+assert "ATM_RELEASE_SOURCE_REVISION: '43f3010607550d7d4380353b97f85a4dd0186695'" in signing_workflow
+assert "ATM_RELEASE_CANDIDATE_SHA256: '3db751f3a2c80d8d339ea0648d00a8ff016840f6587b58e5a61c484bf687588f'" in signing_workflow
+assert "ATM_TARGET_RECORD_SHA256: '862d449ab63ed362a2c2c5d7c76e0f540e063b1f1fe03b1171f6682d89d9f6e2'" in signing_workflow
+assert "target-acceptance-provenance-0.1.12.json" in signing_workflow
+assert "validate-provenance" in signing_workflow and "--expected-source-revision" in signing_workflow and "--expected-record-sha256" in signing_workflow
+assert "git merge-base --is-ancestor" in signing_workflow and 'git checkout --detach "$ATM_RELEASE_SOURCE_REVISION"' in signing_workflow
 assert "Bind signing to authoritative main" in signing_workflow
 assert "web-ext@10.5.0 sign" in signing_workflow and "--channel=unlisted" in signing_workflow
 assert "AMO_JWT_ISSUER" in signing_workflow and "AMO_JWT_SECRET" in signing_workflow
 assert "stable_security_review.py" in signing_workflow and "glaze_consumer_qualification.py" in signing_workflow
+assert "advanced-tab-manager-glaze-1.6.0-acceptance.json" in signing_workflow
+assert "workflowRevision" in signing_workflow and "sourceRevision" in signing_workflow
+assert "dist/target-acceptance-provenance.json" in signing_workflow
 assert "verify_signed_xpi.py" in signing_workflow and "signed_restart_smoke.py" in signing_workflow
 assert "advanced-tab-manager-signing-evidence.json" in signing_workflow
 assert "statuses: write" in signing_workflow
