@@ -13,6 +13,7 @@ function createMockBrowser({
   tab = { id: 42, url: "https://example.com/research", title: "Example", incognito: false },
   storedTitle = "",
   executionResult = { ok: true, title: "Research" },
+  failGetValue = false,
   failSetValue = false,
   failRemoveValue = false
 } = {}) {
@@ -40,6 +41,7 @@ function createMockBrowser({
         async getTabValue(tabId, key) {
           assert.equal(tabId, tab.id);
           assert.equal(key, TAB_TITLE_SESSION_KEY);
+          if (failGetValue) throw new Error("simulated getTabValue failure");
           return currentStoredTitle || undefined;
         },
         async setTabValue(tabId, key, value) {
@@ -98,6 +100,16 @@ test("tab title renaming eligibility is limited to non-private HTTP(S) tabs", ()
   assert.equal(isTabTitleRenameEligible({ id: 3, url: "about:config", incognito: false }), false);
   assert.equal(isTabTitleRenameEligible({ id: 4, url: "file:///tmp/test.html", incognito: false }), false);
   assert.equal(isTabTitleRenameEligible({ id: 5, url: "https://example.com", incognito: true }), false);
+});
+
+test("rename state fails closed when saved title metadata cannot be read", async () => {
+  const { browser } = createMockBrowser({ failGetValue: true });
+  const manager = createTabTitleRenaming({ browser });
+
+  assert.deepEqual(await manager.readRenameState(42), {
+    ok: false,
+    reason: "session-metadata-read-failed"
+  });
 });
 
 test("rename state reads the saved custom title without page-content inspection", async () => {
