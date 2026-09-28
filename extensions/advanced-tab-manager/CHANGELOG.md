@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.12 — Development update: explicit tab-title renaming
+
+- Added **Rename tab title…** to Firefox's tab context menu for eligible non-private HTTP(S) tabs.
+- Added a dedicated Glaze-aligned rename dialog with Restore page title, 160-character validation, keyboard focus treatment, Reduced Transparency, and Forced Colors fallbacks.
+- Added a same-document title observer so dynamic sites cannot immediately overwrite the custom label.
+- Stored the custom label with Firefox session-tab metadata so the value follows supported close/restore cycles without treating runtime tab IDs as durable.
+- Added `activeTab`, `menus`, and `scripting` as narrowly scoped permissions. No host permission or declarative content script is added.
+- Restricted pages fail closed; navigation/reload can restore the website title and requires explicit user reapplication rather than broad background injection.
+- Added deterministic unit/source validation for eligibility, session metadata, injected targeting, restore behavior, menu registration, and no-host-permission posture.
+- Stable 0.1.11 remains unchanged; this material 0.1.12 Development change requires fresh exact-candidate Firefox permission/runtime/rendered/accessibility review.
+
+
 ## 0.1.12 — Development
 
 - Started a new Development/source-candidate line from accepted Stable 0.1.11; Stable 0.1.11 remains the signed rollback/production baseline.
