@@ -62,3 +62,4 @@ jobs:
           path: |
             dist/advanced-tab-manager-firefox-runtime.json
             dist/advanced-tab-manager-runtime-candidate.sha256
+            dist/advanced-tab-manager-appearance-preflight/*.png
