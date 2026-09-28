@@ -5,6 +5,7 @@ import {
   MAX_CUSTOM_TAB_TITLE_LENGTH,
   TAB_TITLE_MENU_ID,
   TAB_TITLE_SESSION_KEY,
+  applyTabTitleOverride,
   createTabTitleRenaming,
   isTabTitleRenameEligible
 } from "../src/background/tab-title-renaming.js";
@@ -93,6 +94,92 @@ function createMockBrowser({
     }
   };
 }
+
+function withFakeTitleDocument(initialTitle, run) {
+  const stateKey = "__goreecloudAdvancedTabManagerTabTitleOverride";
+  const previousDocument = globalThis.document;
+  const previousMutationObserver = globalThis.MutationObserver;
+  let titleValue = initialTitle;
+  let observerCallback = null;
+
+  globalThis.document = {
+    get title() {
+      return titleValue;
+    },
+    set title(value) {
+      titleValue = String(value);
+    },
+    head: {},
+    querySelector() {
+      return this.head;
+    }
+  };
+
+  globalThis.MutationObserver = class {
+    constructor(callback) {
+      observerCallback = callback;
+    }
+    observe() {}
+    disconnect() {}
+  };
+
+  try {
+    run({
+      get title() {
+        return titleValue;
+      },
+      set title(value) {
+        titleValue = String(value);
+      },
+      notifyMutation() {
+        observerCallback?.();
+      }
+    });
+  } finally {
+    delete globalThis[stateKey];
+    if (previousDocument === undefined) delete globalThis.document;
+    else globalThis.document = previousDocument;
+    if (previousMutationObserver === undefined) delete globalThis.MutationObserver;
+    else globalThis.MutationObserver = previousMutationObserver;
+  }
+}
+
+test("title override preserves an intentionally empty original page title", () => {
+  withFakeTitleDocument("", (page) => {
+    assert.deepEqual(applyTabTitleOverride("Custom", "Stale fallback"), {
+      ok: true,
+      title: "Custom"
+    });
+    assert.equal(page.title, "Custom");
+
+    assert.deepEqual(applyTabTitleOverride("", "Stale fallback"), {
+      ok: true,
+      title: "",
+      restoredTitle: ""
+    });
+    assert.equal(page.title, "");
+  });
+});
+
+test("title override remembers a same-document site change to an empty title", () => {
+  withFakeTitleDocument("Website title", (page) => {
+    assert.deepEqual(applyTabTitleOverride("Custom", "Website title"), {
+      ok: true,
+      title: "Custom"
+    });
+
+    page.title = "";
+    page.notifyMutation();
+    assert.equal(page.title, "Custom");
+
+    assert.deepEqual(applyTabTitleOverride("", "Website title"), {
+      ok: true,
+      title: "",
+      restoredTitle: ""
+    });
+    assert.equal(page.title, "");
+  });
+});
 
 test("tab title renaming eligibility is limited to non-private HTTP(S) tabs", () => {
   assert.equal(isTabTitleRenameEligible({ id: 1, url: "https://example.com", incognito: false }), true);
