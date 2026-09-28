@@ -581,6 +581,33 @@ def main() -> int:
             )
             passes.append("tab-title-keyboard-accessibility")
 
+            _, blank_title_dialog = invoke_tab_title_menu(driver)
+            blank_input = driver.find_element("id", "tab-title")
+            blank_input.clear()
+            blank_input.send_keys("Blank restore custom")
+            driver.find_element("id", "save").click()
+            wait_until(lambda: blank_title_dialog not in driver.window_handles, 10, "blank-title setup dialog closes after rename")
+            driver.switch_to.window(rename_source_handle)
+            wait_until(lambda: driver.title == "Blank restore custom", 10, "blank-title setup custom label applied")
+
+            driver.execute_script('document.title = "";')
+            wait_until(
+                lambda: driver.title == "Blank restore custom",
+                10,
+                "observer preserves custom label after the site clears its title",
+            )
+
+            _, blank_restore_dialog = invoke_tab_title_menu(driver)
+            driver.find_element("id", "restore").click()
+            wait_until(lambda: blank_restore_dialog not in driver.window_handles, 10, "blank-title restore dialog closes")
+            driver.switch_to.window(rename_source_handle)
+            wait_until(lambda: driver.title == "", 10, "Restore page title preserves an intentionally empty site title")
+            require(
+                selected_tab_label(driver) != "Blank restore custom",
+                "Firefox tab strip no longer exposes the custom label after empty-title restore",
+            )
+            passes.append("tab-title-empty-page-title")
+
             driver.get("about:blank")
             wait_until(lambda: driver.current_url == "about:blank", 10, "restricted Firefox page loaded for fail-closed rename check")
             require(
@@ -1052,7 +1079,7 @@ def main() -> int:
             server.shutdown()
             server.server_close()
 
-    require(len(passes) == 21, "all release-critical unsigned runtime checks passed", str(passes))
+    require(len(passes) == 22, "all release-critical unsigned runtime checks passed", str(passes))
     print("Advanced Tab Manager unsigned real-Firefox runtime acceptance passed.")
     return 0
 
