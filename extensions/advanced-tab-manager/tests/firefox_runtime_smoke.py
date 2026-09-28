@@ -363,6 +363,16 @@ def rename_appearance_state(driver: webdriver.Firefox) -> dict:
     return result
 
 
+def capture_appearance_screenshot(driver: webdriver.Firefox, name: str) -> str:
+    output_dir = Path("dist/advanced-tab-manager-appearance-preflight")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output = output_dir / f"{name}.png"
+    shell = driver.find_element("css selector", ".rename-shell")
+    saved = shell.screenshot(str(output))
+    require(saved and output.is_file() and output.stat().st_size > 0, f"appearance screenshot retained: {name}")
+    return output.name
+
+
 def set_current_extension_zoom(driver: webdriver.Firefox, zoom: float) -> float:
     result = driver.execute_async_script(
         """
@@ -587,6 +597,7 @@ def main() -> int:
             )
 
             appearance_baseline = rename_appearance_state(driver)
+            appearance_screenshots = [capture_appearance_screenshot(driver, "rename-normal-light")]
 
             set_current_document_appearance(driver, "dark", "none")
             wait_until(
@@ -600,6 +611,7 @@ def main() -> int:
                 "rename dialog has no horizontal overflow in dark appearance preflight",
                 repr(dark_reflow),
             )
+            appearance_screenshots.append(capture_appearance_screenshot(driver, "rename-dark"))
             set_current_document_appearance(driver, "none", "none")
             wait_until(
                 lambda: rename_appearance_state(driver)["dark"] == appearance_baseline["dark"],
@@ -626,6 +638,7 @@ def main() -> int:
                 "rename dialog has no horizontal overflow in Forced Colors preflight",
                 repr(forced_reflow),
             )
+            appearance_screenshots.append(capture_appearance_screenshot(driver, "rename-forced-colors"))
             set_current_document_appearance(driver, "none", "none")
             wait_until(
                 lambda: rename_appearance_state(driver)["forcedColors"] == appearance_baseline["forcedColors"],
@@ -647,6 +660,7 @@ def main() -> int:
                 "rename dialog removes material transparency and secondary shadows when transparency is reduced",
                 repr(transparency_state),
             )
+            appearance_screenshots.append(capture_appearance_screenshot(driver, "rename-reduced-transparency"))
             set_firefox_pref(driver, "ui.prefersReducedTransparency", None)
 
             set_firefox_pref(driver, "ui.prefersReducedMotion", 1)
@@ -661,6 +675,7 @@ def main() -> int:
                 "rename dialog has no active animation under Reduced Motion",
                 repr(motion_state),
             )
+            appearance_screenshots.append(capture_appearance_screenshot(driver, "rename-reduced-motion"))
             set_firefox_pref(driver, "ui.prefersReducedMotion", None)
             set_firefox_pref(driver, "layout.css.prefers-reduced-transparency.enabled", None)
             passes.append("tab-title-appearance-preflight")
@@ -683,6 +698,7 @@ def main() -> int:
                 "rename dialog actions remain within the viewport at 200% Firefox zoom",
                 repr(reflow),
             )
+            appearance_screenshots.append(capture_appearance_screenshot(driver, "rename-zoom-200"))
             set_current_extension_zoom(driver, 1.0)
             passes.append("tab-title-reflow-preflight")
 
@@ -1224,6 +1240,7 @@ def main() -> int:
                 "installation": "temporary-unsigned-runtime-smoke",
                 "controlledLocalFixtureOnly": True,
                 "passedChecks": passes,
+                "appearancePreflightScreenshots": appearance_screenshots,
                 "signedPersistentRestartAccepted": False,
             }
             out = Path("dist/advanced-tab-manager-firefox-runtime.json")
