@@ -281,6 +281,86 @@ def invoke_tab_title_menu(driver: webdriver.Firefox) -> tuple[str, str]:
     return source_handle, dialog_handle
 
 
+def set_firefox_pref(driver: webdriver.Firefox, name: str, value: object | None) -> None:
+    driver.set_context(driver.CONTEXT_CHROME)
+    try:
+        result = driver.execute_script(
+            """
+            const [name, value] = arguments;
+            const {Services} = ChromeUtils.importESModule("resource://gre/modules/Services.sys.mjs");
+            if (value === null) {
+              if (Services.prefs.prefHasUserValue(name)) Services.prefs.clearUserPref(name);
+            } else if (typeof value === "boolean") {
+              Services.prefs.setBoolPref(name, value);
+            } else if (Number.isInteger(value)) {
+              Services.prefs.setIntPref(name, value);
+            } else {
+              throw new Error("unsupported preference value");
+            }
+            return {ok: true};
+            """,
+            name,
+            value,
+        )
+    finally:
+        driver.set_context(driver.CONTEXT_CONTENT)
+    require(isinstance(result, dict) and result.get("ok") is True, f"Firefox preference updated: {name}", repr(result))
+
+
+def set_current_document_appearance(
+    driver: webdriver.Firefox,
+    color_scheme: str = "none",
+    forced_colors: str = "none",
+) -> None:
+    driver.set_context(driver.CONTEXT_CHROME)
+    try:
+        result = driver.execute_script(
+            """
+            const [colorScheme, forcedColors] = arguments;
+            const browser = window.gBrowser?.selectedBrowser;
+            const context = browser?.browsingContext;
+            if (!context) return {ok: false, error: "selected Firefox content browsing context unavailable"};
+            context.prefersColorSchemeOverride = colorScheme;
+            context.forcedColorsOverride = forcedColors;
+            return {
+              ok: true,
+              colorScheme: context.prefersColorSchemeOverride,
+              forcedColors: context.forcedColorsOverride
+            };
+            """,
+            color_scheme,
+            forced_colors,
+        )
+    finally:
+        driver.set_context(driver.CONTEXT_CONTENT)
+    require(isinstance(result, dict) and result.get("ok") is True, "Firefox document appearance override updated", repr(result))
+
+
+def rename_appearance_state(driver: webdriver.Firefox) -> dict:
+    result = driver.execute_script(
+        """
+        const shell = document.querySelector(".rename-shell");
+        const secondary = document.querySelector("#cancel");
+        if (!shell || !secondary) return {ok: false};
+        const shellStyle = getComputedStyle(shell);
+        const secondaryStyle = getComputedStyle(secondary);
+        return {
+          ok: true,
+          dark: matchMedia("(prefers-color-scheme: dark)").matches,
+          forcedColors: matchMedia("(forced-colors: active)").matches,
+          reducedTransparency: matchMedia("(prefers-reduced-transparency: reduce)").matches,
+          reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+          shellBackdropFilter: shellStyle.getPropertyValue("backdrop-filter").trim(),
+          shellBoxShadow: shellStyle.boxShadow,
+          secondaryBoxShadow: secondaryStyle.boxShadow,
+          animationCount: document.getAnimations().length
+        };
+        """
+    )
+    require(isinstance(result, dict) and result.get("ok") is True, "rename dialog appearance state available", repr(result))
+    return result
+
+
 def set_current_extension_zoom(driver: webdriver.Firefox, zoom: float) -> float:
     result = driver.execute_async_script(
         """
@@ -453,6 +533,7 @@ def main() -> int:
             )
             passes.append("tab-title-context-menu")
 
+            set_firefox_pref(driver, "layout.css.prefers-reduced-transparency.enabled", True)
             source_handle, dialog_handle = invoke_tab_title_menu(driver)
             require(source_handle == rename_source_handle and dialog_handle is not None, "rename dialog targets the selected ordinary web tab")
             require(
@@ -502,6 +583,83 @@ def main() -> int:
                 "rename dialog actions remain visible without vertical scrolling at default Firefox zoom",
                 repr(normal_reflow),
             )
+
+            set_current_document_appearance(driver, "dark", "none")
+            wait_until(
+                lambda: rename_appearance_state(driver)["dark"],
+                5,
+                "rename dialog enters Firefox dark color-scheme override",
+            )
+            dark_reflow = horizontal_reflow_metrics(driver)
+            require(
+                dark_reflow["scrollWidth"] <= dark_reflow["clientWidth"] + 1,
+                "rename dialog has no horizontal overflow in dark appearance preflight",
+                repr(dark_reflow),
+            )
+            set_current_document_appearance(driver, "none", "none")
+            wait_until(
+                lambda: not rename_appearance_state(driver)["dark"],
+                5,
+                "rename dialog leaves Firefox dark color-scheme override",
+            )
+
+            set_current_document_appearance(driver, "none", "active")
+            wait_until(
+                lambda: rename_appearance_state(driver)["forcedColors"],
+                5,
+                "rename dialog enters Firefox Forced Colors override",
+            )
+            forced_state = rename_appearance_state(driver)
+            require(
+                forced_state["shellBackdropFilter"] in {"", "none"}
+                and forced_state["shellBoxShadow"] == "none",
+                "rename dialog disables translucent material effects in Forced Colors",
+                repr(forced_state),
+            )
+            forced_reflow = horizontal_reflow_metrics(driver)
+            require(
+                forced_reflow["scrollWidth"] <= forced_reflow["clientWidth"] + 1,
+                "rename dialog has no horizontal overflow in Forced Colors preflight",
+                repr(forced_reflow),
+            )
+            set_current_document_appearance(driver, "none", "none")
+            wait_until(
+                lambda: not rename_appearance_state(driver)["forcedColors"],
+                5,
+                "rename dialog leaves Firefox Forced Colors override",
+            )
+
+            set_firefox_pref(driver, "ui.prefersReducedTransparency", 1)
+            wait_until(
+                lambda: rename_appearance_state(driver)["reducedTransparency"],
+                5,
+                "rename dialog enters Reduced Transparency preference",
+            )
+            transparency_state = rename_appearance_state(driver)
+            require(
+                transparency_state["shellBackdropFilter"] in {"", "none"}
+                and transparency_state["shellBoxShadow"] == "none"
+                and transparency_state["secondaryBoxShadow"] == "none",
+                "rename dialog removes material transparency and secondary shadows when transparency is reduced",
+                repr(transparency_state),
+            )
+            set_firefox_pref(driver, "ui.prefersReducedTransparency", None)
+
+            set_firefox_pref(driver, "ui.prefersReducedMotion", 1)
+            wait_until(
+                lambda: rename_appearance_state(driver)["reducedMotion"],
+                5,
+                "rename dialog enters Reduced Motion preference",
+            )
+            motion_state = rename_appearance_state(driver)
+            require(
+                motion_state["animationCount"] == 0,
+                "rename dialog has no active animation under Reduced Motion",
+                repr(motion_state),
+            )
+            set_firefox_pref(driver, "ui.prefersReducedMotion", None)
+            set_firefox_pref(driver, "layout.css.prefers-reduced-transparency.enabled", None)
+            passes.append("tab-title-appearance-preflight")
 
             set_current_extension_zoom(driver, 2.0)
             WebDriverWait(driver, 5).until(
@@ -1074,7 +1232,7 @@ def main() -> int:
             server.shutdown()
             server.server_close()
 
-    require(len(passes) == 21, "all release-critical unsigned runtime checks passed", str(passes))
+    require(len(passes) == 22, "all release-critical unsigned runtime checks passed", str(passes))
     print("Advanced Tab Manager unsigned real-Firefox runtime acceptance passed.")
     return 0
 
