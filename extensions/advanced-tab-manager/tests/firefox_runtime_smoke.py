@@ -76,6 +76,11 @@ def firefox_options(profile: Path) -> Options:
     options.set_preference("browser.startup.page", 0)
     options.set_preference("datareporting.policy.dataSubmissionEnabled", False)
     options.set_preference("toolkit.telemetry.reportingpolicy.firstRun", False)
+    options.set_preference("layout.css.prefers-reduced-transparency.enabled", True)
+    options.set_preference("ui.systemUsesDarkTheme", 0)
+    options.set_preference("ui.prefersReducedMotion", 0)
+    options.set_preference("ui.prefersReducedTransparency", 0)
+    options.set_preference("browser.display.document_color_use", 1)
     options.set_preference(
         "extensions.webextensions.uuids",
         json.dumps({EXPECTED_ADDON_ID: FIXED_EXTENSION_UUID}, separators=(",", ":")),
