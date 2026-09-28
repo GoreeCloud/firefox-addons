@@ -1,6 +1,6 @@
 # GoreeCloud Advanced Tab Manager — Repository Specifications
 
-This repository document describes the implemented source boundary for version `0.1.12`. The broader product direction is governed by the canonical Drive project specification.
+This repository document is the canonical source-controlled specification for the implemented `0.1.12` Development boundary. Legacy Drive project-specification copies are migration sources only and do not supersede repository-native specification state.
 
 ## Component and dependency contract
 
@@ -74,7 +74,7 @@ This repository document describes the implemented source boundary for version `
 #### Tab-title renaming boundary
 
 - Firefox exposes no direct Tabs API setter for tab titles. Advanced Tab Manager therefore changes only the clicked eligible page's `document.title` through `browser.scripting.executeScript`.
-- The action is surfaced through Firefox's native tab context menu as **Rename tab title…**. Selecting that menu item grants temporary `activeTab` authority for the clicked tab, including an inactive clicked tab, without granting all-sites host access.
+- The action is surfaced through Firefox's native tab context menu as **Rename tab title…**. Because Manifest V3 uses a non-persistent event-page background in Firefox, the persistent menu item is created from `runtime.onInstalled` and must not be removed/recreated on routine background startup. Selecting that menu item grants temporary `activeTab` authority for the clicked tab, including an inactive clicked tab, without granting all-sites host access.
 - Eligibility is limited to non-private HTTP(S) tabs. Privileged browser pages, restricted Mozilla domains, PDF/reader/view-source surfaces, extension pages, and other non-scriptable contexts fail closed.
 - The custom title is bounded to 160 characters and stored with `browser.sessions.setTabValue` under the tab's Firefox session identity; no new `storage.local` schema is introduced.
 - The injected same-document observer watches only title/head mutations needed to preserve the custom label when a site updates its own title. It does not inspect body content, forms, cookies, credentials, or page application state.
