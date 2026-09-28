@@ -15,7 +15,7 @@ assert manifest["homepage_url"] == "https://github.com/GoreeCloud/firefox-addons
 assert manifest["browser_specific_settings"]["gecko"]["id"] == "advanced-tab-manager@goreecloud.com"
 assert manifest["browser_specific_settings"]["gecko"]["strict_min_version"] == "139.0"
 assert manifest["incognito"] == "not_allowed"
-assert set(manifest["permissions"]) == {"alarms", "sessions", "storage", "tabGroups", "tabs"}
+assert set(manifest["permissions"]) == {"activeTab", "alarms", "menus", "scripting", "sessions", "storage", "tabGroups", "tabs"}
 assert not manifest.get("host_permissions"), "Stable source must not request host permissions"
 assert "content_scripts" not in manifest, "Stable source must not inspect page content"
 assert "unlimitedStorage" not in manifest["permissions"], "bounded Stable saved state must not request unlimited storage"
@@ -29,12 +29,13 @@ required = [
     "README.md", "FEATURES.md", "IMPLEMENTED-FEATURES.md", "PLANNED-FEATURES.md", "CHANGELOGS.md", "SPECIFICATIONS.md", "ARCHITECTURE.md",
     "PRIVACY.md", "SECURITY.md", "CHANGELOG.md", "LICENSE",
     "GLAZE-UI-1.5.1-ADOPTION.md", "GLAZE-UI-1.6.0-ADOPTION.md", "RENDERED-ACCEPTANCE-0.1.12.md", "STABLE-SECURITY-REVIEW-0.1.11.md", "RELEASE-ACCEPTANCE-0.1.11.md",
-    "src/background/background.js", "src/background/browser-state.js", "src/background/tab-residency.js", "src/background/tree-branch-actions.js", "src/background/saved-state.js", "src/background/duplicate-cleanup.js", "src/background/snooze.js", "src/background/rules.js", "src/background/manager.js", "src/background/portability.js",
+    "src/background/background.js", "src/background/browser-state.js", "src/background/tab-residency.js", "src/background/tab-title-renaming.js", "src/background/tree-branch-actions.js", "src/background/saved-state.js", "src/background/duplicate-cleanup.js", "src/background/snooze.js", "src/background/rules.js", "src/background/manager.js", "src/background/portability.js",
     "src/core/state.js", "src/core/tree.js", "src/core/tree-session.js", "src/core/duplicates.js",
     "src/core/persistent-state.js", "src/core/tab-sets.js", "src/core/stash-transaction.js",
     "src/core/snooze-store.js", "src/core/snooze.js", "src/core/snooze-time.js", "src/core/snooze-transaction.js",
     "src/core/rule-state.js", "src/core/rules.js", "src/core/commands.js", "src/core/manager-model.js", "src/core/portability.js", "src/core/session-snapshots.js",
     "src/shared/glaze.css",
+    "src/tab-title/rename.html", "src/tab-title/rename.js", "src/tab-title/rename.css",
     "src/sidebar/sidebar.html", "src/sidebar/sidebar.js", "src/sidebar/open-tabs-view.js", "src/sidebar/saved-view.js", "src/sidebar/duplicates-view.js", "src/sidebar/snoozed-view.js", "src/sidebar/rules-view.js", "src/sidebar/command-palette.js", "src/sidebar/command-palette.css", "src/sidebar/manager-link.js", "src/sidebar/rules.css", "src/sidebar/ui.js", "src/sidebar/sidebar.css",
     "src/popup/popup.html", "src/popup/popup.js", "src/popup/popup.css",
     "src/manager/manager.html", "src/manager/manager.js", "src/manager/manager.css",
@@ -44,7 +45,7 @@ required = [
     "tests/snooze-store.test.mjs", "tests/snooze.test.mjs", "tests/snooze-time.test.mjs", "tests/snooze-transaction.test.mjs", "tests/background-snooze.test.mjs",
     "tests/rule-state.test.mjs", "tests/rules.test.mjs", "tests/background-rules.test.mjs", "tests/commands.test.mjs",
     "tests/manager-model.test.mjs", "tests/background-manager.test.mjs", "tests/portability.test.mjs", "tests/background-portability.test.mjs",
-    "tests/session-snapshots.test.mjs", "tests/background-session-snapshots.test.mjs", "tests/tab-residency.test.mjs",
+    "tests/session-snapshots.test.mjs", "tests/background-session-snapshots.test.mjs", "tests/tab-residency.test.mjs", "tests/tab-title-renaming.test.mjs",
     "tests/firefox_runtime_smoke.py", "tests/signed_restart_smoke.py", "tests/amo_signed_version_recovery.py", "tests/verify_signed_xpi.py",
     "RELEASE-ACCEPTANCE-0.1.10.md",
     "scripts/large-session-qualification.mjs", "scripts/stable_security_review.py", "scripts/glaze_consumer_qualification.py",
@@ -56,6 +57,10 @@ for relative in required:
 
 background = (ROOT / "src/background/background.js").read_text(encoding="utf-8")
 tab_residency = (ROOT / "src/background/tab-residency.js").read_text(encoding="utf-8")
+tab_title_renaming = (ROOT / "src/background/tab-title-renaming.js").read_text(encoding="utf-8")
+tab_title_html = (ROOT / "src/tab-title/rename.html").read_text(encoding="utf-8")
+tab_title_js = (ROOT / "src/tab-title/rename.js").read_text(encoding="utf-8")
+tab_title_css = (ROOT / "src/tab-title/rename.css").read_text(encoding="utf-8")
 tree_branch_actions = (ROOT / "src/background/tree-branch-actions.js").read_text(encoding="utf-8")
 tree_core = (ROOT / "src/core/tree.js").read_text(encoding="utf-8")
 manager_background = (ROOT / "src/background/manager.js").read_text(encoding="utf-8")
@@ -91,6 +96,8 @@ popup_html = (ROOT / "src/popup/popup.html").read_text(encoding="utf-8")
 popup_js = (ROOT / "src/popup/popup.js").read_text(encoding="utf-8")
 
 assert "createTabResidencyPolicy" in background
+assert "createTabTitleRenaming" in background and "tabTitleRenaming.register()" in background
+assert "atm:get-tab-title-rename-state" in background and "atm:set-tab-title-override" in background
 assert "protectAllOpenTabs" in background and "protectTab(tab)" in background
 assert "autoDiscardable: false" in tab_residency
 assert "autoDiscardable" in state_core and "summarizeTabResidency" in state_core
@@ -110,6 +117,13 @@ assert '"atm:cleanup-duplicates"' in background and '"atm:cleanup-exact-duplicat
 assert "splitViewId" in state_core, "normalized live state must retain Firefox Split View membership for move safety"
 assert "browser.tabs.query({})" in tab_residency and "browser.tabs.update" in tab_residency
 assert "browser.tabs.reload" not in tab_residency, "default residency must not silently reload a user-discarded tab"
+assert "browser.scripting.executeScript" in tab_title_renaming, "tab title changes must use explicit activeTab-scoped script injection"
+assert "browser.sessions.setTabValue" in tab_title_renaming and "browser.sessions.removeTabValue" in tab_title_renaming
+assert 'contexts: ["tab"]' in tab_title_renaming and 'title: "Rename tab title…"' in tab_title_renaming
+assert 'protocol === "http:" || protocol === "https:"' in tab_title_renaming, "rename eligibility must fail closed outside HTTP(S)"
+assert "host_permissions" not in manifest, "tab title renaming must not introduce broad host access"
+assert "Rename tab title" in tab_title_html and "atm:set-tab-title-override" in tab_title_js
+assert "prefers-reduced-transparency" in tab_title_css and "forced-colors" in tab_title_css
 assert "collectTreeBranchTabs" in tree_core
 assert "createTreeBranchActions" in tree_branch_actions
 assert "tree-branch-changed" in tree_branch_actions and "tree-branch-not-discardable" in tree_branch_actions
