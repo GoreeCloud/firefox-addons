@@ -3,7 +3,7 @@
 ## Product
 
 - **Name:** GoreeCloud ChatGPT Enhancer
-- **Version:** 0.1.0
+- **Version:** 0.1.1
 - **Lifecycle:** Source candidate
 - **Platform:** Firefox desktop
 - **Web target:** `https://chatgpt.com/*`
@@ -24,7 +24,9 @@
 7. Provide opt-in, bounded local draft recovery without automatic submission.
 8. Provide focus, wide, compact, text-scale, and code-wrap presentation controls.
 9. Provide direct previous/next prompt and top/bottom navigation.
-10. Remain useful without any GoreeCloud server or OpenAI API integration.
+10. Expose privacy-safe integration-health diagnostics containing only version/origin, selector availability, and loaded-message counts.
+11. Export/import normalized presentation settings and prompt snippets through an explicit local JSON flow that excludes drafts and validates product/schema identity.
+12. Remain useful without any GoreeCloud server or OpenAI API integration.
 
 ## Privacy requirements
 
@@ -76,4 +78,4 @@ Stable qualification requires evidence beyond source merge:
 - persistent installation and full restart;
 - post-restart feature verification.
 
-Until those gates are complete, 0.1.0 remains a source candidate.
+Until those gates are complete, 0.1.1 remains a source candidate.
