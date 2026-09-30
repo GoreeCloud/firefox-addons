@@ -1,0 +1,70 @@
+name: ChatGPT Enhancer Firefox Runtime
+
+on:
+  pull_request:
+    paths:
+      - 'extensions/chatgpt-enhancer/**'
+      - 'shared/scripts/package_extension.py'
+      - '.github/workflows/chatgpt-enhancer-firefox-runtime.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: chatgpt-enhancer-firefox-runtime-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  runtime-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: latest
+      - uses: browser-actions/setup-geckodriver@latest
+      - name: Install Selenium
+        run: python -m pip install --disable-pip-version-check selenium
+      - name: Validate exact ChatGPT Enhancer candidate
+        run: |
+          python shared/scripts/validate_repository.py
+          python extensions/chatgpt-enhancer/scripts/validate.py
+          node --test extensions/chatgpt-enhancer/tests/*.test.mjs
+          python -m py_compile extensions/chatgpt-enhancer/tests/firefox_runtime_smoke.py
+      - name: Package deterministic unsigned ChatGPT Enhancer XPI
+        run: python shared/scripts/package_extension.py chatgpt-enhancer --output-dir dist/runtime
+      - name: Resolve runtime candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          XPI="$(find dist/runtime -maxdepth 1 -type f -name 'goreecloud-chatgpt-enhancer-*.xpi' -print -quit)"
+          test -n "$XPI"
+          echo "GCCE_RUNTIME_XPI=$XPI" >> "$GITHUB_ENV"
+          sha256sum "$XPI" | tee dist/chatgpt-enhancer-runtime-candidate.sha256
+      - name: Route controlled ChatGPT fixture locally
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '127.0.0.1 chatgpt.com' | sudo tee -a /etc/hosts
+          getent hosts chatgpt.com
+      - name: Exercise real Firefox extension runtime
+        env:
+          GCCE_SOURCE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: python extensions/chatgpt-enhancer/tests/firefox_runtime_smoke.py "$GCCE_RUNTIME_XPI"
+      - name: Retain unsigned Firefox runtime evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: goreecloud-chatgpt-enhancer-runtime-${{ github.event.pull_request.head.sha || github.sha }}
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            dist/chatgpt-enhancer-firefox-runtime.json
+            dist/chatgpt-enhancer-runtime-candidate.sha256
+            dist/chatgpt-enhancer-controlled-runtime.png
