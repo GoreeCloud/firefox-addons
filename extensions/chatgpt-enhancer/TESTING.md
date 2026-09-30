@@ -14,7 +14,7 @@ python -m py_compile extensions/chatgpt-enhancer/tests/firefox_runtime_smoke.py
 
 Repository CI also runs `node --check` against maintained JavaScript and verifies generated XPI archives. The dedicated `ChatGPT Enhancer Firefox Runtime` workflow installs the deterministic unsigned XPI temporarily in a clean headless Firefox profile and exercises a controlled local HTTPS fixture mapped to `chatgpt.com`.
 
-## Required 0.1.1 source checks
+## Required 0.1.2 source checks
 
 The extension-specific validator fails if:
 
@@ -33,6 +33,9 @@ The extension-specific validator fails if:
 - privacy-safe diagnostics stop omitting conversation/prompt content or expected selector-health markers disappear;
 - settings portability loses its product/Gecko-ID/format validation or 1 MiB pre-parse cap;
 - the local regression suite disappears;
+- onboarding background behavior stops being install-only/non-temporary or gains broader tab/browser authority;
+- welcome UI loses Reduced Motion / Forced Colors fallbacks;
+- command-list Arrow/Home/End/activation keyboard behavior disappears;
 - Reduced Motion or Forced Colors fallbacks disappear;
 - controlled extension pages stop declaring the Glaze UI V1.6 target.
 
