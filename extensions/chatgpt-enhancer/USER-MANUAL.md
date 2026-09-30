@@ -30,11 +30,19 @@ Choose **Open conversation outline** to see the user prompts currently loaded in
 
 Export includes the current conversation URL. Protect exported files as you would protect the conversation itself.
 
+## Check integration health
+
+Open the command center and choose **Check integration health** when an enhancement appears unavailable after a ChatGPT interface change. The view shows only extension version, the ChatGPT site origin, message counts, and selector/composer availability. You can copy the diagnostic snapshot for troubleshooting without copying conversation or prompt text.
+
 ## Use prompt snippets
 
 Open Firefox's ChatGPT Enhancer Settings page from the toolbar popup. Add a snippet name and reusable prompt text.
 
-On ChatGPT, open the command center, choose **Insert saved prompt snippet**, and select a snippet. The extension adds it to the current composer without submitting it.
+On ChatGPT, open the command center, choose **Insert saved prompt snippet**, search by snippet name or text if needed, and select a snippet. The extension adds it to the current composer without submitting it.
+
+## Back up or restore settings
+
+The Settings page can export presentation settings and prompt snippets to a local JSON file. Drafts are never included in that backup. Import accepts only a bounded backup matching this extension's identity and supported format, previews the snippet count, and asks for confirmation before replacing current settings. Saved drafts are unchanged by an import.
 
 ## Presentation controls
 
