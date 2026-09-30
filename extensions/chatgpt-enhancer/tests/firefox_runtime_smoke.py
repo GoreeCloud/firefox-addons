@@ -319,17 +319,29 @@ def main() -> int:
 
             open_command_center(driver)
             click_command(driver, "Toggle compact spacing")
+            WebDriverWait(driver, 10).until(
+                lambda d: "gcce-compact" in d.find_element("tag name", "html").get_attribute("class").split()
+            )
             require("gcce-compact" in driver.find_element("tag name", "html").get_attribute("class").split(), "compact mode enables")
             open_command_center(driver)
             click_command(driver, "Toggle compact spacing")
+            WebDriverWait(driver, 10).until(
+                lambda d: "gcce-compact" not in d.find_element("tag name", "html").get_attribute("class").split()
+            )
             require("gcce-compact" not in driver.find_element("tag name", "html").get_attribute("class").split(), "compact mode reverses")
             passes.append("presentation-toggle-reversible")
 
             open_command_center(driver)
             click_command(driver, "Toggle focus mode")
+            WebDriverWait(driver, 10).until(
+                lambda d: d.execute_script("return getComputedStyle(document.querySelector('nav')).display") == "none"
+            )
             require(driver.execute_script("return getComputedStyle(document.querySelector('nav')).display") == "none", "focus mode hides controlled side navigation")
             open_command_center(driver)
             click_command(driver, "Toggle focus mode")
+            WebDriverWait(driver, 10).until(
+                lambda d: d.execute_script("return getComputedStyle(document.querySelector('nav')).display") != "none"
+            )
             require(driver.execute_script("return getComputedStyle(document.querySelector('nav')).display") != "none", "focus mode restores controlled side navigation")
             passes.append("focus-toggle-reversible")
 
