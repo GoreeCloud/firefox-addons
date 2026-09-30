@@ -28,6 +28,8 @@ jobs:
           python-version: '3.13'
       - name: Validate canonical extension inventory and manifests
         run: python shared/scripts/validate_repository.py
+      - name: Validate ChatGPT Enhancer source contract
+        run: python extensions/chatgpt-enhancer/scripts/validate.py
       - name: Validate Advanced Tab Manager source contract
         run: python extensions/advanced-tab-manager/scripts/validate.py
       - name: Validate Advanced Tab Manager target acceptance source contract
@@ -68,6 +70,7 @@ jobs:
       - name: Build deterministic unsigned packages
         run: |
           python shared/scripts/package_extension.py advanced-tab-manager
+          python shared/scripts/package_extension.py chatgpt-enhancer
           python shared/scripts/package_extension.py redirector
           python shared/scripts/package_extension.py source-resync
           python shared/scripts/package_extension.py privacy-shield
