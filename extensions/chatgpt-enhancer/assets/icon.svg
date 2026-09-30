@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="GoreeCloud ChatGPT Enhancer">
+  <defs>
+    <linearGradient id="g" x1="20" y1="16" x2="106" y2="112" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7dd3fc"/>
+      <stop offset=".52" stop-color="#818cf8"/>
+      <stop offset="1" stop-color="#c084fc"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="112" height="112" rx="32" fill="#0f172a"/>
+  <rect x="11" y="11" width="106" height="106" rx="29" fill="url(#g)" fill-opacity=".18" stroke="url(#g)" stroke-width="3"/>
+  <path d="M89 45c-6-8-15-12-26-12-19 0-34 14-34 32s15 32 34 32c10 0 19-3 26-9V63H62v14h12v5c-3 2-7 3-11 3-11 0-20-8-20-20s9-20 20-20c6 0 11 2 15 7l11-7Z" fill="#f8fafc"/>
+  <circle cx="98" cy="30" r="8" fill="url(#g)"/>
+</svg>
