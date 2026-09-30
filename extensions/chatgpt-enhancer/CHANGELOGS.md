@@ -1,5 +1,27 @@
 # GoreeCloud ChatGPT Enhancer — Changelog
 
+## 0.1.2 — Source candidate — 2026-09-30
+
+### Added
+
+- First-install welcome guide covering privacy, core shortcuts, features, and Settings.
+- Background install hook that opens onboarding only after a normal first install and skips updates/temporary installs.
+- Settings link for reopening the welcome guide.
+- Command-list keyboard traversal with ArrowUp/ArrowDown, Home/End, Enter, Space, and semantic selection state.
+- Real-Firefox runtime coverage for command-list keyboard traversal.
+
+### Preserved boundaries
+
+- Explicit Firefox permissions remain exactly `storage`.
+- Content-script scope remains exactly `https://chatgpt.com/*`.
+- Gecko data collection remains declared as none.
+- The onboarding background uses only the unprivileged tab-creation path to open a packaged extension page.
+- No analytics, remote code, ChatGPT API integration, cookies, tokens, or request interception.
+
+### Lifecycle
+
+0.1.2 remains a source candidate. Stable and signed/persistent restart acceptance are not implied.
+
 ## 0.1.1 — Source candidate — 2026-09-30
 
 ### Added
