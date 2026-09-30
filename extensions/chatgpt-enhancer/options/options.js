@@ -123,6 +123,9 @@
 
   async function load() {
     settings = await Settings.get();
+    if (settings.contentWidth === 1040) {
+      settings = await Settings.patch({ contentWidth: 1440 });
+    }
     render();
 
     for (const input of document.querySelectorAll("[data-setting]")) {
@@ -189,6 +192,7 @@
 
   document.getElementById("reset-settings").addEventListener("click", async () => {
     settings = await Settings.reset();
+    settings = await Settings.patch({ contentWidth: 1440 });
     snippetFilter.value = "";
     render();
     announce("Default settings restored.");
