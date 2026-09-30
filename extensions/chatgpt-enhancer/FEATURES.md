@@ -11,7 +11,9 @@
 - Copy the last assistant response.
 - Copy the loaded conversation as Markdown.
 - Download the loaded conversation as Markdown.
-- Local reusable prompt snippets with search in both the command center and Settings page.\n- Privacy-safe integration-health diagnostics containing selector availability and counts only.\n- Local settings/snippet JSON export and import with extension identity/schema validation and a 1 MiB import limit.
+- Local reusable prompt snippets with search in both the command center and Settings page.
+- Privacy-safe integration-health diagnostics containing selector availability and counts only.
+- Local settings/snippet JSON export and import with extension identity/schema validation and a 1 MiB import limit.
 
 ## Workspace presentation
 
