@@ -36,12 +36,14 @@ The extension-specific validator fails if:
 - onboarding background behavior stops being install-only/non-temporary or gains broader tab/browser authority;
 - welcome UI loses Reduced Motion / Forced Colors fallbacks;
 - command-list Arrow/Home/End/activation keyboard behavior disappears;
+- the command center loses its bounded scroll region or permits command content to overlap the footer;
+- the Settings page loses its responsive wide-desktop layout or leaks internal design-system implementation labels into user-facing text;
 - Reduced Motion or Forced Colors fallbacks disappear;
 - controlled extension pages stop declaring the Glaze UI V1.6 target.
 
 ## Automated controlled real-Firefox smoke
 
-The runtime workflow must verify exact add-on identity/version/icon, real content-script injection under the manifest's `https://chatgpt.com/*` match, launcher/dialog semantics, privacy-safe integration diagnostics, snippet insertion without submission, reversible compact/focus presentation toggles, and both keyboard shortcuts. Evidence must contain only candidate/runtime metadata, controlled counts, and pass-group names—not fixture conversation text, prompt text, full URLs, profile paths, cookies, credentials, or account data.
+The runtime workflow must verify exact add-on identity/version/icon, real content-script injection under the manifest's `https://chatgpt.com/*` match, launcher/dialog semantics, command-list keyboard traversal with the focused final command fully visible above a non-overlapping footer, privacy-safe integration diagnostics, snippet insertion without submission, reversible compact/focus presentation toggles, and both keyboard shortcuts. Evidence must contain only candidate/runtime metadata, controlled counts, and pass-group names—not fixture conversation text, prompt text, full URLs, profile paths, cookies, credentials, or account data.
 
 The workflow rewrites `chatgpt.com` to localhost for the job and uses a self-signed controlled fixture accepted only by the test profile. It must not contact the live ChatGPT service. This gate is unsigned runtime evidence and does not prove live-site compatibility.
 
@@ -67,6 +69,8 @@ Using a clean supported Firefox profile and the exact candidate package:
 - focus/wide/compact/code-wrap modes are reversible;
 - text scale and content width remain readable at supported extremes;
 - keyboard-only operation is possible;
+- the command center remains fully operable at constrained heights with no final-row clipping or footer overlap;
+- Settings uses available desktop width without forcing a narrow single-column layout, while remaining single-column and readable on constrained widths;
 - Reduced Motion avoids smooth/transition-heavy movement;
 - Forced Colors keeps controls and focus boundaries visible;
 - disabling/removing the extension leaves ChatGPT usable.
