@@ -17,8 +17,10 @@ def main() -> None:
         fail("Manifest V3 is required")
     if manifest.get("name") != "GoreeCloud ChatGPT Enhancer":
         fail("unexpected product name")
-    if manifest.get("version") != "0.1.1":
+    if manifest.get("version") != "0.1.2":
         fail("source version must remain synchronized with canonical inventory")
+    if manifest.get("background") != {"scripts": ["background.js"]}:
+        fail("unexpected background runtime registration")
     if manifest.get("incognito") != "not_allowed":
         fail("private browsing must remain outside the operating boundary")
 
@@ -63,6 +65,9 @@ def main() -> None:
         "SECURITY.md",
         "TESTING.md",
         "assets/icon.svg",
+        "background.js",
+        "welcome/welcome.html",
+        "welcome/welcome.css",
         "shared/settings.js",
         "src/content.js",
         "src/content.css",
@@ -80,11 +85,19 @@ def main() -> None:
     if missing:
         fail(f"missing required source files: {', '.join(missing)}")
 
+    background_js = (ROOT / "background.js").read_text(encoding="utf-8")
     settings_js = (ROOT / "shared/settings.js").read_text(encoding="utf-8")
     content_js = (ROOT / "src/content.js").read_text(encoding="utf-8")
     popup_js = (ROOT / "popup/popup.js").read_text(encoding="utf-8")
     options_js = (ROOT / "options/options.js").read_text(encoding="utf-8")
     runtime_js = "\n".join([settings_js, content_js, popup_js, options_js])
+
+    for marker in ("browser.runtime.onInstalled.addListener", 'details.reason !== "install"', "details.temporary", "browser.tabs.create", 'welcome/welcome.html'):
+        if marker not in background_js:
+            fail(f"first-install onboarding contract missing: {marker}")
+    for marker in ("browser.tabs.query", "browser.tabs.update", "browser.tabs.remove", "browser.cookies", "fetch(", "XMLHttpRequest", "eval(", "new Function("):
+        if marker in background_js:
+            fail(f"forbidden onboarding/background authority marker: {marker}")
 
     forbidden_runtime_markers = [
         "fetch(",
@@ -117,6 +130,11 @@ def main() -> None:
         'restore-draft',
         'previous-user',
         'next-user',
+        'event.key === "ArrowDown"',
+        'event.key === "ArrowUp"',
+        'event.key === "Home"',
+        'event.key === "End"',
+        '"aria-selected"',
     ]
     for marker in required_content_markers:
         if marker not in content_js:
@@ -144,16 +162,16 @@ def main() -> None:
         if marker not in options_html:
             fail(f"settings UI capability missing: {marker}")
 
-    for relative in ("popup/popup.html", "options/options.html"):
+    for relative in ("popup/popup.html", "options/options.html", "welcome/welcome.html"):
         html = (ROOT / relative).read_text(encoding="utf-8")
         if 'data-glaze-version="1.6"' not in html:
             fail(f"{relative} must declare the Glaze UI V1.6 target")
-        if "../shared/settings.js" not in html:
+        if relative != "welcome/welcome.html" and "../shared/settings.js" not in html:
             fail(f"{relative} must use the shared local settings contract")
         if "../assets/icon.svg" not in html:
             fail(f"{relative} must use first-party product artwork")
 
-    for relative in ("src/content.css", "popup/popup.css", "options/options.css"):
+    for relative in ("src/content.css", "popup/popup.css", "options/options.css", "welcome/welcome.css"):
         css = (ROOT / relative).read_text(encoding="utf-8")
         if "forced-colors: active" not in css:
             fail(f"{relative} must retain Forced Colors fallback")
@@ -199,7 +217,7 @@ def main() -> None:
             fail(f"security record missing required boundary: {marker}")
 
     print(
-        "Validated GoreeCloud ChatGPT Enhancer 0.1.1 source candidate: "
+        "Validated GoreeCloud ChatGPT Enhancer 0.1.2 source candidate: "
         "ChatGPT-only scope, storage-only permission, no-data-collection declaration, "
         "local-first runtime, bounded draft recovery, privacy-safe diagnostics, bounded settings portability, accessibility fallbacks, and required documentation."
     )
