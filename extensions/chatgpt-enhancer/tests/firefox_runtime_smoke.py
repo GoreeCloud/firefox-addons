@@ -35,7 +35,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 EXPECTED_ADDON_ID = "chatgpt-enhancer@goreecloud.com"
 EXPECTED_NAME = "GoreeCloud ChatGPT Enhancer"
-EXPECTED_VERSION = "0.1.1"
+EXPECTED_VERSION = "0.1.2"
 EXPECTED_ICON_PATH = "assets/icon.svg"
 FIXED_EXTENSION_UUID = "5cc41b8e-35d6-47a7-8a12-3fa5f67f5727"
 FIXTURE_USER_SECRET = "fixture-user-content-must-not-leak"
@@ -296,6 +296,18 @@ def main() -> int:
 
             open_command_center(driver)
             require(driver.switch_to.active_element.get_attribute("id") == "gcce-command-input", "command center receives initial keyboard focus")
+            ActionChains(driver).send_keys(Keys.ARROW_DOWN).perform()
+            require("gcce-command" in driver.switch_to.active_element.get_attribute("class").split(), "ArrowDown enters command options")
+            ActionChains(driver).send_keys(Keys.END).perform()
+            require("Jump to conversation bottom" in driver.switch_to.active_element.text, "End moves to final command")
+            ActionChains(driver).send_keys(Keys.HOME).perform()
+            require("Focus prompt composer" in driver.switch_to.active_element.text, "Home moves to first command")
+            ActionChains(driver).send_keys(Keys.ARROW_UP).perform()
+            require("Jump to conversation bottom" in driver.switch_to.active_element.text, "ArrowUp wraps from first to final command")
+            passes.append("command-keyboard-navigation")
+            close_command_center(driver)
+
+            open_command_center(driver)
             click_command(driver, "Check integration health")
             WebDriverWait(driver, 10).until(lambda d: d.find_element("css selector", ".gcce-diagnostics").is_displayed())
             diagnostic_text = driver.find_element("css selector", ".gcce-diagnostics").text
