@@ -16,7 +16,7 @@ def main() -> None:
         fail("Manifest V3 is required")
     if manifest.get("name") != "GoreeCloud ChatGPT Enhancer":
         fail("unexpected product name")
-    if manifest.get("version") != "0.1.0":
+    if manifest.get("version") != "0.1.1":
         fail("source version must remain synchronized with canonical inventory")
     if manifest.get("incognito") != "not_allowed":
         fail("private browsing must remain outside the operating boundary")
@@ -72,6 +72,7 @@ def main() -> None:
         "options/options.js",
         "options/options.css",
         "scripts/validate.py",
+        "tests/settings.test.mjs",
     ]
     missing = [path for path in required_files if not (ROOT / path).is_file()]
     if missing:
@@ -109,6 +110,8 @@ def main() -> None:
         'showConversationSearch',
         'showOutline',
         'showSnippets',
+        'showDiagnostics',
+        'integrationSnapshot',
         'restore-draft',
         'previous-user',
         'next-user',
@@ -122,6 +125,22 @@ def main() -> None:
     for marker in ("MAX_DRAFTS = 20", "MAX_DRAFT_LENGTH = 20000", "MAX_SNIPPETS = 50"):
         if marker not in settings_js:
             fail(f"local storage bound missing: {marker}")
+
+    for marker in (
+        "buildSettingsExport",
+        "parseSettingsImport",
+        "PORTABILITY_FORMAT_VERSION = 1",
+        'GECKO_ID = "chatgpt-enhancer@goreecloud.com"',
+    ):
+        if marker not in settings_js:
+            fail(f"settings portability contract missing: {marker}")
+
+    if "MAX_IMPORT_BYTES = 1024 * 1024" not in options_js:
+        fail("settings import must retain the 1 MiB pre-parse limit")
+    for marker in ("export-settings", "import-settings", "import-file", "snippet-filter"):
+        options_html = (ROOT / "options/options.html").read_text(encoding="utf-8")
+        if marker not in options_html:
+            fail(f"settings UI capability missing: {marker}")
 
     for relative in ("popup/popup.html", "options/options.html"):
         html = (ROOT / relative).read_text(encoding="utf-8")
@@ -149,9 +168,9 @@ def main() -> None:
             fail(f"security record missing required boundary: {marker}")
 
     print(
-        "Validated GoreeCloud ChatGPT Enhancer 0.1.0 source candidate: "
+        "Validated GoreeCloud ChatGPT Enhancer 0.1.1 source candidate: "
         "ChatGPT-only scope, storage-only permission, no-data-collection declaration, "
-        "local-first runtime, bounded draft recovery, accessibility fallbacks, and required documentation."
+        "local-first runtime, bounded draft recovery, privacy-safe diagnostics, bounded settings portability, accessibility fallbacks, and required documentation."
     )
 
 
