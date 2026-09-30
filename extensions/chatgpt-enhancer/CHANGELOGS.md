@@ -9,6 +9,8 @@
 - Settings link for reopening the welcome guide.
 - Command-list keyboard traversal with ArrowUp/ArrowDown, Home/End, Enter, Space, and semantic selection state.
 - Real-Firefox runtime coverage for command-list keyboard traversal.
+- Command-center layout hardening that keeps the scrollable command region above a separate footer and prevents keyboard-focused commands from being clipped.
+- Responsive desktop Settings layout that uses available Firefox viewport width, reduces unnecessary vertical scrolling, and keeps internal Glaze implementation terminology out of user-facing labels.
 
 ### Preserved boundaries
 
