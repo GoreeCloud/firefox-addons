@@ -166,7 +166,8 @@ footer {
 }
 
 .snippet-form input,
-.snippet-form textarea {
+.snippet-form textarea,
+.filter-field input {
   width: 100%;
   border: 1px solid var(--border);
   border-radius: 13px;
@@ -207,10 +208,32 @@ footer {
   white-space: nowrap;
 }
 
+.filter-field {
+  display: grid;
+  gap: 5px;
+  margin-top: 16px;
+  font-weight: 650;
+}
+
+.filter-field input {
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--surface);
+  color: CanvasText;
+  padding: 10px 12px;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
 .snippet-list {
   display: grid;
   gap: 8px;
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .snippet-item {
@@ -291,6 +314,7 @@ textarea:focus-visible {
   .snippet-item,
   .snippet-form input,
   .snippet-form textarea,
+  .filter-field input,
   .pill,
   kbd,
   .primary,

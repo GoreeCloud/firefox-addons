@@ -38,7 +38,7 @@ Use stable semantic page cues where available. If the ChatGPT interface changes,
 
 Keep source-candidate, signed-candidate, and Stable states distinct. Do not market source validation or temporary loading as proof of a production-ready release.
 
-## Non-objectives for 0.1.0
+## Non-objectives for 0.1.1
 
 - Automated prompt submission.
 - Bulk chat deletion or account modification.

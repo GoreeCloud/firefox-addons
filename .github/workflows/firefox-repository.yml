@@ -30,6 +30,8 @@ jobs:
         run: python shared/scripts/validate_repository.py
       - name: Validate ChatGPT Enhancer source contract
         run: python extensions/chatgpt-enhancer/scripts/validate.py
+      - name: Test ChatGPT Enhancer local core
+        run: node --test extensions/chatgpt-enhancer/tests/*.test.mjs
       - name: Validate Advanced Tab Manager source contract
         run: python extensions/advanced-tab-manager/scripts/validate.py
       - name: Validate Advanced Tab Manager target acceptance source contract

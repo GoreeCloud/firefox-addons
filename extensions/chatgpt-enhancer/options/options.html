@@ -63,7 +63,21 @@
         <label><span>Prompt text</span><textarea id="snippet-body" maxlength="8000" rows="5" required placeholder="Write a reusable instruction…"></textarea></label>
         <button type="submit" class="primary">Add snippet</button>
       </form>
+      <label class="filter-field"><span>Search saved snippets</span><input id="snippet-filter" type="search" autocomplete="off" placeholder="Filter by name or prompt text…"></label>
       <div id="snippet-list" class="snippet-list" aria-live="polite"></div>
+    </section>
+
+    <section class="card">
+      <div class="section-heading">
+        <div><p class="eyebrow">PORTABILITY</p><h2>Local settings backup</h2></div>
+        <span class="pill">Drafts excluded</span>
+      </div>
+      <p>Export presentation settings and prompt snippets to a local JSON file, or import a backup created by this extension. Drafts are intentionally excluded from portability files.</p>
+      <div class="button-row">
+        <button id="export-settings" type="button" class="secondary">Export settings</button>
+        <button id="import-settings" type="button" class="secondary">Import settings</button>
+      </div>
+      <input id="import-file" type="file" accept="application/json,.json" hidden>
     </section>
 
     <section class="card compact-card">

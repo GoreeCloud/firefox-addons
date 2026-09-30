@@ -25,7 +25,8 @@
     ["copy-last", "Copy last response", "Markdown-friendly text"],
     ["copy-all", "Copy conversation as Markdown", "Local clipboard"],
     ["download", "Download conversation as Markdown", "Local file"],
-    ["snippets", "Insert saved prompt snippet", "Local library"],
+    ["snippets", "Insert saved prompt snippet", "Searchable local library"],
+    ["diagnostics", "Check integration health", "Privacy-safe local diagnostics"],
     ["restore-draft", "Restore saved draft", "Opt-in only"],
     ["toggle-focus", "Toggle focus mode", "Hide side chrome"],
     ["toggle-wide", "Toggle wide conversation", "More reading width"],
@@ -388,29 +389,124 @@
 
   function showSnippets() {
     showPanel("Prompt snippets", (host) => {
+      const input = document.createElement("input");
+      input.type = "search";
+      input.placeholder = "Search snippet names and text…";
+      input.setAttribute("aria-label", "Search prompt snippets");
+
       const results = document.createElement("div");
       results.className = "gcce-results";
-      if (!settings.snippets.length) {
-        results.textContent = "No snippets saved. Add them from the extension Settings page.";
-      }
-      settings.snippets.forEach((snippet) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "gcce-result gcce-snippet";
-        const title = document.createElement("strong");
-        title.textContent = snippet.name;
-        const preview = document.createElement("span");
-        preview.textContent = snippet.body.slice(0, 180);
-        button.append(title, preview);
-        button.addEventListener("click", () => {
-          if (setComposerText(snippet.body, true)) {
-            closeCommandCenter();
-            toast(`Inserted “${snippet.name}”.`);
-          }
+
+      const render = () => {
+        const query = input.value.trim().toLowerCase();
+        const matches = settings.snippets.filter((snippet) =>
+          !query || `${snippet.name} ${snippet.body}`.toLowerCase().includes(query)
+        );
+        results.replaceChildren();
+
+        if (!settings.snippets.length) {
+          results.textContent = "No snippets saved. Add them from the extension Settings page.";
+          return;
+        }
+        if (!matches.length) {
+          results.textContent = "No snippets match this search.";
+          return;
+        }
+
+        matches.forEach((snippet) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "gcce-result gcce-snippet";
+          const title = document.createElement("strong");
+          title.textContent = snippet.name;
+          const preview = document.createElement("span");
+          preview.textContent = snippet.body.slice(0, 180);
+          button.append(title, preview);
+          button.addEventListener("click", () => {
+            if (setComposerText(snippet.body, true)) {
+              closeCommandCenter();
+              toast(`Inserted “${snippet.name}”.`);
+            }
+          });
+          results.appendChild(button);
         });
-        results.appendChild(button);
+      };
+
+      input.addEventListener("input", render);
+      host.append(input, results);
+      input.focus();
+      render();
+    });
+  }
+
+  function integrationSnapshot() {
+    const messages = messageNodes();
+    const users = userNodes();
+    const assistants = assistantNodes();
+    const directComposer = document.querySelector("#prompt-textarea");
+    const composer = findComposer();
+    return {
+      product: "GoreeCloud ChatGPT Enhancer",
+      version: browser.runtime.getManifest().version,
+      origin: location.origin,
+      semanticMessageRolesDetected: messages.length > 0,
+      messageCount: messages.length,
+      userMessageCount: users.length,
+      assistantMessageCount: assistants.length,
+      promptTextareaDetected: Boolean(directComposer),
+      composerDetected: Boolean(composer),
+      composerFallbackInUse: Boolean(composer && !directComposer)
+    };
+  }
+
+  function showDiagnostics() {
+    showPanel("Integration health", (host) => {
+      const snapshot = integrationSnapshot();
+      const summary = document.createElement("div");
+      summary.className = "gcce-diagnostics";
+
+      const status = document.createElement("p");
+      const healthy = snapshot.composerDetected && (
+        snapshot.semanticMessageRolesDetected || snapshot.messageCount === 0
+      );
+      status.className = healthy ? "gcce-health-good" : "gcce-health-warning";
+      status.textContent = healthy
+        ? "Core ChatGPT integration points are available."
+        : "One or more expected ChatGPT integration points are unavailable.";
+
+      const note = document.createElement("p");
+      note.textContent = "This snapshot contains counts and selector availability only. It does not include conversation text, URLs beyond the site origin, prompt text, cookies, or account data.";
+
+      const list = document.createElement("dl");
+      for (const [label, value] of [
+        ["Extension version", snapshot.version],
+        ["Site origin", snapshot.origin],
+        ["Loaded messages", snapshot.messageCount],
+        ["Loaded user prompts", snapshot.userMessageCount],
+        ["Loaded assistant responses", snapshot.assistantMessageCount],
+        ["Semantic message roles", snapshot.semanticMessageRolesDetected ? "available" : "not detected"],
+        ["Prompt composer", snapshot.composerDetected ? "available" : "not detected"],
+        ["Primary prompt selector", snapshot.promptTextareaDetected ? "available" : "not detected"],
+        ["Fallback composer selector", snapshot.composerFallbackInUse ? "in use" : "not in use"]
+      ]) {
+        const dt = document.createElement("dt");
+        dt.textContent = label;
+        const dd = document.createElement("dd");
+        dd.textContent = String(value);
+        list.append(dt, dd);
+      }
+
+      const copy = document.createElement("button");
+      copy.type = "button";
+      copy.className = "gcce-result";
+      copy.textContent = "Copy privacy-safe diagnostic snapshot";
+      copy.addEventListener("click", async () => {
+        const copied = await writeClipboard(JSON.stringify(snapshot, null, 2));
+        toast(copied ? "Diagnostic snapshot copied." : "Clipboard copy was blocked.");
       });
-      host.appendChild(results);
+
+      summary.append(status, note, list, copy);
+      host.appendChild(summary);
     });
   }
 
@@ -470,6 +566,9 @@
         break;
       case "snippets":
         showSnippets();
+        break;
+      case "diagnostics":
+        showDiagnostics();
         break;
       case "restore-draft": {
         if (!settings.draftRecovery) return toast("Draft recovery is off. Enable it in extension settings.");
