@@ -74,7 +74,7 @@
 #gcce-launcher:focus-visible,
 #gcce-dialog button:focus-visible,
 #gcce-dialog input:focus-visible {
-  outline: 3px solid var(--gcce-accent);
+  outline: 2px solid var(--gcce-accent);
   outline-offset: 2px;
 }
 
@@ -84,7 +84,7 @@
   z-index: 2147483640;
   display: grid;
   place-items: start center;
-  padding: min(12vh, 92px) 16px 16px;
+  padding: clamp(24px, 7vh, 72px) 16px 16px;
   background: color-mix(in srgb, CanvasText 34%, transparent);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -95,8 +95,10 @@
 }
 
 #gcce-dialog {
-  width: min(720px, 100%);
-  max-height: min(76vh, 760px);
+  width: min(760px, 100%);
+  max-height: min(82vh, 760px);
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
   overflow: hidden;
   border: 1px solid var(--gcce-border);
   border-radius: 24px;
@@ -144,7 +146,13 @@
 }
 
 .gcce-icon-button {
-  font-size: 24px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  padding: 0;
+  font-size: 22px;
   line-height: 1;
 }
 
@@ -154,20 +162,26 @@
 
 #gcce-dialog input[type="search"] {
   width: 100%;
+  min-height: 44px;
   box-sizing: border-box;
   border: 1px solid var(--gcce-border);
-  border-radius: 14px;
-  background: color-mix(in srgb, Canvas 94%, CanvasText 6%);
+  border-radius: 12px;
+  background: color-mix(in srgb, Canvas 96%, CanvasText 4%);
   color: CanvasText;
-  padding: 12px 14px;
+  padding: 10px 13px;
   font: inherit;
 }
 
 .gcce-command-list,
 .gcce-panel {
-  max-height: 54vh;
-  overflow: auto;
-  padding: 6px 10px 14px;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scroll-padding-block: 8px;
+  padding: 4px 10px 14px;
 }
 
 .gcce-command,
@@ -182,10 +196,21 @@
 }
 
 .gcce-command {
+  min-height: 46px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  padding: 11px 12px;
+  gap: 18px;
+  padding: 9px 12px;
+}
+
+.gcce-command > span {
+  min-width: 0;
+  font-weight: 620;
+}
+
+.gcce-command[aria-selected="true"] {
+  background: color-mix(in srgb, AccentColor 12%, transparent);
 }
 
 .gcce-command:hover,
@@ -195,7 +220,10 @@
 }
 
 .gcce-command small {
+  max-width: 46%;
   text-align: right;
+  font-size: 11.5px;
+  line-height: 1.25;
 }
 
 .gcce-panel-header {
@@ -271,8 +299,10 @@
 
 .gcce-dialog-footer {
   border-top: 1px solid var(--gcce-border);
-  padding: 10px 16px 12px;
-  font-size: 12px;
+  background: color-mix(in srgb, Canvas 96%, CanvasText 4%);
+  padding: 9px 16px 11px;
+  font-size: 11.5px;
+  line-height: 1.35;
 }
 
 .gcce-dialog-footer kbd {
@@ -339,7 +369,8 @@
   }
 
   #gcce-dialog {
-    max-height: 86vh;
+    width: 100%;
+    max-height: calc(100dvh - 16px);
     border-radius: 22px 22px 12px 12px;
   }
 
