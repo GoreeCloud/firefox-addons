@@ -4,6 +4,9 @@
   const Settings = globalThis.GoreeChatGPTSettings;
   const status = document.getElementById("status");
   const snippetList = document.getElementById("snippet-list");
+  const snippetFilter = document.getElementById("snippet-filter");
+  const importFile = document.getElementById("import-file");
+  const MAX_IMPORT_BYTES = 1024 * 1024;
   let settings = null;
 
   function announce(message) {
@@ -11,7 +14,7 @@
     clearTimeout(announce.timer);
     announce.timer = setTimeout(() => {
       status.textContent = "";
-    }, 2600);
+    }, 3200);
   }
 
   function render() {
@@ -30,6 +33,11 @@
   }
 
   function renderSnippets() {
+    const query = snippetFilter.value.trim().toLowerCase();
+    const matches = settings.snippets.filter((snippet) =>
+      !query || `${snippet.name} ${snippet.body}`.toLowerCase().includes(query)
+    );
+
     snippetList.replaceChildren();
     if (!settings.snippets.length) {
       const empty = document.createElement("p");
@@ -38,8 +46,15 @@
       snippetList.appendChild(empty);
       return;
     }
+    if (!matches.length) {
+      const empty = document.createElement("p");
+      empty.className = "empty";
+      empty.textContent = "No snippets match this search.";
+      snippetList.appendChild(empty);
+      return;
+    }
 
-    for (const snippet of settings.snippets) {
+    for (const snippet of matches) {
       const item = document.createElement("article");
       item.className = "snippet-item";
       const body = document.createElement("div");
@@ -63,6 +78,47 @@
       item.append(body, remove);
       snippetList.appendChild(item);
     }
+  }
+
+  function exportSettings() {
+    const envelope = Settings.buildSettingsExport(settings);
+    const blob = new Blob(
+      [JSON.stringify(envelope, null, 2) + "\n"],
+      { type: "application/json;charset=utf-8" }
+    );
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "goreecloud-chatgpt-enhancer-settings.json";
+    anchor.rel = "noopener";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    announce("Settings backup download started. Drafts were not included.");
+  }
+
+  async function importSettings(file) {
+    if (!file) return;
+    if (file.size > MAX_IMPORT_BYTES) {
+      throw new Error("Settings file is larger than the 1 MiB import limit.");
+    }
+
+    const imported = Settings.parseSettingsImport(await file.text());
+    const confirmed = confirm(
+      `Replace current presentation settings and prompt snippets with this backup?\n\n` +
+      `Snippets in backup: ${imported.snippets.length}\n` +
+      "Saved prompt drafts are not changed."
+    );
+    if (!confirmed) {
+      announce("Import cancelled.");
+      return;
+    }
+
+    settings = await Settings.set(imported);
+    snippetFilter.value = "";
+    render();
+    announce("Settings imported. Saved drafts were unchanged.");
   }
 
   async function load() {
@@ -90,6 +146,8 @@
     }
   }
 
+  snippetFilter.addEventListener("input", renderSnippets);
+
   document.getElementById("snippet-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     const name = document.getElementById("snippet-name");
@@ -101,9 +159,27 @@
     };
     settings = await Settings.patch({ snippets: [...settings.snippets, snippet] });
     event.currentTarget.reset();
+    snippetFilter.value = "";
     renderSnippets();
     announce("Snippet added.");
     name.focus();
+  });
+
+  document.getElementById("export-settings").addEventListener("click", exportSettings);
+
+  document.getElementById("import-settings").addEventListener("click", () => {
+    importFile.value = "";
+    importFile.click();
+  });
+
+  importFile.addEventListener("change", async () => {
+    try {
+      await importSettings(importFile.files?.[0]);
+    } catch (error) {
+      announce(error instanceof Error ? error.message : "Settings import failed.");
+    } finally {
+      importFile.value = "";
+    }
   });
 
   document.getElementById("clear-drafts").addEventListener("click", async () => {
@@ -113,6 +189,7 @@
 
   document.getElementById("reset-settings").addEventListener("click", async () => {
     settings = await Settings.reset();
+    snippetFilter.value = "";
     render();
     announce("Default settings restored.");
   });
