@@ -180,11 +180,17 @@ footer {
 .primary,
 .secondary,
 .danger,
-.icon-button {
+.icon-button,
+.secondary-link {
   border-radius: 12px;
   padding: 9px 13px;
   cursor: pointer;
   font-weight: 700;
+}
+
+.secondary-link {
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .primary {
@@ -195,7 +201,8 @@ footer {
 }
 
 .secondary,
-.icon-button {
+.icon-button,
+.secondary-link {
   border: 1px solid var(--border);
   background: var(--surface);
   color: CanvasText;
@@ -274,6 +281,7 @@ footer {
 footer p { margin-bottom: 4px; }
 
 button:focus-visible,
+a:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
   outline: 3px solid AccentColor;
@@ -320,7 +328,8 @@ textarea:focus-visible {
   .primary,
   .secondary,
   .danger,
-  .icon-button {
+  .icon-button,
+  .secondary-link {
     border: 1px solid CanvasText;
   }
 
