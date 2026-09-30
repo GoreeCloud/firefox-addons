@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en" data-glaze-version="1.6">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ChatGPT Enhancer Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <img src="../assets/icon.svg" width="64" height="64" alt="">
+      <div>
+        <p class="eyebrow">GOREECLOUD · FIREFOX</p>
+        <h1>ChatGPT Enhancer</h1>
+        <p>Local controls for a faster, calmer, more navigable ChatGPT workspace.</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="section-heading">
+        <div><p class="eyebrow">PRESENTATION</p><h2>Workspace</h2></div>
+        <span class="pill">Glaze UI V1.6 target</span>
+      </div>
+      <div class="switch-grid">
+        <label class="switch-row"><span><strong>Wide conversation</strong><small>Expand loaded messages toward your chosen reading width.</small></span><input type="checkbox" data-setting="wideMode"></label>
+        <label class="switch-row"><span><strong>Compact spacing</strong><small>Reduce vertical whitespace in messages.</small></span><input type="checkbox" data-setting="compactMode"></label>
+        <label class="switch-row"><span><strong>Focus mode</strong><small>Hide side navigation while keeping the conversation and composer visible.</small></span><input type="checkbox" data-setting="focusMode"></label>
+        <label class="switch-row"><span><strong>Wrap code</strong><small>Wrap long code instead of forcing horizontal scrolling.</small></span><input type="checkbox" data-setting="codeWrap"></label>
+        <label class="switch-row"><span><strong>Floating launcher</strong><small>Show an in-page button for the command center.</small></span><input type="checkbox" data-setting="showFloatingButton"></label>
+      </div>
+      <div class="range-grid">
+        <label>
+          <span><strong>Content width</strong><small><output id="contentWidthValue"></output> px</small></span>
+          <input type="range" min="720" max="1440" step="20" data-number-setting="contentWidth">
+        </label>
+        <label>
+          <span><strong>Conversation text scale</strong><small><output id="fontScaleValue"></output>%</small></span>
+          <input type="range" min="85" max="130" step="5" data-number-setting="fontScale">
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-heading">
+        <div><p class="eyebrow">PRIVACY</p><h2>Draft recovery</h2></div>
+        <span class="pill">Off by default</span>
+      </div>
+      <label class="switch-row standalone">
+        <span><strong>Save prompt drafts locally</strong><small>When enabled, prompt text you type is saved only in Firefox extension storage, keyed to the current ChatGPT conversation path. Restore is always explicit.</small></span>
+        <input type="checkbox" data-setting="draftRecovery">
+      </label>
+      <button id="clear-drafts" type="button" class="secondary">Clear all saved drafts</button>
+    </section>
+
+    <section class="card">
+      <div class="section-heading">
+        <div><p class="eyebrow">PROMPTS</p><h2>Snippet library</h2></div>
+        <span class="pill">Local only</span>
+      </div>
+      <form id="snippet-form" class="snippet-form">
+        <label><span>Name</span><input id="snippet-name" maxlength="80" required placeholder="e.g. Verify claims"></label>
+        <label><span>Prompt text</span><textarea id="snippet-body" maxlength="8000" rows="5" required placeholder="Write a reusable instruction…"></textarea></label>
+        <button type="submit" class="primary">Add snippet</button>
+      </form>
+      <div id="snippet-list" class="snippet-list" aria-live="polite"></div>
+    </section>
+
+    <section class="card compact-card">
+      <div>
+        <p class="eyebrow">KEYBOARD</p>
+        <h2>Shortcuts</h2>
+        <p><kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>G</kbd> opens the command center. <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> focuses the prompt composer.</p>
+      </div>
+    </section>
+
+    <section class="card compact-card">
+      <div>
+        <p class="eyebrow">RESET</p>
+        <h2>Restore defaults</h2>
+        <p>This resets presentation settings and the built-in snippet library. Saved drafts are not removed unless you clear them separately.</p>
+      </div>
+      <button id="reset-settings" type="button" class="danger">Restore defaults</button>
+    </section>
+
+    <footer>
+      <p>No analytics, no ChatGPT API calls, no cookie or token access, and no remote code.</p>
+      <p id="status" role="status" aria-live="polite"></p>
+    </footer>
+  </main>
+  <script src="../shared/settings.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>
