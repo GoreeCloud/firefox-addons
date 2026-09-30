@@ -389,7 +389,7 @@ def main() -> int:
             if driver is not None:
                 driver.quit()
 
-    require(len(passes) == 8, "all runtime smoke groups passed", repr(passes))
+    require(len(passes) == 9, "all runtime smoke groups passed", repr(passes))
     print(f"Validated real-Firefox unsigned ChatGPT Enhancer runtime with {len(passes)} privacy-safe pass groups.")
     return 0
 
