@@ -2,7 +2,7 @@
 
 ## Current boundary
 
-Version 0.1.0 is a local-first source candidate.
+Version 0.1.1 is a local-first source candidate.
 
 The extension does **not** intentionally transmit user data to GoreeCloud, OpenAI APIs, analytics providers, advertising systems, or any other extension-owned remote service. The Firefox manifest declares Gecko data collection as `required: ["none"]`.
 
@@ -29,7 +29,7 @@ Conversation search and outline do not create a persistent conversation index. C
 - prompt snippets;
 - draft-recovery records, only when draft recovery is enabled.
 
-Prompt snippets can contain any text the user chooses to save and should therefore be treated as private user data.
+Prompt snippets can contain any text the user chooses to save and should therefore be treated as private user data. Version 0.1.1 can export presentation settings and snippets to an explicit local JSON backup. Drafts are intentionally excluded from that file.
 
 ### Draft recovery
 
@@ -38,6 +38,14 @@ Draft recovery is disabled by default.
 When enabled, the extension stores current composer text locally, keyed by the ChatGPT conversation path. Draft records are bounded to the 20 most recently updated paths and 20,000 characters per draft. Restore is explicit; the extension does not automatically submit restored text.
 
 Turning draft recovery off stops new draft capture. The Settings page provides a separate **Clear all saved drafts** action because disabling a feature should not silently destroy user data.
+
+## Privacy-safe integration diagnostics
+
+The integration-health view reports only extension version, site origin, loaded message/user/assistant counts, and whether expected semantic selectors/composer fallbacks are available. It does not include conversation text, prompt text, cookies, account identifiers, or the full conversation URL/path.
+
+## Settings portability
+
+Settings import/export is explicit and local. Exported JSON contains only normalized presentation settings and prompt snippets. Draft records are not exported. Imports are capped at 1 MiB before parsing and must match this extension's product identity, Gecko ID, and supported portability format before normalized settings can replace the current settings after confirmation.
 
 ## Export and clipboard
 
@@ -63,7 +71,7 @@ Private browsing is explicitly disabled through `incognito: "not_allowed"`.
 
 ## Remote dependencies
 
-There are no remote scripts, web fonts, analytics libraries, remote configuration services, or extension-owned network requests in version 0.1.0.
+There are no remote scripts, web fonts, analytics libraries, remote configuration services, or extension-owned network requests in version 0.1.1.
 
 ChatGPT itself continues to communicate with OpenAI as part of the website's normal operation. That traffic is outside the extension's authority and is not proxied, duplicated, intercepted, or modified by this source candidate.
 
