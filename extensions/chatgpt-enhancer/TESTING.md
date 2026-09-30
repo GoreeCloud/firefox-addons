@@ -9,9 +9,10 @@ python extensions/chatgpt-enhancer/scripts/validate.py
 node --test extensions/chatgpt-enhancer/tests/*.test.mjs
 python shared/scripts/validate_repository.py
 python shared/scripts/package_extension.py chatgpt-enhancer
+python -m py_compile extensions/chatgpt-enhancer/tests/firefox_runtime_smoke.py
 ```
 
-Repository CI also runs `node --check` against maintained JavaScript and verifies generated XPI archives.
+Repository CI also runs `node --check` against maintained JavaScript and verifies generated XPI archives. The dedicated `ChatGPT Enhancer Firefox Runtime` workflow installs the deterministic unsigned XPI temporarily in a clean headless Firefox profile and exercises a controlled local HTTPS fixture mapped to `chatgpt.com`.
 
 ## Required 0.1.1 source checks
 
@@ -34,6 +35,12 @@ The extension-specific validator fails if:
 - the local regression suite disappears;
 - Reduced Motion or Forced Colors fallbacks disappear;
 - controlled extension pages stop declaring the Glaze UI V1.6 target.
+
+## Automated controlled real-Firefox smoke
+
+The runtime workflow must verify exact add-on identity/version/icon, real content-script injection under the manifest's `https://chatgpt.com/*` match, launcher/dialog semantics, privacy-safe integration diagnostics, snippet insertion without submission, reversible compact/focus presentation toggles, and both keyboard shortcuts. Evidence must contain only candidate/runtime metadata, controlled counts, and pass-group names—not fixture conversation text, prompt text, full URLs, profile paths, cookies, credentials, or account data.
+
+The workflow rewrites `chatgpt.com` to localhost for the job and uses a self-signed controlled fixture accepted only by the test profile. It must not contact the live ChatGPT service. This gate is unsigned runtime evidence and does not prove live-site compatibility.
 
 ## Manual/current-site Firefox checks before release promotion
 
