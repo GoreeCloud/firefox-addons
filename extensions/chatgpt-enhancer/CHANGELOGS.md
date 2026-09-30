@@ -10,6 +10,7 @@
 - Local settings/snippet JSON import with a 1 MiB pre-parse limit, extension identity/schema validation, normalization, and explicit confirmation.
 - Regression tests for settings normalization, portability identity, bounds, duplicate IDs, and draft exclusion.
 - CI execution of the ChatGPT Enhancer local-core tests.
+- Controlled real-Firefox runtime workflow that temporarily installs the exact deterministic candidate and exercises the real `chatgpt.com` manifest boundary against a localhost HTTPS fixture.
 
 ### Preserved boundaries
 

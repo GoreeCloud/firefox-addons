@@ -79,7 +79,7 @@ python shared/scripts/validate_repository.py
 python shared/scripts/package_extension.py chatgpt-enhancer
 ```
 
-The repository workflow additionally syntax-checks maintained JavaScript and verifies the deterministic XPI archive.
+The repository workflow additionally syntax-checks maintained JavaScript and verifies the deterministic XPI archive. A dedicated **ChatGPT Enhancer Firefox Runtime** workflow installs the exact unsigned candidate temporarily in headless Firefox and exercises the manifest's real `https://chatgpt.com/*` content-script boundary against a controlled localhost HTTPS fixture mapped to `chatgpt.com`.
 
 ## Architecture
 
@@ -104,7 +104,7 @@ The extension relies on stable semantic web cues where practical, including `dat
 
 The source candidate targets the current GLAZE UI V1.6 presentation principles: solid readable content surfaces, glazed transient command chrome where appropriate, semantic state, keyboard focus, accessibility precedence, responsive composition, Reduced Motion, and Forced Colors resilience.
 
-This source-level target is not a claim of formal Glaze consumer acceptance.
+This source-level target is not a claim of formal Glaze consumer acceptance. The controlled Firefox smoke is likewise unsigned runtime evidence only; it does not replace live `chatgpt.com` human review, Mozilla signing, persistent installation, or full-restart acceptance.
 
 ## Release boundary
 

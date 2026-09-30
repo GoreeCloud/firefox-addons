@@ -59,6 +59,6 @@ The extension packages all runtime code locally. It does not require a relaxed e
 
 ## Release boundary
 
-Passing static validation, syntax checks, or deterministic packaging is not sufficient for a Stable claim. Current-site Firefox runtime validation, accessibility checks, privacy/security review, applicable Glaze UI acceptance, Mozilla signing, persistent installation, browser restart, and post-restart verification remain separate release gates.
+Passing static validation, syntax checks, deterministic packaging, or the controlled unsigned real-Firefox smoke is not sufficient for a Stable claim. The runtime smoke uses a localhost HTTPS fixture mapped to `chatgpt.com`, temporarily installs the exact candidate, records only privacy-minimized outcomes, and does not contact the live ChatGPT service.  Current-site Firefox runtime validation, accessibility checks, privacy/security review, applicable Glaze UI acceptance, Mozilla signing, persistent installation, browser restart, and post-restart verification remain separate release gates.
 
 Security exceptions for 0.1.1: **none recorded**.

@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = ROOT.parents[1]
 
 
 def fail(message: str) -> None:
@@ -73,6 +74,7 @@ def main() -> None:
         "options/options.css",
         "scripts/validate.py",
         "tests/settings.test.mjs",
+        "tests/firefox_runtime_smoke.py",
     ]
     missing = [path for path in required_files if not (ROOT / path).is_file()]
     if missing:
@@ -157,6 +159,35 @@ def main() -> None:
             fail(f"{relative} must retain Forced Colors fallback")
         if "prefers-reduced-motion: reduce" not in css:
             fail(f"{relative} must retain Reduced Motion fallback")
+
+
+    runtime_smoke = (ROOT / "tests/firefox_runtime_smoke.py").read_text(encoding="utf-8")
+    for marker in (
+        "driver.install_addon",
+        "temporary=True",
+        "controlledLocalFixtureOnly",
+        "liveChatGPTContacted",
+        "manifestChatGPTMatchExercised",
+        "FIXTURE_USER_SECRET",
+        "FIXTURE_ASSISTANT_SECRET",
+        "FIXTURE_PROMPT_SECRET",
+    ):
+        if marker not in runtime_smoke:
+            fail(f"real-Firefox runtime contract missing: {marker}")
+
+    runtime_workflow = REPO_ROOT / ".github/workflows/chatgpt-enhancer-firefox-runtime.yml"
+    if not runtime_workflow.is_file():
+        fail("ChatGPT Enhancer real-Firefox runtime workflow is missing")
+    runtime_workflow_text = runtime_workflow.read_text(encoding="utf-8")
+    for marker in (
+        "browser-actions/setup-firefox@v1",
+        "browser-actions/setup-geckodriver@latest",
+        "python extensions/chatgpt-enhancer/tests/firefox_runtime_smoke.py",
+        "127.0.0.1 chatgpt.com",
+        "dist/chatgpt-enhancer-firefox-runtime.json",
+    ):
+        if marker not in runtime_workflow_text:
+            fail(f"real-Firefox runtime workflow contract missing: {marker}")
 
     privacy = (ROOT / "PRIVACY.md").read_text(encoding="utf-8").lower()
     security = (ROOT / "SECURITY.md").read_text(encoding="utf-8").lower()
