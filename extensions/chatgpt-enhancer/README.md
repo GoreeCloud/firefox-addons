@@ -24,7 +24,9 @@ The extension operates entirely in Firefox on the ChatGPT page and in its own lo
 - **Response copy** — copy the last loaded assistant response.
 - **Markdown export** — copy or download the currently loaded conversation as Markdown.
 - **Prompt snippets** — maintain and search a local reusable instruction library, then insert a snippet into the composer.
-- **Integration health** — inspect privacy-safe selector/count diagnostics when ChatGPT changes its interface.\n- **Local settings portability** — export/import presentation settings and prompt snippets with strict extension/schema validation; drafts are excluded.\n- **Opt-in draft recovery** — save prompt drafts locally by conversation path and restore them explicitly.
+- **Integration health** — inspect privacy-safe selector/count diagnostics when ChatGPT changes its interface.
+- **Local settings portability** — export/import presentation settings and prompt snippets with strict extension/schema validation; drafts are excluded.
+- **Opt-in draft recovery** — save prompt drafts locally by conversation path and restore them explicitly.
 - **Focus mode** — temporarily hide side navigation.
 - **Wide mode** — expand the readable conversation width.
 - **Compact mode** — reduce message spacing.
