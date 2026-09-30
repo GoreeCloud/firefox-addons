@@ -25,9 +25,6 @@
     }
   }
 
-  document.getElementById("open-settings").addEventListener("click", () => {
-    browser.runtime.openOptionsPage();
-  });
 
   load().catch(() => announce("Settings could not be loaded."));
 })();
