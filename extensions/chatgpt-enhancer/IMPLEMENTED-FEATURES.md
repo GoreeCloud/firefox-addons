@@ -1,5 +1,20 @@
 # GoreeCloud ChatGPT Enhancer — Implemented Features
 
+## 0.1.1 source candidate
+
+Added on top of the 0.1.0 foundation:
+
+- Searchable prompt snippets in the in-page command center.
+- Searchable prompt snippets in Settings.
+- Privacy-safe integration-health diagnostics with counts and selector availability only.
+- Copyable privacy-safe diagnostic snapshot.
+- Local JSON export of normalized presentation settings and prompt snippets.
+- Local JSON import with 1 MiB pre-parse cap, exact product/Gecko-ID/format validation, normalization, and explicit replacement confirmation.
+- Draft exclusion from settings portability.
+- Duplicate imported snippet-ID normalization without dropping valid snippet content.
+- Node regression tests for normalization and portability boundaries.
+- CI execution of the ChatGPT Enhancer regression suite.
+
 ## 0.1.0 source candidate
 
 Implemented in source:
