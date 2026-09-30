@@ -690,6 +690,11 @@
   });
 
   Settings.get()
-    .then(applySettings)
-    .catch(() => applySettings(Settings.normalize(Settings.DEFAULTS)));
+    .then(async (loaded) => {
+      const settings = loaded.contentWidth === 1040
+        ? await Settings.patch({ contentWidth: 1440 })
+        : loaded;
+      applySettings(settings);
+    })
+    .catch(() => applySettings(Settings.normalize({ ...Settings.DEFAULTS, contentWidth: 1440 })));
 })();
