@@ -17,7 +17,7 @@ def main() -> None:
         fail("Manifest V3 is required")
     if manifest.get("name") != "GoreeCloud ChatGPT Enhancer":
         fail("unexpected product name")
-    if manifest.get("version") != "0.1.2":
+    if manifest.get("version") != "0.1.3":
         fail("source version must remain synchronized with canonical inventory")
     if manifest.get("background") != {"scripts": ["background.js"]}:
         fail("unexpected background runtime registration")
@@ -217,7 +217,7 @@ def main() -> None:
             fail(f"security record missing required boundary: {marker}")
 
     print(
-        "Validated GoreeCloud ChatGPT Enhancer 0.1.2 source candidate: "
+        "Validated GoreeCloud ChatGPT Enhancer 0.1.3 source candidate: "
         "ChatGPT-only scope, storage-only permission, no-data-collection declaration, "
         "local-first runtime, bounded draft recovery, privacy-safe diagnostics, bounded settings portability, accessibility fallbacks, and required documentation."
     )
