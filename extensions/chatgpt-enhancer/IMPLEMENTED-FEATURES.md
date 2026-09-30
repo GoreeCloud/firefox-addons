@@ -14,6 +14,7 @@ Added on top of the 0.1.0 foundation:
 - Duplicate imported snippet-ID normalization without dropping valid snippet content.
 - Node regression tests for normalization and portability boundaries.
 - CI execution of the ChatGPT Enhancer regression suite.
+- Controlled real-Firefox unsigned runtime smoke against a localhost HTTPS fixture mapped to `chatgpt.com`, with privacy-minimized evidence and exact deterministic candidate installation.
 
 ## 0.1.0 source candidate
 
