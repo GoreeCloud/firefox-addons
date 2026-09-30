@@ -22,16 +22,20 @@ body {
 button, input, textarea { font: inherit; }
 
 .page {
-  width: min(920px, calc(100% - 32px));
+  width: min(1180px, calc(100% - 40px));
   margin: 0 auto;
-  padding: 48px 0 72px;
+  padding: 40px 0 64px;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px;
 }
 
 .hero {
+  grid-column: 1 / -1;
   display: flex;
   align-items: center;
   gap: 18px;
-  margin-bottom: 24px;
+  margin-bottom: 8px;
 }
 
 .hero img {
@@ -69,7 +73,7 @@ footer {
 }
 
 .card {
-  margin-top: 16px;
+  margin-top: 0;
   padding: 20px;
   border: 1px solid var(--border);
   border-radius: 22px;
@@ -77,6 +81,32 @@ footer {
   box-shadow: 0 10px 40px color-mix(in srgb, CanvasText 7%, transparent);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+}
+
+.workspace-card,
+.snippets-card,
+footer {
+  grid-column: 1 / -1;
+}
+
+.privacy-card {
+  grid-column: span 5;
+}
+
+.portability-card {
+  grid-column: span 7;
+}
+
+.shortcuts-card,
+.welcome-card,
+.reset-card {
+  grid-column: span 4;
+}
+
+.compact-card {
+  align-items: flex-start;
+  flex-direction: column;
+  min-height: 150px;
 }
 
 .section-heading,
@@ -136,21 +166,25 @@ footer {
 
 .range-grid {
   display: grid;
-  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
   margin-top: 14px;
 }
 
 .range-grid label {
+  display: grid;
+  align-items: start;
+  gap: 8px;
   padding: 10px 2px;
 }
 
 .range-grid label > span {
   display: grid;
-  min-width: 220px;
+  min-width: 0;
 }
 
 .range-grid input[type="range"] {
-  width: min(420px, 55%);
+  width: 100%;
   accent-color: AccentColor;
 }
 
@@ -239,7 +273,8 @@ footer {
 
 .snippet-list {
   display: grid;
-  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;
   margin-top: 12px;
 }
 
@@ -286,6 +321,34 @@ input:focus-visible,
 textarea:focus-visible {
   outline: 3px solid AccentColor;
   outline-offset: 2px;
+}
+
+@media (max-width: 960px) {
+  .page {
+    width: min(760px, calc(100% - 28px));
+    grid-template-columns: 1fr;
+  }
+
+  .hero,
+  .workspace-card,
+  .privacy-card,
+  .snippets-card,
+  .portability-card,
+  .shortcuts-card,
+  .welcome-card,
+  .reset-card,
+  footer {
+    grid-column: 1;
+  }
+
+  .range-grid,
+  .snippet-list {
+    grid-template-columns: 1fr;
+  }
+
+  .compact-card {
+    min-height: 0;
+  }
 }
 
 @media (max-width: 680px) {
