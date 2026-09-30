@@ -2,7 +2,7 @@
 
 ## Current boundary
 
-Version 0.1.1 is a local-first source candidate.
+Version 0.1.2 is a local-first source candidate.
 
 The extension does **not** intentionally transmit user data to GoreeCloud, OpenAI APIs, analytics providers, advertising systems, or any other extension-owned remote service. The Firefox manifest declares Gecko data collection as `required: ["none"]`.
 
@@ -29,7 +29,7 @@ Conversation search and outline do not create a persistent conversation index. C
 - prompt snippets;
 - draft-recovery records, only when draft recovery is enabled.
 
-Prompt snippets can contain any text the user chooses to save and should therefore be treated as private user data. Version 0.1.1 can export presentation settings and snippets to an explicit local JSON backup. Drafts are intentionally excluded from that file.
+Prompt snippets can contain any text the user chooses to save and should therefore be treated as private user data. Version 0.1.2 can export presentation settings and snippets to an explicit local JSON backup. Drafts are intentionally excluded from that file.
 
 ### Draft recovery
 
@@ -71,7 +71,7 @@ Private browsing is explicitly disabled through `incognito: "not_allowed"`.
 
 ## Remote dependencies
 
-There are no remote scripts, web fonts, analytics libraries, remote configuration services, or extension-owned network requests in version 0.1.1.
+There are no remote scripts, web fonts, analytics libraries, remote configuration services, or extension-owned network requests in version 0.1.2.
 
 ChatGPT itself continues to communicate with OpenAI as part of the website's normal operation. That traffic is outside the extension's authority and is not proxied, duplicated, intercepted, or modified by this source candidate.
 
