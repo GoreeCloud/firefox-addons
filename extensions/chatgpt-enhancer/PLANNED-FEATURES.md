@@ -1,16 +1,15 @@
 # GoreeCloud ChatGPT Enhancer — Planned Features
 
-The items below are candidates for future governed work. They are not implemented or promised by version 0.1.0.
+The items below are candidates for future governed work. They are not implemented or promised by version 0.1.1.
 
 ## Near-term evaluation
 
 - Current-site Firefox runtime acceptance automation using controlled fixtures where feasible.
-- Selector health diagnostics that expose which semantic ChatGPT integration points are available without recording conversation content.
 - User-configurable command-center shortcut through Firefox command APIs if this can be added without unnecessary authority.
 - Better Markdown structure preservation for code blocks, lists, tables, and attachments while keeping export local.
 - Per-feature enable/disable controls for users who want a smaller page footprint.
-- Import/export of extension settings and prompt snippets using an explicit local file flow.
-- Local snippet search and grouping for larger libraries.
+- Optional snippet grouping/tagging for larger libraries.
+- Richer privacy-safe selector-health history that does not persist conversation content.
 
 ## Deferred unless justified
 
