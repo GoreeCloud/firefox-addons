@@ -112,6 +112,7 @@ kbd {
 }
 
 .primary {
+  display: block;
   width: 100%;
   border: 0;
   border-radius: 13px;
@@ -119,6 +120,8 @@ kbd {
   background: AccentColor;
   color: AccentColorText;
   font-weight: 700;
+  text-align: center;
+  text-decoration: none;
   cursor: pointer;
 }
 
