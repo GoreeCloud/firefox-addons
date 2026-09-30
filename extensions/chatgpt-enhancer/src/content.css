@@ -227,6 +227,48 @@
   text-align: center;
 }
 
+.gcce-diagnostics {
+  display: grid;
+  gap: 10px;
+  padding: 2px 4px 8px;
+}
+
+.gcce-diagnostics p {
+  margin: 0;
+}
+
+.gcce-diagnostics dl {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.8fr) minmax(0, 1.2fr);
+  gap: 7px 14px;
+  margin: 2px 0;
+  padding: 12px;
+  border: 1px solid var(--gcce-border);
+  border-radius: 13px;
+}
+
+.gcce-diagnostics dt {
+  color: var(--gcce-muted);
+}
+
+.gcce-diagnostics dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.gcce-health-good,
+.gcce-health-warning {
+  font-weight: 700;
+}
+
+.gcce-health-good {
+  color: color-mix(in srgb, #16803d 82%, CanvasText);
+}
+
+.gcce-health-warning {
+  color: color-mix(in srgb, #b35c00 82%, CanvasText);
+}
+
 .gcce-dialog-footer {
   border-top: 1px solid var(--gcce-border);
   padding: 10px 16px 12px;
