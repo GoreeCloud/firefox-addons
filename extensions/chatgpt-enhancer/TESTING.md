@@ -6,13 +6,14 @@ From repository root:
 
 ```bash
 python extensions/chatgpt-enhancer/scripts/validate.py
+node --test extensions/chatgpt-enhancer/tests/*.test.mjs
 python shared/scripts/validate_repository.py
 python shared/scripts/package_extension.py chatgpt-enhancer
 ```
 
 Repository CI also runs `node --check` against maintained JavaScript and verifies generated XPI archives.
 
-## Required 0.1.0 source checks
+## Required 0.1.1 source checks
 
 The extension-specific validator fails if:
 
@@ -28,6 +29,9 @@ The extension-specific validator fails if:
 - draft recovery stops defaulting to off;
 - local retention bounds disappear;
 - required commands/features disappear from source;
+- privacy-safe diagnostics stop omitting conversation/prompt content or expected selector-health markers disappear;
+- settings portability loses its product/Gecko-ID/format validation or 1 MiB pre-parse cap;
+- the local regression suite disappears;
 - Reduced Motion or Forced Colors fallbacks disappear;
 - controlled extension pages stop declaring the Glaze UI V1.6 target.
 
@@ -46,6 +50,9 @@ Using a clean supported Firefox profile and the exact candidate package:
 - Markdown copy and download preserve expected loaded-message order;
 - snippet insertion changes the composer but never submits;
 - draft recovery remains inactive by default;
+- integration diagnostics contain no conversation text, prompt text, account identifiers, or full conversation path;
+- settings export contains normalized settings/snippets and no drafts;
+- malformed, oversized, wrong-product, wrong-Gecko-ID, and unsupported-format settings imports fail closed;
 - enabled draft recovery saves/restores locally and clear-all removes records;
 - focus/wide/compact/code-wrap modes are reversible;
 - text scale and content width remain readable at supported extremes;
