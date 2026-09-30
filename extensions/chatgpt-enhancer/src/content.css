@@ -1,0 +1,327 @@
+:root {
+  --gcce-content-width: 1040px;
+  --gcce-font-scale: 1;
+  --gcce-panel: color-mix(in srgb, Canvas 88%, transparent);
+  --gcce-panel-solid: Canvas;
+  --gcce-border: color-mix(in srgb, CanvasText 18%, transparent);
+  --gcce-muted: color-mix(in srgb, CanvasText 68%, transparent);
+  --gcce-accent: AccentColor;
+  --gcce-accent-text: AccentColorText;
+  --gcce-radius: 18px;
+  --gcce-shadow: 0 18px 60px color-mix(in srgb, CanvasText 18%, transparent);
+}
+
+.gcce-wide [data-message-author-role] {
+  width: min(calc(100vw - 32px), var(--gcce-content-width)) !important;
+  max-width: var(--gcce-content-width) !important;
+  margin-inline: auto !important;
+}
+
+[data-message-author-role] {
+  font-size: calc(1em * var(--gcce-font-scale));
+}
+
+.gcce-compact [data-message-author-role] {
+  padding-block: 0.35rem !important;
+}
+
+.gcce-compact [data-message-author-role] p,
+.gcce-compact [data-message-author-role] pre,
+.gcce-compact [data-message-author-role] ul,
+.gcce-compact [data-message-author-role] ol {
+  margin-block: 0.45rem !important;
+}
+
+.gcce-code-wrap [data-message-author-role] pre,
+.gcce-code-wrap [data-message-author-role] pre code {
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word;
+}
+
+.gcce-focus body > div nav,
+.gcce-focus body > div aside {
+  display: none !important;
+}
+
+.gcce-focus main {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+#gcce-launcher {
+  position: fixed;
+  right: 18px;
+  bottom: 88px;
+  z-index: 2147483600;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--gcce-border);
+  border-radius: 16px;
+  background: var(--gcce-panel);
+  color: CanvasText;
+  box-shadow: var(--gcce-shadow);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  font: 750 17px/1 system-ui, sans-serif;
+  cursor: pointer;
+}
+
+#gcce-launcher:hover {
+  transform: translateY(-1px);
+}
+
+#gcce-launcher:focus-visible,
+#gcce-dialog button:focus-visible,
+#gcce-dialog input:focus-visible {
+  outline: 3px solid var(--gcce-accent);
+  outline-offset: 2px;
+}
+
+#gcce-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483640;
+  display: grid;
+  place-items: start center;
+  padding: min(12vh, 92px) 16px 16px;
+  background: color-mix(in srgb, CanvasText 34%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+#gcce-overlay[hidden] {
+  display: none !important;
+}
+
+#gcce-dialog {
+  width: min(720px, 100%);
+  max-height: min(76vh, 760px);
+  overflow: hidden;
+  border: 1px solid var(--gcce-border);
+  border-radius: 24px;
+  background: var(--gcce-panel-solid);
+  color: CanvasText;
+  box-shadow: var(--gcce-shadow);
+  font: 14px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.gcce-dialog-header,
+.gcce-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.gcce-dialog-header {
+  padding: 18px 20px 10px;
+}
+
+.gcce-dialog-header > div {
+  display: grid;
+  gap: 2px;
+}
+
+.gcce-dialog-header strong {
+  font-size: 17px;
+}
+
+.gcce-dialog-header span,
+.gcce-dialog-footer,
+.gcce-command small {
+  color: var(--gcce-muted);
+}
+
+.gcce-icon-button,
+.gcce-panel-header button {
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.gcce-icon-button {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.gcce-command-search {
+  padding: 8px 16px 12px;
+}
+
+#gcce-dialog input[type="search"] {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--gcce-border);
+  border-radius: 14px;
+  background: color-mix(in srgb, Canvas 94%, CanvasText 6%);
+  color: CanvasText;
+  padding: 12px 14px;
+  font: inherit;
+}
+
+.gcce-command-list,
+.gcce-panel {
+  max-height: 54vh;
+  overflow: auto;
+  padding: 6px 10px 14px;
+}
+
+.gcce-command,
+.gcce-result {
+  width: 100%;
+  border: 0;
+  border-radius: 13px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.gcce-command {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 11px 12px;
+}
+
+.gcce-command:hover,
+.gcce-result:hover,
+.gcce-panel-header button:hover {
+  background: color-mix(in srgb, CanvasText 8%, transparent);
+}
+
+.gcce-command small {
+  text-align: right;
+}
+
+.gcce-panel-header {
+  padding: 4px 4px 12px;
+}
+
+.gcce-results {
+  display: grid;
+  gap: 6px;
+}
+
+.gcce-result {
+  padding: 10px 12px;
+  line-height: 1.4;
+}
+
+.gcce-snippet {
+  display: grid;
+  gap: 4px;
+}
+
+.gcce-snippet span {
+  color: var(--gcce-muted);
+}
+
+.gcce-empty {
+  padding: 28px 12px;
+  color: var(--gcce-muted);
+  text-align: center;
+}
+
+.gcce-dialog-footer {
+  border-top: 1px solid var(--gcce-border);
+  padding: 10px 16px 12px;
+  font-size: 12px;
+}
+
+.gcce-dialog-footer kbd {
+  font: inherit;
+  border: 1px solid var(--gcce-border);
+  border-radius: 5px;
+  padding: 1px 4px;
+}
+
+.gcce-sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.gcce-highlight {
+  outline: 3px solid var(--gcce-accent) !important;
+  outline-offset: 4px !important;
+  border-radius: 8px;
+}
+
+#gcce-toast {
+  position: fixed;
+  z-index: 2147483645;
+  left: 50%;
+  bottom: 24px;
+  translate: -50% 12px;
+  max-width: min(560px, calc(100vw - 32px));
+  padding: 10px 14px;
+  border: 1px solid var(--gcce-border);
+  border-radius: 999px;
+  background: Canvas;
+  color: CanvasText;
+  box-shadow: var(--gcce-shadow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease, translate 160ms ease;
+  font: 13px/1.4 system-ui, sans-serif;
+}
+
+#gcce-toast.gcce-toast-visible {
+  opacity: 1;
+  translate: -50% 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #gcce-launcher,
+  #gcce-toast {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+@media (max-width: 620px) {
+  #gcce-overlay {
+    padding: 8px;
+    place-items: end center;
+  }
+
+  #gcce-dialog {
+    max-height: 86vh;
+    border-radius: 22px 22px 12px 12px;
+  }
+
+  #gcce-launcher {
+    right: 12px;
+    bottom: 78px;
+  }
+}
+
+@media (forced-colors: active) {
+  #gcce-launcher,
+  #gcce-dialog,
+  #gcce-dialog input,
+  .gcce-dialog-footer {
+    border: 1px solid CanvasText;
+  }
+
+  #gcce-launcher,
+  #gcce-overlay {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .gcce-highlight {
+    outline-color: Highlight !important;
+  }
+}

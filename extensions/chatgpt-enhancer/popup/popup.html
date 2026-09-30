@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" data-glaze-version="1.6">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>GoreeCloud ChatGPT Enhancer</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="brand">
+      <img src="../assets/icon.svg" width="40" height="40" alt="">
+      <div>
+        <h1>ChatGPT Enhancer</h1>
+        <p>Local-first Firefox controls</p>
+      </div>
+    </header>
+
+    <section class="hint" aria-label="Command center shortcut">
+      <span>Command center</span>
+      <kbd>Alt</kbd><span>+</span><kbd>Shift</kbd><span>+</span><kbd>G</kbd>
+    </section>
+
+    <section class="controls" aria-label="Quick settings">
+      <label><span><strong>Wide conversation</strong><small>Use more reading width</small></span><input type="checkbox" data-setting="wideMode"></label>
+      <label><span><strong>Compact spacing</strong><small>Reduce vertical gaps</small></span><input type="checkbox" data-setting="compactMode"></label>
+      <label><span><strong>Focus mode</strong><small>Hide side navigation</small></span><input type="checkbox" data-setting="focusMode"></label>
+      <label><span><strong>Wrap code</strong><small>Keep long code on screen</small></span><input type="checkbox" data-setting="codeWrap"></label>
+      <label><span><strong>Floating launcher</strong><small>Show the in-page G button</small></span><input type="checkbox" data-setting="showFloatingButton"></label>
+      <label><span><strong>Draft recovery</strong><small>Opt-in local prompt drafts</small></span><input type="checkbox" data-setting="draftRecovery"></label>
+    </section>
+
+    <p class="privacy">Conversation text is processed in the page and is not sent to GoreeCloud. Draft recovery is off by default.</p>
+    <button id="open-settings" type="button" class="primary">Open settings & prompt snippets</button>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+  </main>
+  <script src="../shared/settings.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

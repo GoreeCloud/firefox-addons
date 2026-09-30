@@ -1,0 +1,149 @@
+:root {
+  color-scheme: light dark;
+  font: 14px/1.4 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: Canvas;
+  color: CanvasText;
+  --border: color-mix(in srgb, CanvasText 17%, transparent);
+  --muted: color-mix(in srgb, CanvasText 66%, transparent);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  width: 350px;
+  min-height: 470px;
+  background:
+    radial-gradient(circle at 90% 0%, color-mix(in srgb, AccentColor 16%, transparent), transparent 38%),
+    Canvas;
+}
+
+button, input { font: inherit; }
+
+.shell { padding: 16px; }
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.brand img { border-radius: 13px; }
+
+h1 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+}
+
+.brand p,
+.privacy,
+.status {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: color-mix(in srgb, Canvas 88%, AccentColor 12%);
+}
+
+.hint > span:first-child {
+  margin-right: auto;
+  font-weight: 650;
+}
+
+kbd {
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  padding: 1px 5px;
+  background: Canvas;
+  color: CanvasText;
+  font: 11px/1.5 system-ui, sans-serif;
+}
+
+.controls {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: color-mix(in srgb, Canvas 95%, CanvasText 5%);
+}
+
+.controls label {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.controls label:last-child { border-bottom: 0; }
+
+.controls span {
+  display: grid;
+  flex: 1;
+}
+
+.controls small {
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.controls input {
+  width: 18px;
+  height: 18px;
+  accent-color: AccentColor;
+}
+
+.privacy {
+  margin: 12px 2px;
+  line-height: 1.5;
+}
+
+.primary {
+  width: 100%;
+  border: 0;
+  border-radius: 13px;
+  padding: 11px 14px;
+  background: AccentColor;
+  color: AccentColorText;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primary:focus-visible,
+input:focus-visible {
+  outline: 3px solid AccentColor;
+  outline-offset: 2px;
+}
+
+.status {
+  min-height: 18px;
+  text-align: center;
+  margin-top: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; }
+}
+
+@media (forced-colors: active) {
+  .controls,
+  .controls label,
+  .hint,
+  kbd,
+  .primary {
+    border: 1px solid CanvasText;
+  }
+}
