@@ -2,6 +2,9 @@
 
 ## Productivity
 
+- First-install welcome guide with privacy, shortcuts, and feature orientation.
+- Command-list keyboard traversal with ArrowUp/ArrowDown, Home/End, Enter, and Space.
+
 - Keyboard command center.
 - Direct prompt-composer focus shortcut.
 - Search across currently loaded conversation messages.
