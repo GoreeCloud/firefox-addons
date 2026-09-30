@@ -62,17 +62,19 @@ class FixtureHandler(BaseHTTPRequestHandler):
   </style>
 </head>
 <body>
-  <nav id="fixture-nav">Controlled navigation</nav>
-  <main>
-    <div data-message-author-role="user">{FIXTURE_USER_SECRET} one</div>
-    <div data-message-author-role="assistant">{FIXTURE_ASSISTANT_SECRET} one</div>
-    <div data-message-author-role="user">{FIXTURE_USER_SECRET} two</div>
-    <div data-message-author-role="assistant">{FIXTURE_ASSISTANT_SECRET} two</div>
-    <form id="fixture-form">
-      <textarea id="prompt-textarea" name="prompt-textarea" aria-label="Prompt"></textarea>
-      <button type="submit">Submit fixture</button>
-    </form>
-  </main>
+  <div id="app">
+    <nav id="fixture-nav">Controlled navigation</nav>
+    <main>
+      <div data-message-author-role="user">{FIXTURE_USER_SECRET} one</div>
+      <div data-message-author-role="assistant">{FIXTURE_ASSISTANT_SECRET} one</div>
+      <div data-message-author-role="user">{FIXTURE_USER_SECRET} two</div>
+      <div data-message-author-role="assistant">{FIXTURE_ASSISTANT_SECRET} two</div>
+      <form id="fixture-form">
+        <textarea id="prompt-textarea" name="prompt-textarea" aria-label="Prompt"></textarea>
+        <button type="submit">Submit fixture</button>
+      </form>
+    </main>
+  </div>
   <script>
     window.__fixtureSubmitCount = 0;
     document.querySelector("#fixture-form").addEventListener("submit", event => {{
