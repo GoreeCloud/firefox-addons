@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unsigned real-Firefox smoke for GoreeCloud ChatGPT Enhancer 0.1.1.
+"""Unsigned real-Firefox smoke for GoreeCloud ChatGPT Enhancer 0.1.2.
 
 The test installs the exact deterministic candidate temporarily in a clean
 headless Firefox profile. A controlled HTTPS fixture is served from localhost
@@ -35,7 +35,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 EXPECTED_ADDON_ID = "chatgpt-enhancer@goreecloud.com"
 EXPECTED_NAME = "GoreeCloud ChatGPT Enhancer"
-EXPECTED_VERSION = "0.1.1"
+EXPECTED_VERSION = "0.1.2"
 EXPECTED_ICON_PATH = "assets/icon.svg"
 FIXED_EXTENSION_UUID = "5cc41b8e-35d6-47a7-8a12-3fa5f67f5727"
 FIXTURE_USER_SECRET = "fixture-user-content-must-not-leak"
@@ -296,6 +296,46 @@ def main() -> int:
 
             open_command_center(driver)
             require(driver.switch_to.active_element.get_attribute("id") == "gcce-command-input", "command center receives initial keyboard focus")
+            ActionChains(driver).send_keys(Keys.ARROW_DOWN).perform()
+            require("gcce-command" in driver.switch_to.active_element.get_attribute("class").split(), "ArrowDown enters command options")
+            ActionChains(driver).send_keys(Keys.END).perform()
+            require("Jump to conversation bottom" in driver.switch_to.active_element.text, "End moves to final command")
+            ActionChains(driver).send_keys(Keys.HOME).perform()
+            require("Focus prompt composer" in driver.switch_to.active_element.text, "Home moves to first command")
+            ActionChains(driver).send_keys(Keys.ARROW_UP).perform()
+            require("Jump to conversation bottom" in driver.switch_to.active_element.text, "ArrowUp wraps from first to final command")
+            command_layout = driver.execute_script(
+                """
+                const list = document.querySelector("#gcce-command-list");
+                const footer = document.querySelector(".gcce-dialog-footer");
+                const active = document.activeElement;
+                const listRect = list.getBoundingClientRect();
+                const footerRect = footer.getBoundingClientRect();
+                const activeRect = active.getBoundingClientRect();
+                return {
+                  listTop: listRect.top,
+                  listBottom: listRect.bottom,
+                  footerTop: footerRect.top,
+                  activeTop: activeRect.top,
+                  activeBottom: activeRect.bottom
+                };
+                """
+            )
+            require(
+                command_layout["listBottom"] <= command_layout["footerTop"] + 1,
+                "command scroll region stays above footer",
+                repr(command_layout),
+            )
+            require(
+                command_layout["activeTop"] >= command_layout["listTop"] - 1
+                and command_layout["activeBottom"] <= command_layout["listBottom"] + 1,
+                "keyboard-focused command remains fully visible",
+                repr(command_layout),
+            )
+            passes.append("command-keyboard-navigation")
+            close_command_center(driver)
+
+            open_command_center(driver)
             click_command(driver, "Check integration health")
             WebDriverWait(driver, 10).until(lambda d: d.find_element("css selector", ".gcce-diagnostics").is_displayed())
             diagnostic_text = driver.find_element("css selector", ".gcce-diagnostics").text
@@ -389,7 +429,7 @@ def main() -> int:
             if driver is not None:
                 driver.quit()
 
-    require(len(passes) == 9, "all runtime smoke groups passed", repr(passes))
+    require(len(passes) == 10, "all runtime smoke groups passed", repr(passes))
     print(f"Validated real-Firefox unsigned ChatGPT Enhancer runtime with {len(passes)} privacy-safe pass groups.")
     return 0
 

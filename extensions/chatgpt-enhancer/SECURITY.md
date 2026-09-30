@@ -2,7 +2,7 @@
 
 ## Trust boundary
 
-GoreeCloud ChatGPT Enhancer 0.1.1 is designed as a least-privilege content extension for `https://chatgpt.com/*`.
+GoreeCloud ChatGPT Enhancer 0.1.2 is designed as a least-privilege content extension for `https://chatgpt.com/*`.
 
 The manifest requests only `storage`. It does not request broad host access, cookies, webRequest, history, tabs, downloads, native messaging, management, scripting, or clipboard permissions.
 
@@ -21,6 +21,7 @@ The ChatGPT page is treated as an independently changing and potentially adversa
 - No request interception or modification.
 - No native messaging or filesystem helper.
 - No automatic prompt submission.
+- First-install onboarding opens only a packaged extension page through `tabs.create()` after a normal install; it skips updates and temporary installs and does not require the `tabs` permission.
 - No automatic conversation deletion, account changes, or other destructive ChatGPT actions.
 - All persistent records pass through bounded normalization in `shared/settings.js`.
 - Settings imports are capped at 1 MiB before parsing and require exact portability format, product identity, and Gecko ID.
@@ -61,4 +62,4 @@ The extension packages all runtime code locally. It does not require a relaxed e
 
 Passing static validation, syntax checks, deterministic packaging, or the controlled unsigned real-Firefox smoke is not sufficient for a Stable claim. The runtime smoke uses a localhost HTTPS fixture mapped to `chatgpt.com`, temporarily installs the exact candidate, records only privacy-minimized outcomes, and does not contact the live ChatGPT service.  Current-site Firefox runtime validation, accessibility checks, privacy/security review, applicable Glaze UI acceptance, Mozilla signing, persistent installation, browser restart, and post-restart verification remain separate release gates.
 
-Security exceptions for 0.1.1: **none recorded**.
+Security exceptions for 0.1.2: **none recorded**.

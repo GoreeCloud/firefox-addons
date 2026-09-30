@@ -1,6 +1,6 @@
 # GoreeCloud ChatGPT Enhancer — Planned Features
 
-The items below are candidates for future governed work. They are not implemented or promised by version 0.1.1.
+The items below are candidates for future governed work. They are not implemented or promised by version 0.1.2.
 
 ## Near-term evaluation
 

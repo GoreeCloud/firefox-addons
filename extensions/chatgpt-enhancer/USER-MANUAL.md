@@ -1,12 +1,16 @@
 # GoreeCloud ChatGPT Enhancer — User Manual
 
+## First install
+
+After a normal first install, Firefox opens the ChatGPT Enhancer welcome guide once. It explains privacy boundaries, core shortcuts, useful commands, and where to configure the extension. The guide does not auto-open on updates or temporary development installs, and it can be reopened at any time from Settings.
+
 ## Open the command center
 
 On `chatgpt.com`, press **Alt+Shift+G** or select the floating **G** button.
 
 Type in the command search box to filter available actions. Press Enter to run the first matching command or select any command directly.
 
-Press Escape to close the command center.
+Use ArrowDown or ArrowUp to move through commands, Home or End to jump to the first or last command, and Enter or Space to activate the focused command. Press Escape to close the command center.
 
 ## Return to the prompt
 

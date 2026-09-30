@@ -3,7 +3,7 @@
 ## Product
 
 - **Name:** GoreeCloud ChatGPT Enhancer
-- **Version:** 0.1.1
+- **Version:** 0.1.2
 - **Lifecycle:** Source candidate
 - **Platform:** Firefox desktop
 - **Web target:** `https://chatgpt.com/*`
@@ -78,4 +78,4 @@ Stable qualification requires evidence beyond source merge:
 - persistent installation and full restart;
 - post-restart feature verification.
 
-Until those gates are complete, 0.1.1 remains a source candidate.
+Until those gates are complete, 0.1.2 remains a source candidate.

@@ -2,7 +2,7 @@
 
 GoreeCloud ChatGPT Enhancer is a local-first Firefox extension that improves the ChatGPT web experience with faster navigation, local conversation tools, reusable prompts, reading controls, and accessibility-aware workspace options.
 
-**Current source version:** 0.1.1  
+**Current source version:** 0.1.2  
 **Current lifecycle:** Source candidate  
 **Firefox add-on ID:** `chatgpt-enhancer@goreecloud.com`  
 **Supported web origin:** `https://chatgpt.com/*`
@@ -17,7 +17,8 @@ The extension operates entirely in Firefox on the ChatGPT page and in its own lo
 
 ## Implemented capabilities
 
-- **Command center** — press **Alt+Shift+G** or use the floating launcher.
+- **First-run guide** — a concise welcome page opens once after a normal install and remains available from Settings.
+- **Command center** — press **Alt+Shift+G** or use the floating launcher; Arrow keys, Home/End, Enter, and Space support keyboard-first command selection.
 - **Prompt focus** — press **Alt+Shift+P** to return to the composer.
 - **Conversation search** — search text in messages currently loaded in the page.
 - **Conversation outline** — list user prompts and jump directly to them.
@@ -108,4 +109,4 @@ This source-level target is not a claim of formal Glaze consumer acceptance. The
 
 ## Release boundary
 
-Version 0.1.1 remains a source candidate until applicable repository checks, current-site Firefox runtime testing, privacy/security review, Glaze UI consumer acceptance where required, Mozilla signing, persistent installation, full Firefox restart, and post-restart behavior are verified under the governed release workflow.
+Version 0.1.2 remains a source candidate until applicable repository checks, current-site Firefox runtime testing, privacy/security review, Glaze UI consumer acceptance where required, Mozilla signing, persistent installation, full Firefox restart, and post-restart behavior are verified under the governed release workflow.

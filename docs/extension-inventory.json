@@ -17,7 +17,7 @@
       "name": "GoreeCloud ChatGPT Enhancer",
       "directory": "extensions/chatgpt-enhancer",
       "gecko_id": "chatgpt-enhancer@goreecloud.com",
-      "source_version": "0.1.1",
+      "source_version": "0.1.2",
       "source_state": "source-candidate",
       "accepted_stable_version": null,
       "legacy_repository": null

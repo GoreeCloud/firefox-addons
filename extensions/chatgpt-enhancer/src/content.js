@@ -240,12 +240,45 @@
     panel = overlay.querySelector("#gcce-panel");
     commandInput.addEventListener("input", renderCommands);
     commandInput.addEventListener("keydown", (event) => {
+      const buttons = [...commandList.querySelectorAll(".gcce-command")];
+      if (!buttons.length) return;
+
       if (event.key === "Enter") {
-        const first = commandList.querySelector("button");
-        if (first) {
-          event.preventDefault();
-          first.click();
-        }
+        event.preventDefault();
+        buttons[0].click();
+      } else if (event.key === "ArrowDown") {
+        event.preventDefault();
+        buttons[0].focus();
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        buttons.at(-1).focus();
+      }
+    });
+    commandList.addEventListener("keydown", (event) => {
+      const current = event.target.closest?.(".gcce-command");
+      if (!current) return;
+      const buttons = [...commandList.querySelectorAll(".gcce-command")];
+      const index = buttons.indexOf(current);
+      let next = null;
+
+      if (event.key === "ArrowDown") next = buttons[(index + 1) % buttons.length];
+      else if (event.key === "ArrowUp") next = buttons[(index - 1 + buttons.length) % buttons.length];
+      else if (event.key === "Home") next = buttons[0];
+      else if (event.key === "End") next = buttons.at(-1);
+      else if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        current.click();
+        return;
+      }
+
+      if (next) {
+        event.preventDefault();
+        next.focus();
+      }
+    });
+    commandList.addEventListener("focusin", (event) => {
+      for (const button of commandList.querySelectorAll(".gcce-command")) {
+        button.setAttribute("aria-selected", button === event.target ? "true" : "false");
       }
     });
     document.body.appendChild(overlay);
@@ -265,6 +298,7 @@
       button.type = "button";
       button.className = "gcce-command";
       button.setAttribute("role", "option");
+      button.setAttribute("aria-selected", "false");
       const titleNode = document.createElement("span");
       titleNode.textContent = title;
       const detailNode = document.createElement("small");

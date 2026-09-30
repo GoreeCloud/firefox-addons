@@ -1,5 +1,15 @@
 # GoreeCloud ChatGPT Enhancer — Implemented Features
 
+## 0.1.2 source candidate
+
+Added on top of the 0.1.1 foundation:
+
+- First-install welcome guide with privacy, shortcut, feature, and Settings orientation.
+- Install-only/non-temporary onboarding trigger using a packaged extension page.
+- Reopen-welcome action from Settings.
+- ArrowUp/ArrowDown/Home/End command-list navigation with Enter/Space activation and semantic selection state.
+- Real-Firefox runtime coverage for command-list keyboard traversal.
+
 ## 0.1.1 source candidate
 
 Added on top of the 0.1.0 foundation:
