@@ -77,6 +77,11 @@ jobs:
           python shared/scripts/package_extension.py source-resync
           python shared/scripts/package_extension.py privacy-shield
           python shared/scripts/package_extension.py webspaces
+      - name: Record ChatGPT Enhancer unsigned package checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum dist/goreecloud-chatgpt-enhancer-*.xpi > dist/goreecloud-chatgpt-enhancer-${{ github.event.pull_request.head.sha || github.sha }}.sha256
       - name: Record Advanced Tab Manager unsigned package checksum
         shell: bash
         run: |
@@ -90,6 +95,15 @@ jobs:
             unzip -t "$package"
             unzip -l "$package"
           done
+      - name: Publish ChatGPT Enhancer candidate evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: goreecloud-chatgpt-enhancer-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/goreecloud-chatgpt-enhancer-*.xpi
+            dist/goreecloud-chatgpt-enhancer-${{ github.event.pull_request.head.sha || github.sha }}.sha256
+          if-no-files-found: error
+          retention-days: 14
       - name: Publish Advanced Tab Manager candidate evidence
         uses: actions/upload-artifact@v4
         with:
