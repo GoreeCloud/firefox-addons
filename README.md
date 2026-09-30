@@ -22,6 +22,7 @@ The repository provides:
 ```text
 extensions/
 ├── advanced-tab-manager/
+├── chatgpt-enhancer/
 ├── privacy-shield/
 ├── redirector/
 ├── source-resync/
@@ -42,7 +43,8 @@ shared/
 
 | Extension | Current directory | Firefox add-on ID | Source state | Ownership / disposition |
 | --- | --- | --- | --- | --- |
-| GoreeCloud Advanced Tab Manager | `extensions/advanced-tab-manager/` | `advanced-tab-manager@goreecloud.com` | **Stable 0.1.13** accepted for Mozilla unlisted/self-distribution | Standalone Firefox product; remains here |\n| GoreeCloud ChatGPT Enhancer | `extensions/chatgpt-enhancer/` | `chatgpt-enhancer@goreecloud.com` | **Source candidate 0.1.0**; no accepted Stable release | Standalone Firefox product; remains here |
+| GoreeCloud Advanced Tab Manager | `extensions/advanced-tab-manager/` | `advanced-tab-manager@goreecloud.com` | **Stable 0.1.13** accepted for Mozilla unlisted/self-distribution | Standalone Firefox product; remains here |
+| GoreeCloud ChatGPT Enhancer | `extensions/chatgpt-enhancer/` | `chatgpt-enhancer@goreecloud.com` | **Source candidate 0.1.0**; no accepted Stable release | Standalone Firefox product; remains here |
 | GoreeCloud Privacy Shield | `extensions/privacy-shield/` | `privacy-shield@goreecloud.com` | Stable 0.2.0 accepted for Mozilla unlisted/self-distribution | Platform adapter; retained here pending explicit platform-boundary review |
 | GoreeCloud Redirector | `extensions/redirector/` | `redirector@goreecloud.com` | Canonical source | Standalone Firefox product; canonical here; isolated legacy repository retired 2026-09-18 after history/provenance preservation |
 | GoreeCloud Source Resync | `extensions/source-resync/` | `source-resync@goreecloud.com` | Canonical source | Standalone Firefox product; canonical here; former standalone repository retired 2026-09-18 after history/release preservation |
