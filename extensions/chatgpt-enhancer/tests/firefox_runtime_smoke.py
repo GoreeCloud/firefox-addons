@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unsigned real-Firefox smoke for GoreeCloud ChatGPT Enhancer 0.1.2.
+"""Unsigned real-Firefox smoke for GoreeCloud ChatGPT Enhancer 0.1.3.
 
 The test installs the exact deterministic candidate temporarily in a clean
 headless Firefox profile. A controlled HTTPS fixture is served from localhost
@@ -35,7 +35,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 EXPECTED_ADDON_ID = "chatgpt-enhancer@goreecloud.com"
 EXPECTED_NAME = "GoreeCloud ChatGPT Enhancer"
-EXPECTED_VERSION = "0.1.2"
+EXPECTED_VERSION = "0.1.3"
 EXPECTED_ICON_PATH = "assets/icon.svg"
 FIXED_EXTENSION_UUID = "5cc41b8e-35d6-47a7-8a12-3fa5f67f5727"
 FIXTURE_USER_SECRET = "fixture-user-content-must-not-leak"
@@ -285,12 +285,32 @@ def main() -> int:
             require(str(identity.get("iconURL", "")).endswith(icon_suffix), "canonical packaged icon resolves", repr(identity))
             passes.append("addon-identity")
 
+            popup_url = f"moz-extension://{FIXED_EXTENSION_UUID}/popup/popup.html"
+            options_url = f"moz-extension://{FIXED_EXTENSION_UUID}/options/options.html"
+            driver.get(popup_url)
+            WebDriverWait(driver, 10).until(lambda d: d.title == "GoreeCloud ChatGPT Enhancer")
+            popup_handle = driver.current_window_handle
+            existing_handles = set(driver.window_handles)
+            driver.find_element("id", "open-settings").click()
+            WebDriverWait(driver, 10).until(lambda d: len(set(d.window_handles) - existing_handles) == 1)
+            settings_handle = next(iter(set(driver.window_handles) - existing_handles))
+            driver.switch_to.window(settings_handle)
+            WebDriverWait(driver, 10).until(lambda d: d.current_url == options_url)
+            require(driver.title == "ChatGPT Enhancer Settings", "popup Settings control opens packaged options page")
+            passes.append("popup-settings-navigation")
+            driver.close()
+            driver.switch_to.window(popup_handle)
+
             target = f"https://chatgpt.com:{port}/controlled-runtime"
             driver.get(target)
             WebDriverWait(driver, 15).until(lambda d: d.title == "Controlled ChatGPT Enhancer Runtime")
             WebDriverWait(driver, 15).until(lambda d: d.find_element("id", "gcce-launcher").is_displayed())
             require(driver.find_element("id", "gcce-launcher").get_attribute("aria-label") == "Open GoreeCloud ChatGPT Enhancer", "launcher semantics")
             require("gcce-wide" in driver.find_element("tag name", "html").get_attribute("class").split(), "default wide mode applied")
+            require(
+                driver.execute_script("return getComputedStyle(document.documentElement).getPropertyValue('--gcce-content-width').trim()") == "1440px",
+                "default content width is 1440px",
+            )
             require("gcce-code-wrap" in driver.find_element("tag name", "html").get_attribute("class").split(), "default code wrapping applied")
             passes.append("content-script-injection")
 
@@ -429,7 +449,7 @@ def main() -> int:
             if driver is not None:
                 driver.quit()
 
-    require(len(passes) == 10, "all runtime smoke groups passed", repr(passes))
+    require(len(passes) == 11, "all runtime smoke groups passed", repr(passes))
     print(f"Validated real-Firefox unsigned ChatGPT Enhancer runtime with {len(passes)} privacy-safe pass groups.")
     return 0
 
