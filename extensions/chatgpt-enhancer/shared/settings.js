@@ -3,6 +3,9 @@
 
   const SETTINGS_KEY = "gcce.settings.v1";
   const DRAFTS_KEY = "gcce.drafts.v1";
+  const PRODUCT_NAME = "GoreeCloud ChatGPT Enhancer";
+  const GECKO_ID = "chatgpt-enhancer@goreecloud.com";
+  const PORTABILITY_FORMAT_VERSION = 1;
   const MAX_DRAFTS = 20;
   const MAX_DRAFT_LENGTH = 20000;
   const MAX_SNIPPETS = 50;
@@ -53,10 +56,28 @@
     return { id, name, body };
   }
 
+  function uniqueSnippetIds(snippets) {
+    const used = new Set();
+    return snippets.map((snippet, index) => {
+      let id = snippet.id || `snippet-${index + 1}`;
+      if (!used.has(id)) {
+        used.add(id);
+        return snippet;
+      }
+
+      const base = id.slice(0, 88) || "snippet";
+      let suffix = 2;
+      while (used.has(`${base}-${suffix}`)) suffix += 1;
+      id = `${base}-${suffix}`;
+      used.add(id);
+      return { ...snippet, id };
+    });
+  }
+
   function normalize(input = {}) {
     const source = input && typeof input === "object" ? input : {};
     const snippets = Array.isArray(source.snippets)
-      ? source.snippets.slice(0, MAX_SNIPPETS).map(normalizeSnippet).filter(Boolean)
+      ? uniqueSnippetIds(source.snippets.slice(0, MAX_SNIPPETS).map(normalizeSnippet).filter(Boolean))
       : DEFAULTS.snippets.map((item) => ({ ...item }));
 
     return {
@@ -70,6 +91,40 @@
       fontScale: clampNumber(source.fontScale, 85, 130, DEFAULTS.fontScale),
       snippets
     };
+  }
+
+  function buildSettingsExport(input, exportedAt = new Date().toISOString()) {
+    return {
+      formatVersion: PORTABILITY_FORMAT_VERSION,
+      product: PRODUCT_NAME,
+      geckoId: GECKO_ID,
+      exportedAt: String(exportedAt),
+      settings: normalize(input)
+    };
+  }
+
+  function parseSettingsImport(text) {
+    let envelope;
+    try {
+      envelope = JSON.parse(String(text || ""));
+    } catch (_) {
+      throw new Error("Settings file is not valid JSON.");
+    }
+
+    if (!envelope || typeof envelope !== "object" || Array.isArray(envelope)) {
+      throw new Error("Settings file must contain an object.");
+    }
+    if (envelope.formatVersion !== PORTABILITY_FORMAT_VERSION) {
+      throw new Error("Unsupported settings file format.");
+    }
+    if (envelope.product !== PRODUCT_NAME || envelope.geckoId !== GECKO_ID) {
+      throw new Error("Settings file belongs to a different extension.");
+    }
+    if (!envelope.settings || typeof envelope.settings !== "object" || Array.isArray(envelope.settings)) {
+      throw new Error("Settings file does not contain settings.");
+    }
+
+    return normalize(envelope.settings);
   }
 
   async function get() {
@@ -134,6 +189,9 @@
   globalThis.GoreeChatGPTSettings = Object.freeze({
     SETTINGS_KEY,
     DRAFTS_KEY,
+    PRODUCT_NAME,
+    GECKO_ID,
+    PORTABILITY_FORMAT_VERSION,
     DEFAULTS,
     get,
     set,
@@ -142,6 +200,8 @@
     saveDraft,
     getDraft,
     clearDrafts,
-    normalize
+    normalize,
+    buildSettingsExport,
+    parseSettingsImport
   });
 })();
