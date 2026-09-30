@@ -12,7 +12,7 @@ python shared/scripts/package_extension.py chatgpt-enhancer
 python -m py_compile extensions/chatgpt-enhancer/tests/firefox_runtime_smoke.py
 ```
 
-Repository CI also runs `node --check` against maintained JavaScript and verifies generated XPI archives. The dedicated `ChatGPT Enhancer Firefox Runtime` workflow installs the deterministic unsigned XPI temporarily in a clean headless Firefox profile and exercises a controlled local HTTPS fixture mapped to `chatgpt.com`.
+Repository CI also runs `node --check` against maintained JavaScript and verifies generated XPI archives. The Firefox Repository workflow publishes the deterministic ChatGPT Enhancer unsigned XPI together with a SHA-256 checksum in a short-lived artifact named for the exact PR head or push revision, so test packages remain directly bound to validated source. The dedicated `ChatGPT Enhancer Firefox Runtime` workflow installs the deterministic unsigned XPI temporarily in a clean headless Firefox profile and exercises a controlled local HTTPS fixture mapped to `chatgpt.com`.
 
 ## Required 0.1.2 source checks
 
