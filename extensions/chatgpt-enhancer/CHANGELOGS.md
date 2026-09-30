@@ -1,5 +1,28 @@
 # GoreeCloud ChatGPT Enhancer — Changelog
 
+## 0.1.1 — Source candidate — 2026-09-30
+
+### Added
+
+- Searchable prompt snippets in the command center and Settings page.
+- Privacy-safe integration-health diagnostics and copyable diagnostic snapshot.
+- Local settings/snippet JSON export.
+- Local settings/snippet JSON import with a 1 MiB pre-parse limit, extension identity/schema validation, normalization, and explicit confirmation.
+- Regression tests for settings normalization, portability identity, bounds, duplicate IDs, and draft exclusion.
+- CI execution of the ChatGPT Enhancer local-core tests.
+
+### Preserved boundaries
+
+- Firefox permission set remains exactly `storage`.
+- Content-script scope remains exactly `https://chatgpt.com/*`.
+- Gecko data collection remains declared as none.
+- Draft recovery remains disabled by default.
+- No remote code, analytics, ChatGPT API integration, cookies, tokens, request interception, or extension-owned network requests.
+
+### Lifecycle
+
+0.1.1 remains a source candidate. No Stable, Mozilla-signed, persistent-install/restart, or current-site runtime acceptance is claimed by this source update.
+
 ## 0.1.0 — Source candidate — 2026-09-30
 
 Initial first-party source candidate.
