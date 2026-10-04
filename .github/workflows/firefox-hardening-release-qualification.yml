@@ -1,4 +1,4 @@
-name: Firefox Hardening Release Qualification
+name: Browser Hardening Release Qualification
 
 on:
   pull_request:
@@ -59,7 +59,7 @@ jobs:
           mkdir -p dist
           printf '%s\n' "$SOURCE_REVISION" > dist/firefox-hardening-source-revision.txt
 
-      - name: Validate repository and Firefox Hardening source contract
+      - name: Validate repository and Browser Hardening source contract
         run: |
           python shared/scripts/validate_repository.py
           python extensions/firefox-hardening/scripts/validate.py
@@ -70,7 +70,7 @@ jobs:
       - name: Run deterministic core tests
         run: node --test extensions/firefox-hardening/tests/*.test.js
 
-      - name: Check Firefox Hardening JavaScript syntax
+      - name: Check Browser Hardening JavaScript syntax
         shell: bash
         run: |
           set -euo pipefail
@@ -123,7 +123,7 @@ jobs:
           print("Runtime evidence is bound to the exact candidate source and XPI.")
           PY
 
-      - name: Publish Firefox Hardening qualification evidence
+      - name: Publish Browser Hardening qualification evidence
         uses: actions/upload-artifact@v4
         with:
           name: goreecloud-firefox-hardening-${{ env.FIREFOX_HARDENING_VERSION }}-${{ env.FIREFOX_HARDENING_SOURCE_REVISION }}
