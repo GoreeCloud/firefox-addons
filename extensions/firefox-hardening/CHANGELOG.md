@@ -10,6 +10,7 @@
 - Added deterministic real-Firefox release qualification; run `37165320162` accepted exact source `05c73782d9edb072fda3f6872406cb6809099011` and unsigned candidate SHA-256 `82043d51fafed43635b480f7530a5f5c2ea3ef7bd16a7f79fa2eb62ca63a1151` on Firefox 156.0.
 - Added governed Mozilla-signing, signed-payload parity, existing-version recovery, and persistent-install/full-restart acceptance infrastructure.
 - Mozilla signing run `37165746695` rejected the former add-on display name because it contained the Firefox trademark; no signed artifact was created. Renamed the user-facing product to **GoreeCloud Browser Hardening**.
-- Fresh post-rename qualification passed in run `37166231119` for exact source `7726d8ee91ae72dc81b4c407a6c1572c9bdc790c`, deterministic unsigned SHA-256 `52333b66989c61da92342f7f386c2a2f0a6718585cab96c7037f04d1760d93ba`, and Firefox 156.0. The signing workflow is rebound to this exact candidate; signed restart acceptance remains pending.
+- Fresh post-rename qualification passed in run `37166231119` for exact source `7726d8ee91ae72dc81b4c407a6c1572c9bdc790c`, deterministic unsigned SHA-256 `52333b66989c61da92342f7f386c2a2f0a6718585cab96c7037f04d1760d93ba`, and Firefox 156.0.
+- Governed run `37167368897` recovered the approved unlisted Mozilla-signed 0.1.0 XPI, verified signed package parity, persistent installation, full Firefox 156.0 restart without reinstalling, post-restart Strict-profile behavior, and release of all extension-owned settings on Restore. Signed SHA-256: `d123228b15a58762895540342d063e012195eedd2d65bf1a937e8b634604f0ae`.
 
-This entry records source and unsigned runtime qualification. It does not claim Mozilla signing or Stable release acceptance.
+This entry records source, unsigned runtime, Mozilla signing, and signed persistent-restart qualification. It does not claim Stable release acceptance.
