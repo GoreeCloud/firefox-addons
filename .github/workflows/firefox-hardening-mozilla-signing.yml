@@ -47,6 +47,8 @@ jobs:
       - uses: browser-actions/setup-geckodriver@latest
       - name: Install Selenium
         run: python -m pip install --disable-pip-version-check selenium
+      - name: Verify persistent install after Firefox restart
+        run: python extensions/firefox-hardening/tests/signed_restart_smoke.py dist/goreecloud-firefox-hardening-0.1.0-signed.xpi
       - name: Retain signed XPI evidence
         uses: actions/upload-artifact@v4
         with:
@@ -57,3 +59,4 @@ jobs:
             dist/goreecloud-firefox-hardening-0.1.0-signed.xpi
             dist/signed-sha256.txt
             dist/signed-xpi-parity.json
+            dist/firefox-hardening-signed-restart.json
