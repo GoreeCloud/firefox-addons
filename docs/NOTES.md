@@ -1,6 +1,6 @@
 # Repository Notes
 
-## Firefox Hardening — 2026-10-03
+## Browser Hardening — 2026-10-03
 
 - `extensions/firefox-hardening/` introduces a standalone Firefox product for native browser-configuration hardening without maintaining a `user.js` file.
 - The extension intentionally does not duplicate Privacy Shield's request/page filtering boundary.
