@@ -6,9 +6,9 @@ GoreeCloud Browser Hardening owns browser-configuration hardening. It does not d
 
 ## Runtime layers
 
-1. `src/hardening.js` — pure setting catalog, profile targets, control-ownership checks, change-plan generation, opt-out-aware scan/apply/restore behavior, scoring, and deterministic Firefox Enterprise Policy generation.
+1. `src/hardening.js` — pure setting catalog, profile targets, control-ownership checks, change-plan generation, opt-out-aware scan/apply/restore behavior, scoring, deterministic Firefox Enterprise Policy generation, read-only policy parsing/diff, compatibility diagnostics, and deployment-guide generation.
 2. `src/popup.js` — compact profile/score surface that opens dashboard review instead of mutating settings directly.
-3. `src/dashboard.js` — full live-state table, non-mutating change preview, persistent local opt-outs, first-use guidance, conflict reporting, reversible restore, and explicit policy export.
+3. `src/dashboard.js` — full live-state table, non-mutating change preview, persistent local opt-outs, first-use guidance, conflict reporting, reversible restore, explicit policy export, session-local policy audit, compatibility diagnostics, and deployment-guide presentation.
 4. `popup.html` / `dashboard.html` / `styles.css` — local Glaze-aligned presentation with Reduced Motion support and no remote assets.
 
 There is no background worker, content script, host permission, or network interceptor.
@@ -31,6 +31,8 @@ WebExtensions do not expose every Firefox preference. The core therefore generat
 
 The generated policy uses named Firefox Enterprise Policy keys where available and uses the `Preferences` policy only for settings without a dedicated policy in the selected profile. Saved opt-outs remove the corresponding policy entry where an equivalent control exists. Policy export is a configuration artifact, not evidence that the policy has been installed or accepted by a target Firefox runtime.
 
+Existing-policy audit is a separate read-only path. A selected or pasted JSON document is parsed in page memory and diffed against the selected generated profile. Imported policy text is not persisted or applied. Deployment guides are generated text only.
+
 ## Release boundary
 
-Version 0.1.1 is the current source candidate. Version 0.1.0 has signed persistent-install/full-restart evidence but was not promoted to Stable because post-gate user-facing rename defects required a new source version. Repository validation, JavaScript tests, deterministic packaging, and prior-version signing evidence do not establish 0.1.1 signing or Stable promotion.
+Version 0.1.1 is the current source candidate. Version 0.1.0 remains the accepted Stable rollback after signed persistent-install/full-restart acceptance and final Stable lifecycle readback. Repository validation, JavaScript tests, deterministic packaging, and prior-version signing evidence do not establish 0.1.1 signing or Stable promotion.
