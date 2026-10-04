@@ -4,7 +4,7 @@
 
 - `extensions/firefox-hardening/` introduces a standalone Firefox product for native browser-configuration hardening without maintaining a `user.js` file.
 - The extension intentionally does not duplicate Privacy Shield's request/page filtering boundary.
-- Version 0.1.0 is a source candidate only. Stable status requires independent Mozilla signing and governed runtime/restart/target acceptance.
+- Version 0.1.0 remains a source candidate. Automated real-Firefox unsigned qualification passed on exact source `05c73782d9edb072fda3f6872406cb6809099011` in run `37165320162` with candidate SHA-256 `82043d51fafed43635b480f7530a5f5c2ea3ef7bd16a7f79fa2eb62ca63a1151`; Mozilla signing, persistent-install/full-restart acceptance, and final Stable promotion remain open.
 - The implementation uses WebExtension BrowserSetting ownership semantics for reversible live controls and exports Firefox Enterprise `policies.json` for startup-level settings that extensions cannot control.
 - No host permissions, content scripts, browsing-data collection, remote configuration, or telemetry are part of the source candidate.
 
