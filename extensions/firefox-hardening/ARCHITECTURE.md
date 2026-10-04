@@ -35,4 +35,4 @@ Existing-policy audit is a separate read-only path. A selected or pasted JSON do
 
 ## Release boundary
 
-Version 0.1.1 is the current source candidate. Version 0.1.0 remains the accepted Stable rollback after signed persistent-install/full-restart acceptance and final Stable lifecycle readback. Repository validation, JavaScript tests, deterministic packaging, and prior-version signing evidence do not establish 0.1.1 signing or Stable promotion.
+Version 0.1.1 is the accepted Stable release for Mozilla unlisted/self-distribution after exact-source qualification, Mozilla signing, signed-payload parity verification, persistent installation, full Firefox restart, post-restart Strict acceptance, and ownership release in governed run `37170617536`. Version 0.1.0 remains the previous Stable rollback. Future source changes must independently repeat the applicable release gates before replacing Stable 0.1.1.
