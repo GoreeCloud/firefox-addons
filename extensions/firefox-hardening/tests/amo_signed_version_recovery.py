@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Recover an already-approved unlisted Firefox Hardening AMO version."""
+"""Recover an already-approved unlisted Browser Hardening AMO version."""
 
 from __future__ import annotations
 
