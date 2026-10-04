@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "GoreeCloud Browser Hardening",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Native Firefox privacy and security hardening with reversible WebExtension controls and Firefox Enterprise policy export.",
   "homepage_url": "https://github.com/GoreeCloud/firefox-addons/tree/main/extensions/firefox-hardening",
   "icons": {
