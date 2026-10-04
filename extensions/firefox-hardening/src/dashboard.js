@@ -42,7 +42,11 @@
     for (const row of rows) {
       const tr = document.createElement("tr");
       const title = document.createElement("td");
-      title.innerHTML = `<strong>${row.label}</strong><small>${row.group} · ${row.description}</small>`;
+      const titleStrong = document.createElement("strong");
+      titleStrong.textContent = row.label;
+      const titleDetails = document.createElement("small");
+      titleDetails.textContent = `${row.group} · ${row.description}`;
+      title.append(titleStrong, titleDetails);
       const current = document.createElement("td");
       current.textContent = row.supported ? H.formatValue(row.value) : "—";
       const target = document.createElement("td");
