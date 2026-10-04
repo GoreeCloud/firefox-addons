@@ -65,7 +65,10 @@ jobs:
           python extensions/firefox-hardening/scripts/validate.py
           python -m py_compile \
             extensions/firefox-hardening/scripts/validate.py \
-            extensions/firefox-hardening/tests/runtime_smoke.py
+            extensions/firefox-hardening/tests/runtime_smoke.py \
+            extensions/firefox-hardening/tests/signed_restart_smoke.py \
+            extensions/firefox-hardening/tests/verify_signed_xpi.py \
+            extensions/firefox-hardening/tests/amo_signed_version_recovery.py
 
       - name: Run deterministic core tests
         run: node --test extensions/firefox-hardening/tests/*.test.js
