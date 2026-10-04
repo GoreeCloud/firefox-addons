@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "manifest.json"
-EXPECTED_NAME = "GoreeCloud Firefox Hardening"
+EXPECTED_NAME = "GoreeCloud Browser Hardening"
 EXPECTED_ID = "firefox-hardening@goreecloud.com"
 EXPECTED_VERSION = "0.1.0"
 EXPECTED_PERMISSIONS = {"browserSettings", "privacy", "storage"}
