@@ -18,6 +18,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Verify qualification record
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          e = json.loads(Path("extensions/firefox-hardening/docs/qualification-evidence-0.1.0.json").read_text(encoding="utf-8"))
+          assert e["sourceRevision"] == "05c73782d9edb072fda3f6872406cb6809099011"
+          assert e["candidateSha256"] == "82043d51fafed43635b480f7530a5f5c2ea3ef7bd16a7f79fa2eb62ca63a1151"
+          assert e["runtimeAccepted"] is True
+          assert e["mozillaSigned"] is False
+          PY
       - name: Build exact candidate
         run: python shared/scripts/package_extension.py firefox-hardening --output-dir dist/candidate
       - name: Verify accepted candidate
