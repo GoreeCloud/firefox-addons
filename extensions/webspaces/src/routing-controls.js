@@ -16,11 +16,7 @@ function clone(config) {
   return structuredClone(config);
 }
 
-function optionsDurationMinutes(options) {
-  return options?.durationMinutes;
-}
-
-export function createRoutingPause(mode, { hostname = null, now = Date.now() } = {}) {
+export function createRoutingPause(mode, { hostname = null, durationMinutes: requestedDurationMinutes = null, now = Date.now() } = {}) {
   if (!ROUTING_PAUSE_MODES.includes(mode)) {
     throw new Error("Unsupported routing pause mode.");
   }
@@ -39,7 +35,7 @@ export function createRoutingPause(mode, { hostname = null, now = Date.now() } =
 
   let durationMinutes;
   if (mode === "custom-minutes") {
-    durationMinutes = Number(optionsDurationMinutes(arguments[1]));
+    durationMinutes = Number(requestedDurationMinutes);
   } else {
     durationMinutes = mode === "five-minutes" ? FIVE_MINUTES_MS / 60000 : THIRTY_MINUTES_MS / 60000;
   }
