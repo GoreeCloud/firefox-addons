@@ -1,13 +1,7 @@
-name: Firefox Hardening Mozilla Signing
+name: Browser Hardening Mozilla Signing
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/firefox-hardening-mozilla-signing.yml'
-      - 'docs/extension-inventory.json'
 
 permissions:
   contents: read
@@ -87,7 +81,7 @@ jobs:
           git fetch --no-tags origin main
           main_sha="$(git rev-parse origin/main)"
           if [[ "$GITHUB_SHA" != "$main_sha" ]]; then
-            echo '::error::Firefox Hardening signing must run from authoritative main.'
+            echo '::error::Browser Hardening signing must run from authoritative main.'
             echo "Workflow revision: $GITHUB_SHA"
             echo "Authoritative main: $main_sha"
             exit 1
@@ -262,14 +256,14 @@ jobs:
           inventory = json.loads(Path("dist/current-extension-inventory.json").read_text(encoding="utf-8"))
           entry = next((item for item in inventory.get("extensions", []) if item.get("slug") == "firefox-hardening"), None)
           if entry is None or entry.get("source_version") != version:
-              raise SystemExit("Firefox Hardening inventory/source version mismatch")
+              raise SystemExit("Browser Hardening inventory/source version mismatch")
           stable_promoted = (
               entry.get("source_state") == "stable"
               and entry.get("accepted_stable_version") == version
           )
           record = {
               "schemaVersion": 1,
-              "product": "GoreeCloud Firefox Hardening",
+              "product": "GoreeCloud Browser Hardening",
               "version": version,
               "sourceRevision": source_revision,
               "workflowRevision": workflow_revision,
