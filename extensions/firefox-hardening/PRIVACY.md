@@ -1,6 +1,6 @@
 # Privacy
 
-GoreeCloud Firefox Hardening is local-only.
+GoreeCloud Browser Hardening is local-only.
 
 The extension does not request host permissions and does not use content scripts, web-request interception, page injection, remote configuration, analytics, telemetry, or a GoreeCloud service connection.
 
