@@ -121,7 +121,8 @@
         updateFloatingButton("running", { current: index, total: names.length });
 
         const current = findSourceCards();
-        const target = current.find(item => item.name === sourceName) || current[index];
+        const target = current.find(item => item.name === sourceName)
+          || (Array.isArray(requestedSources) ? null : current[index]);
         if (!target?.card) {
           failures.push({ source: sourceName, error: "Source card could not be found after the page updated." });
           reportProgress(index + 1, names.length, sourceName);
