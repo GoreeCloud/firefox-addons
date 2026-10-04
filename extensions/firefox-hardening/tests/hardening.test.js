@@ -169,3 +169,42 @@ test("score and policy output respect saved opt-outs", async () => {
   assert.equal(policy.policies.Permissions, undefined);
   assert.equal(policy.policies.Preferences, undefined);
 });
+
+
+test("policy audit distinguishes exact and divergent documents", () => {
+  const exact = H.policyDiff("strict", H.policyFor("strict"));
+  assert.equal(H.summarizePolicyDiff(exact).differences, 0);
+  const imported = structuredClone(H.policyFor("strict"));
+  imported.policies.DisableTelemetry = false;
+  delete imported.policies.HttpsOnlyMode;
+  imported.policies.ExtraPolicy = true;
+  const summary = H.summarizePolicyDiff(H.policyDiff("strict", imported));
+  assert.equal(summary.different, 1);
+  assert.equal(summary.missing, 1);
+  assert.equal(summary.extra, 1);
+});
+
+test("policy parser validates the policies object", () => {
+  assert.throws(() => H.parsePolicyDocument(""), Error);
+  assert.throws(() => H.parsePolicyDocument("{"), Error);
+  assert.throws(() => H.parsePolicyDocument({}), Error);
+  assert.deepEqual(H.parsePolicyDocument('{"policies":{"DisableTelemetry":true}}'), {
+    policies: { DisableTelemetry: true }
+  });
+});
+
+test("compatibility diagnostics are profile-aware and honor opt-outs", () => {
+  assert.deepEqual(H.compatibilityDiagnostics("balanced"), []);
+  const strict = H.compatibilityDiagnostics("strict");
+  assert.equal(strict.length, 2);
+  const maximum = H.compatibilityDiagnostics("maximum", ["peerConnectionEnabled"]);
+  assert.equal(maximum.some((item) => item.settingId === "peerConnectionEnabled"), false);
+  assert.equal(maximum.some((item) => item.settingId === "passwordSavingEnabled"), true);
+});
+
+test("deployment guides identify platform targets and remain non-mutating", () => {
+  assert.equal(H.deploymentGuide("linux", "strict").includes("/etc/firefox/policies/policies.json"), true);
+  assert.equal(H.deploymentGuide("windows", "balanced").includes("distribution\\policies.json"), true);
+  assert.equal(H.deploymentGuide("macos", "maximum").includes("Firefox.app/Contents/Resources/distribution/policies.json"), true);
+  assert.equal(H.deploymentGuide("linux", "strict").includes("does not write files"), true);
+});
