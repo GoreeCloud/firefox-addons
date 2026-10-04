@@ -316,6 +316,9 @@ def main() -> int:
                     all(result["profiles"].values()),
                     result["restoreAccepted"],
                     result["policyGenerationAccepted"],
+                    result["policyAuditAccepted"],
+                    result["compatibilityDiagnosticsAccepted"],
+                    result["deploymentGuideAccepted"],
                     result["popupAccepted"],
                 ]
             )
