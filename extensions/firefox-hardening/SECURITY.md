@@ -1,6 +1,6 @@
 # Security
 
-GoreeCloud Firefox Hardening deliberately keeps a narrow trust boundary.
+GoreeCloud Browser Hardening deliberately keeps a narrow trust boundary.
 
 - No host permissions or content scripts.
 - No remote code, remote configuration, update feed, or runtime network request.
