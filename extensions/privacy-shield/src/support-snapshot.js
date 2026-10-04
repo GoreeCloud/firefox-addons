@@ -5,6 +5,7 @@
   const PROFILE_LABELS = Object.freeze({
     standard: "Standard",
     strict: "Strict",
+    lockdown: "Lockdown",
     compatible: "Compatible",
     custom: "Custom"
   });

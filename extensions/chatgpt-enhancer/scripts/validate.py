@@ -17,7 +17,7 @@ def main() -> None:
         fail("Manifest V3 is required")
     if manifest.get("name") != "GoreeCloud ChatGPT Enhancer":
         fail("unexpected product name")
-    if manifest.get("version") != "0.1.2":
+    if manifest.get("version") != "0.1.3":
         fail("source version must remain synchronized with canonical inventory")
     if manifest.get("background") != {"scripts": ["background.js"]}:
         fail("unexpected background runtime registration")
@@ -142,7 +142,7 @@ def main() -> None:
 
     if "draftRecovery: false" not in settings_js:
         fail("draft recovery must remain off by default")
-    for marker in ("MAX_DRAFTS = 20", "MAX_DRAFT_LENGTH = 20000", "MAX_SNIPPETS = 50"):
+    for marker in ("MAX_DRAFTS = 20", "MAX_DRAFT_LENGTH = 20000", "MAX_SNIPPETS = 50", "MAX_SNIPPET_TAGS = 8"):
         if marker not in settings_js:
             fail(f"local storage bound missing: {marker}")
 
@@ -157,7 +157,7 @@ def main() -> None:
 
     if "MAX_IMPORT_BYTES = 1024 * 1024" not in options_js:
         fail("settings import must retain the 1 MiB pre-parse limit")
-    for marker in ("export-settings", "import-settings", "import-file", "snippet-filter"):
+    for marker in ("export-settings", "import-settings", "import-file", "snippet-filter", "snippet-tags"):
         options_html = (ROOT / "options/options.html").read_text(encoding="utf-8")
         if marker not in options_html:
             fail(f"settings UI capability missing: {marker}")
@@ -217,7 +217,7 @@ def main() -> None:
             fail(f"security record missing required boundary: {marker}")
 
     print(
-        "Validated GoreeCloud ChatGPT Enhancer 0.1.2 source candidate: "
+        "Validated GoreeCloud ChatGPT Enhancer 0.1.3 source candidate: "
         "ChatGPT-only scope, storage-only permission, no-data-collection declaration, "
         "local-first runtime, bounded draft recovery, privacy-safe diagnostics, bounded settings portability, accessibility fallbacks, and required documentation."
     )

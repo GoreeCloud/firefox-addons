@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unsigned real-Firefox smoke for GoreeCloud ChatGPT Enhancer 0.1.2.
+"""Unsigned real-Firefox smoke for GoreeCloud ChatGPT Enhancer 0.1.3.
 
 The test installs the exact deterministic candidate temporarily in a clean
 headless Firefox profile. A controlled HTTPS fixture is served from localhost
@@ -35,7 +35,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 EXPECTED_ADDON_ID = "chatgpt-enhancer@goreecloud.com"
 EXPECTED_NAME = "GoreeCloud ChatGPT Enhancer"
-EXPECTED_VERSION = "0.1.2"
+EXPECTED_VERSION = "0.1.3"
 EXPECTED_ICON_PATH = "assets/icon.svg"
 FIXED_EXTENSION_UUID = "5cc41b8e-35d6-47a7-8a12-3fa5f67f5727"
 FIXTURE_USER_SECRET = "fixture-user-content-must-not-leak"

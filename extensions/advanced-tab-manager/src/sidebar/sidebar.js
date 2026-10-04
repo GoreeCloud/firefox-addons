@@ -386,6 +386,18 @@ content.addEventListener("click", async (event) => {
       await handleTreeAction(button);
       return;
     }
+    if (button.dataset.action === "toggle-cleanup-protected") {
+      const result = await browser.runtime.sendMessage({
+        type: "atm:set-cleanup-protected",
+        tabId,
+        protected: button.dataset.protected === "true"
+      });
+      if (!result?.ok) {
+        summary.textContent = `Cleanup protection was not changed (${result?.reason || "unknown error"}).`;
+      }
+      await load();
+      return;
+    }
     if (button.dataset.action === "snooze") {
       const tab = flattenTabs(snapshot).find((candidate) => candidate.id === tabId);
       if (!tab) {

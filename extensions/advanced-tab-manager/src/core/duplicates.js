@@ -9,7 +9,7 @@ export const DUPLICATE_POLICY = Object.freeze({
   mode: DUPLICATE_MODES.EXACT_URL,
   normalizedMode: DUPLICATE_MODES.TRACKING_NORMALIZED,
   reviewRequired: true,
-  blockedReasons: Object.freeze(["active", "pinned", "audible", "hidden", "incognito", "tree-child", "tree-parent", "excluded"])
+  blockedReasons: Object.freeze(["active", "pinned", "audible", "hidden", "incognito", "protected", "tree-child", "tree-parent", "excluded"])
 });
 
 const TRACKING_PARAMETERS = Object.freeze(new Set([
@@ -32,6 +32,7 @@ function blockReasons(tab, treeParentLogicalIds, excludedTabIds) {
   if (tab.audible) reasons.push("audible");
   if (tab.hidden) reasons.push("hidden");
   if (tab.incognito) reasons.push("incognito");
+  if (tab.cleanupProtected) reasons.push("protected");
   if (tab.treeParentLogicalId) reasons.push("tree-child");
   if (tab.logicalId && treeParentLogicalIds.has(tab.logicalId)) reasons.push("tree-parent");
   if (excludedTabIds.has(tab.id)) reasons.push("excluded");

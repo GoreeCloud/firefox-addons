@@ -50,6 +50,28 @@
         blockMedia: false
       })
     }),
+    lockdown: Object.freeze({
+      label: "Lockdown",
+      description: "Enable the strongest built-in site protections, including third-party script/frame blocking, media blocking, cosmetic filtering, and reviewed annoyance controls. Use when breakage is acceptable.",
+      values: Object.freeze({
+        stripTrackingParams: true,
+        cleanLinks: true,
+        bypassRedirects: true,
+        disablePing: true,
+        stripETags: true,
+        blockAds: true,
+        blockTrackers: true,
+        blockMalware: true,
+        blockMiners: true,
+        blockPopups: true,
+        blockAnnoyances: true,
+        cosmeticFiltering: true,
+        localResources: true,
+        blockThirdPartyScripts: true,
+        blockThirdPartyFrames: true,
+        blockMedia: true
+      })
+    }),
     compatible: Object.freeze({
       label: "Compatible",
       description: "Keep tracker, malware, URL, ping, and ETag protections while reducing page-altering behavior.",
@@ -83,7 +105,7 @@
     const override = settings?.siteOverrides?.[host];
     if (!override) return "standard";
     if (!PROFILE_KEYS.some((key) => Object.prototype.hasOwnProperty.call(override, key))) return "standard";
-    for (const name of ["strict", "compatible"]) {
+    for (const name of ["lockdown", "strict", "compatible"]) {
       const values = PROFILES[name].values;
       if (PROFILE_KEYS.every((key) => override[key] === values[key])) return name;
     }

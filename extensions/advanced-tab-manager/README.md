@@ -4,9 +4,9 @@ GoreeCloud Advanced Tab Manager is a local-first Firefox WebExtension for high-s
 
 ## Current source state
 
-- Version: `0.1.13`
-- Source state: `stable`
-- Product lifecycle: Stable
+- Version: `0.1.14`
+- Source state: `source-candidate`
+- Product lifecycle: Candidate source; accepted Stable remains 0.1.13
 - Component class: Browser extension
 - Firefox add-on ID: `advanced-tab-manager@goreecloud.com`
 - Minimum Firefox version: `139.0`
@@ -16,11 +16,17 @@ GoreeCloud Advanced Tab Manager is a local-first Firefox WebExtension for high-s
 - Content scripts: none
 - Private browsing: explicitly not allowed by manifest
 
-The current source implements live Firefox tab/window/native-group reconstruction, durable logical-ID trees, persistent Tab Sets, transactional tab stashing, reviewed exact-URL duplicate cleanup with opt-in conservative tracking-normalized review, restart-safe one-shot snoozing, deterministic local rules with bounded explicit actions, a keyboard-first command palette, explicit user-invoked Firefox tab-title renaming, the Manager/diagnostics foundation, source-preserving local backup portability, and ATM-008E retained local session snapshots.
+The current source implements live Firefox tab/window/native-group reconstruction, durable logical-ID trees, persistent Tab Sets, transactional tab stashing, reviewed exact-URL duplicate cleanup with opt-in conservative tracking-normalized review and durable per-tab cleanup protection, restart-safe one-shot snoozing, deterministic local rules with bounded explicit actions, a keyboard-first command palette, explicit user-invoked Firefox tab-title renaming, the Manager/diagnostics foundation, source-preserving local backup portability, and ATM-008E retained local session snapshots.
 
 Firefox runtime tab/group IDs remain transient. Tree relationships use extension-owned logical IDs. Tab Set/stash, snooze, and rule data remain in separate versioned local records so one capability does not silently reinterpret another capability's saved state.
 
 The restorable URL boundary is `http:`, `https:`, and `about:blank`. Privileged or executable schemes are not persisted for reconstruction.
+
+### Protected duplicate-cleanup exclusions — 0.1.14 source candidate
+
+0.1.14 adds a durable **Protected** tab state for reviewed duplicate cleanup. The flag is stored in Firefox session metadata, rendered in the sidebar, and re-read from live browser state immediately before cleanup. Protected tabs are never selected for automatic closure by the reviewed duplicate cleanup path. The feature adds no host permission and does not change the existing active, pinned, audible, hidden/private, or tree-link cleanup guards.
+
+0.1.14 is source-candidate work only. Accepted Stable remains 0.1.13 until the exact candidate completes the applicable runtime, security, signing, persistent-install, restart, and user-facing acceptance gates.
 
 ### Extension icon packaging correction — 0.1.13
 

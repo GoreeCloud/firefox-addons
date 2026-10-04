@@ -97,7 +97,7 @@
     }).catch(() => {});
   }
 
-  async function resyncAll() {
+  async function resyncAll(requestedSources = null) {
     if (STATE.running) return { ok: false, count: 0, total: 0, failures: [], message: "A resync run is already in progress." };
     STATE.running = true;
     updateFloatingButton("running");
@@ -106,7 +106,10 @@
     let count = 0;
     try {
       const initial = findSourceCards();
-      const names = initial.map(item => item.name);
+      const availableNames = initial.map(item => item.name);
+      const names = Array.isArray(requestedSources)
+        ? [...new Set(requestedSources.filter((name) => typeof name === "string" && name))]
+        : availableNames;
       if (!names.length) return { ok: false, count: 0, total: 0, failures: [], message: "No Google Drive sources were found on this page." };
 
       updateFloatingButton("running", { current: 0, total: names.length });
@@ -118,7 +121,8 @@
         updateFloatingButton("running", { current: index, total: names.length });
 
         const current = findSourceCards();
-        const target = current.find(item => item.name === sourceName) || current[index];
+        const target = current.find(item => item.name === sourceName)
+          || (Array.isArray(requestedSources) ? null : current[index]);
         if (!target?.card) {
           failures.push({ source: sourceName, error: "Source card could not be found after the page updated." });
           reportProgress(index + 1, names.length, sourceName);
@@ -211,7 +215,7 @@
   browser.runtime.onMessage.addListener(async message => {
     if (message?.type === "GOREECLOUD_RESYNC_ALL") {
       if (!isSourcesPage()) return { ok: false, count: 0, total: 0, failures: [], message: "The active ChatGPT page is not a Project Sources page." };
-      return resyncAll();
+      return resyncAll(message.sources);
     }
   });
 
