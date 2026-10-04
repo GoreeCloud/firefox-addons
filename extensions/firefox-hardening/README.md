@@ -9,7 +9,7 @@ It is **not** a fork of arkenfox/user.js and does not copy or redistribute arken
 
 ## Source status
 
-Version 0.1.0 remains a **source candidate** and is not yet an accepted Stable or Mozilla-signed release. The pre-rename candidate at source revision `05c73782d9edb072fda3f6872406cb6809099011` passed real-Firefox unsigned qualification in workflow run `37165320162` with SHA-256 `82043d51fafed43635b480f7530a5f5c2ea3ef7bd16a7f79fa2eb62ca63a1151`. Mozilla signing run `37165746695` then rejected the former add-on name because it contained the Firefox trademark; no signed artifact was produced. The product display name is now **GoreeCloud Browser Hardening**, so this revised packaged candidate requires fresh exact-source qualification and a new deterministic XPI digest before signing can resume. Persistent-install/full-restart acceptance and final lifecycle promotion remain separate gates.
+Version 0.1.0 remains a **source candidate** and is not yet an accepted Stable or Mozilla-signed release. After the trademark-safe rename to **GoreeCloud Browser Hardening**, exact source revision `7726d8ee91ae72dc81b4c407a6c1572c9bdc790c` passed fresh real-Firefox unsigned qualification in workflow run `37166231119`. The deterministic renamed candidate SHA-256 is `52333b66989c61da92342f7f386c2a2f0a6718585cab96c7037f04d1760d93ba`, tested with Firefox 156.0. The Mozilla-signing workflow is rebound to this exact candidate; signed payload parity, persistent-install/full-restart acceptance, and final lifecycle promotion remain separate gates.
 
 ## Current capabilities
 
