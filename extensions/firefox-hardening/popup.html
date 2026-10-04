@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>GoreeCloud Firefox Hardening</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="popup-shell">
+  <main class="popup-card">
+    <header class="brand-row">
+      <img src="icons/firefox-hardening.svg" alt="">
+      <div>
+        <h1>Firefox Hardening</h1>
+        <p>Native privacy controls</p>
+      </div>
+      <button id="openDashboard" class="icon-button" type="button" title="Open dashboard" aria-label="Open dashboard">↗</button>
+    </header>
+
+    <section class="score-card" aria-live="polite">
+      <div class="score-ring" id="scoreRing"><strong id="score">—</strong><span>%</span></div>
+      <div>
+        <p class="eyebrow">Selected profile</p>
+        <strong id="profileLabel">Balanced</strong>
+        <p id="scoreText" class="muted">Scanning Firefox settings…</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="quickProfiles" class="section-compact">
+      <div class="section-heading">
+        <h2 id="quickProfiles">Profiles</h2>
+        <button id="rescan" class="icon-button small" type="button" title="Rescan" aria-label="Rescan">↻</button>
+      </div>
+      <div class="profile-grid" role="group" aria-label="Hardening profiles">
+        <button data-profile="balanced" type="button"><span aria-hidden="true">◒</span><b>Balanced</b></button>
+        <button data-profile="strict" type="button"><span aria-hidden="true">◆</span><b>Strict</b></button>
+        <button data-profile="maximum" class="danger-zone" type="button"><span aria-hidden="true">⬢</span><b>Maximum</b></button>
+      </div>
+      <p id="profileHelp" class="muted small-text">Strong baseline privacy with low expected site breakage.</p>
+    </section>
+
+    <div id="status" class="status-line" role="status"></div>
+    <footer>No browsing-content access • no telemetry • reversible</footer>
+  </main>
+  <script src="src/hardening.js"></script>
+  <script src="src/popup.js"></script>
+</body>
+</html>
