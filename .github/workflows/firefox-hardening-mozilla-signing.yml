@@ -1,7 +1,6 @@
 name: Firefox Hardening Mozilla Signing
 
 on:
-  workflow_dispatch:
   push:
     branches: [main]
     paths:
