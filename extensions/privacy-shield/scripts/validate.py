@@ -83,8 +83,9 @@ detail_rows = popup_js.split('function detailRows', 1)[1].split('let currentReas
 render_details = popup_js.split('function renderDetails', 1)[1].split('function setProfileHelp', 1)[0]
 for section in (detail_rows, render_details):
     assert '.url' not in section and 'finalUrl' not in section, "Protection details must not read or render request URLs"
-assert 'strict' in profile_js and 'compatible' in profile_js and 'standard' in profile_js, "site protection profiles are incomplete"
-assert 'blockThirdPartyScripts: true' in profile_js and 'blockThirdPartyFrames: true' in profile_js, "Strict profile must add third-party script/frame blocking"
+assert 'strict' in profile_js and 'lockdown' in profile_js and 'compatible' in profile_js and 'standard' in profile_js, "site protection profiles are incomplete"
+assert 'blockThirdPartyScripts: true' in profile_js and 'blockThirdPartyFrames: true' in profile_js, "Strict/Lockdown profiles must add third-party script/frame blocking"
+assert 'blockAnnoyances: true' in profile_js and 'blockMedia: true' in profile_js, "Lockdown profile must opt into reviewed annoyance and media blocking"
 assert 'cosmeticFiltering: false' in profile_js and 'localResources: false' in profile_js, "Compatible profile must reduce page-altering behavior"
 assert 'enabled' not in profile_js.split('values: Object.freeze({', 1)[1].split('})', 1)[0], "profile values must not silently change the independent site enabled state"
 

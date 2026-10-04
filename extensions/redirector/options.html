@@ -47,11 +47,34 @@
       </form>
     </section>
 
+    <section class="glass-card section-card" aria-labelledby="tester-heading">
+      <div class="section-heading"><div><p class="eyebrow">Test</p><h2 id="tester-heading">Preview a URL</h2></div></div>
+      <div class="field">
+        <span>URL</span>
+        <input id="test-url" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://example.com/path">
+        <small>Checks the built-in rule and your enabled custom rules locally without navigating.</small>
+      </div>
+      <div class="button-row"><button id="test-rule" class="secondary-button" type="button">Test URL</button></div>
+      <p id="test-status" class="form-status" role="status"></p>
+    </section>
+
+    <section class="glass-card section-card" aria-labelledby="backup-heading">
+      <div class="section-heading"><div><p class="eyebrow">Portability</p><h2 id="backup-heading">Redirect backup</h2></div></div>
+      <p>Export rule definitions to a local JSON file. Import validates every rule first; rules that need a host permission you have not already granted are restored paused so Firefox can ask only when you enable them.</p>
+      <div class="button-row">
+        <button id="export-rules" class="secondary-button" type="button">Export redirects</button>
+        <button id="import-rules" class="secondary-button" type="button">Import redirects</button>
+      </div>
+      <input id="import-file" type="file" accept="application/json,.json" hidden>
+      <p id="backup-status" class="form-status" role="status"></p>
+    </section>
+
     <section class="privacy-panel" aria-labelledby="privacy-heading">
       <h2 id="privacy-heading">Privacy boundary</h2>
       <p>GoreeCloud Redirector does not inject scripts into websites, read page contents, use analytics, or contact an external service. Firefox evaluates redirect rules internally. Custom source-site access is requested only when you save a rule for that site.</p>
     </section>
   </main>
+  <script src="portability.js"></script>
   <script src="options.js"></script>
 </body>
 </html>

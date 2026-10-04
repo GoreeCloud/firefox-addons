@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "GoreeCloud ChatGPT Enhancer",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Local-first Firefox productivity, navigation, export, prompt, and accessibility enhancements for ChatGPT.",
   "homepage_url": "https://github.com/GoreeCloud/firefox-addons",
   "incognito": "not_allowed",

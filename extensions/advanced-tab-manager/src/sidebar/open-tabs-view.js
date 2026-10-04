@@ -46,6 +46,7 @@ function createTabRow(tab, { depth = 0, treeStatus = "root", groupsById, window,
   if (tab.audible) badges.append(badge("Audio"));
   if (tab.muted) badges.append(badge("Muted"));
   if (tab.discarded) badges.append(badge("Discarded"));
+  if (tab.cleanupProtected) badges.append(badge("Protected"));
   if (treeStatus === "attached") badges.append(badge("Tree child"));
   if (treeStatus === "orphaned") badges.append(badge("Parent unavailable"));
   if (treeStatus === "cycle") badges.append(badge("Tree repaired for view"));
@@ -62,6 +63,13 @@ function createTabRow(tab, { depth = 0, treeStatus = "root", groupsById, window,
     actions.append(actionButton("◷", "Choose when to snooze this tab after its recovery record and alarm are verified", "snooze", tab.id));
     actions.append(actionButton("▣", "Stash tab locally and close it after persistence is verified", "stash", tab.id));
   }
+  actions.append(actionButton(
+    tab.cleanupProtected ? "◆" : "◇",
+    tab.cleanupProtected ? "Allow this tab to participate in reviewed duplicate cleanup" : "Protect this tab from reviewed duplicate cleanup",
+    "toggle-cleanup-protected",
+    tab.id,
+    { protected: !tab.cleanupProtected }
+  ));
   if (branchInfo?.size > 1) {
     if (branchInfo.movable) {
       actions.append(actionButton(`↗${branchInfo.size}`, `Move this tree branch to a new window (${branchInfo.size} tabs)`, "move-tree-branch-new-window", tab.id, { branchSize: branchInfo.size }));

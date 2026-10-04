@@ -4,6 +4,7 @@ import { persistVerifiedTabString } from "../core/tree-session.js";
 
 export const LOGICAL_ID_KEY = "goreecloud.advancedTabManager.logicalId.v1";
 export const TREE_PARENT_LOGICAL_ID_KEY = "goreecloud.advancedTabManager.treeParentLogicalId.v1";
+export const CLEANUP_PROTECTED_KEY = "goreecloud.advancedTabManager.cleanupProtected.v1";
 
 function presentString(value) {
   return typeof value === "string" && value.length > 0 ? value : null;
@@ -24,27 +25,34 @@ export function createBrowserState({ browser, broadcastChange, idFactory }) {
     return presentString(await browser.sessions.getTabValue(tabId, TREE_PARENT_LOGICAL_ID_KEY));
   }
 
+  async function readCleanupProtected(tabId) {
+    return (await browser.sessions.getTabValue(tabId, CLEANUP_PROTECTED_KEY)) === true;
+  }
+
   async function readLiveSnapshot() {
     const windows = await browser.windows.getAll({ populate: true, windowTypes: ["normal"] });
     const groups = await browser.tabGroups.query({});
     const logicalIds = new Map();
     const treeParents = new Map();
+    const cleanupProtectedTabIds = new Set();
 
     await Promise.all(windows.flatMap((window) => (window.tabs || []).map(async (tab) => {
       if (!Number.isInteger(tab.id) || tab.incognito) return;
       try {
-        const [logicalId, treeParentLogicalId] = await Promise.all([
+        const [logicalId, treeParentLogicalId, cleanupProtected] = await Promise.all([
           ensureLogicalId(tab.id),
-          readTreeParentLogicalId(tab.id)
+          readTreeParentLogicalId(tab.id),
+          readCleanupProtected(tab.id)
         ]);
         logicalIds.set(tab.id, logicalId);
         if (treeParentLogicalId) treeParents.set(tab.id, treeParentLogicalId);
+        if (cleanupProtected) cleanupProtectedTabIds.add(tab.id);
       } catch (error) {
         console.warn("Advanced Tab Manager could not read durable tab metadata", tab.id, error);
       }
     })));
 
-    return buildSnapshot({ windows, groups, logicalIds, treeParents });
+    return buildSnapshot({ windows, groups, logicalIds, treeParents, cleanupProtectedTabIds });
   }
 
   async function adoptOpenerRelationship(tab) {
@@ -69,6 +77,24 @@ export function createBrowserState({ browser, broadcastChange, idFactory }) {
       value: parentLogicalId
     });
     if (!persisted.ok) throw new Error("tree parent verification failed");
+  }
+
+  async function setCleanupProtected(tabId, protectedValue) {
+    const tab = await browser.tabs.get(tabId);
+    if (tab.incognito) return { ok: false, reason: "private-window" };
+
+    if (protectedValue) {
+      await browser.sessions.setTabValue(tabId, CLEANUP_PROTECTED_KEY, true);
+      const verified = await browser.sessions.getTabValue(tabId, CLEANUP_PROTECTED_KEY);
+      if (verified !== true) return { ok: false, reason: "cleanup-protection-verification-failed" };
+    } else {
+      await browser.sessions.removeTabValue(tabId, CLEANUP_PROTECTED_KEY);
+      const verified = await browser.sessions.getTabValue(tabId, CLEANUP_PROTECTED_KEY);
+      if (verified === true) return { ok: false, reason: "cleanup-protection-removal-failed" };
+    }
+
+    broadcastChange(protectedValue ? "cleanup-protection-set" : "cleanup-protection-removed");
+    return { ok: true, protected: Boolean(protectedValue) };
   }
 
   async function setTreeParent(tabId, parentTabId) {
@@ -121,6 +147,7 @@ export function createBrowserState({ browser, broadcastChange, idFactory }) {
     adoptOpenerRelationship,
     ensureLogicalId,
     readLiveSnapshot,
+    setCleanupProtected,
     setTreeParent
   };
 }
