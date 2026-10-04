@@ -278,7 +278,8 @@ def main() -> int:
 
             navigate_extension(driver, "popup.html")
             WebDriverWait(driver, 15).until(lambda d: len(d.find_elements("css selector", "[data-profile]")) == 3)
-            footer = driver.find_element("css selector", "footer").text
+            footer_element = driver.find_element("css selector", "footer")
+            footer = str(footer_element.get_attribute("textContent") or "").strip()
             require("no telemetry" in footer.lower(), "popup privacy boundary visible", footer)
             result["popupAccepted"] = True
 
