@@ -1,0 +1,136 @@
+name: Firefox Hardening Release Qualification
+
+on:
+  pull_request:
+    paths:
+      - 'extensions/firefox-hardening/**'
+      - 'shared/scripts/package_extension.py'
+      - 'shared/scripts/validate_repository.py'
+      - 'docs/extension-inventory.json'
+      - '.github/workflows/firefox-hardening-release-qualification.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'extensions/firefox-hardening/**'
+      - 'shared/scripts/package_extension.py'
+      - 'shared/scripts/validate_repository.py'
+      - 'docs/extension-inventory.json'
+      - '.github/workflows/firefox-hardening-release-qualification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: firefox-hardening-release-qualification-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: latest
+
+      - uses: browser-actions/setup-geckodriver@latest
+
+      - name: Install Selenium
+        run: python -m pip install --disable-pip-version-check selenium
+
+      - name: Resolve exact candidate identity
+        shell: bash
+        env:
+          SOURCE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          [[ "$SOURCE_REVISION" =~ ^[0-9a-f]{40}$ ]]
+          echo "FIREFOX_HARDENING_SOURCE_REVISION=$SOURCE_REVISION" >> "$GITHUB_ENV"
+          mkdir -p dist
+          printf '%s\n' "$SOURCE_REVISION" > dist/firefox-hardening-source-revision.txt
+
+      - name: Validate repository and Firefox Hardening source contract
+        run: |
+          python shared/scripts/validate_repository.py
+          python extensions/firefox-hardening/scripts/validate.py
+          python -m py_compile \
+            extensions/firefox-hardening/scripts/validate.py \
+            extensions/firefox-hardening/tests/runtime_smoke.py
+
+      - name: Run deterministic core tests
+        run: node --test extensions/firefox-hardening/tests/*.test.js
+
+      - name: Check Firefox Hardening JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          find extensions/firefox-hardening -type f -name '*.js' -print0 | while IFS= read -r -d '' file; do
+            node --check "$file"
+          done
+
+      - name: Build deterministic unsigned candidate
+        run: python shared/scripts/package_extension.py firefox-hardening --output-dir dist/candidate
+
+      - name: Bind candidate checksum and package identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(python -c 'import json; print(json.load(open("extensions/firefox-hardening/manifest.json", encoding="utf-8"))["version"])')"
+          XPI="dist/candidate/goreecloud-firefox-hardening-${VERSION}.xpi"
+          test -f "$XPI"
+          unzip -t "$XPI"
+          sha256sum "$XPI" > dist/firefox-hardening-candidate-sha256.txt
+          echo "FIREFOX_HARDENING_XPI=$XPI" >> "$GITHUB_ENV"
+          echo "FIREFOX_HARDENING_VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Run real Firefox runtime qualification
+        env:
+          FIREFOX_HARDENING_SOURCE_REVISION: ${{ env.FIREFOX_HARDENING_SOURCE_REVISION }}
+        run: python extensions/firefox-hardening/tests/runtime_smoke.py "$FIREFOX_HARDENING_XPI"
+
+      - name: Verify runtime evidence binds exact candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          xpi = Path(os.environ["FIREFOX_HARDENING_XPI"])
+          evidence = json.loads(Path("dist/firefox-hardening-runtime-acceptance.json").read_text(encoding="utf-8"))
+          digest = hashlib.sha256(xpi.read_bytes()).hexdigest()
+          expected_source = os.environ["FIREFOX_HARDENING_SOURCE_REVISION"]
+          if evidence.get("sourceRevision") != expected_source:
+              raise SystemExit(f"runtime evidence source mismatch: {evidence.get('sourceRevision')} != {expected_source}")
+          if evidence.get("candidateSha256") != digest:
+              raise SystemExit("runtime evidence candidate SHA-256 mismatch")
+          if evidence.get("runtimeAccepted") is not True:
+              raise SystemExit("real Firefox runtime qualification did not pass")
+          if evidence.get("version") != os.environ["FIREFOX_HARDENING_VERSION"]:
+              raise SystemExit("runtime evidence version mismatch")
+          print("Runtime evidence is bound to the exact candidate source and XPI.")
+          PY
+
+      - name: Publish Firefox Hardening qualification evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: goreecloud-firefox-hardening-${{ env.FIREFOX_HARDENING_VERSION }}-${{ env.FIREFOX_HARDENING_SOURCE_REVISION }}
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            dist/candidate/goreecloud-firefox-hardening-*.xpi
+            dist/firefox-hardening-candidate-sha256.txt
+            dist/firefox-hardening-source-revision.txt
+            dist/firefox-hardening-runtime-acceptance.json
