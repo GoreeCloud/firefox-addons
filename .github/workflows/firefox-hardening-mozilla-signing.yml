@@ -33,3 +33,21 @@ jobs:
           WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
           WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
         run: npx --yes web-ext@10.5.0 sign --source-dir signing-source --artifacts-dir dist/mozilla --channel=unlisted --approval-timeout=900000 --timeout=900000
+      - name: Verify signed XPI parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          candidate="dist/candidate/goreecloud-firefox-hardening-0.1.0.xpi"
+          signed="$(find dist/mozilla -maxdepth 1 -type f -name '*.xpi' -print -quit)"
+          test -n "$signed"
+          python extensions/firefox-hardening/tests/verify_signed_xpi.py 0.1.0 "$candidate" "$signed"
+      - name: Retain signed XPI evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: goreecloud-firefox-hardening-0.1.0-mozilla-signed
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            dist/goreecloud-firefox-hardening-0.1.0-signed.xpi
+            dist/signed-sha256.txt
+            dist/signed-xpi-parity.json
