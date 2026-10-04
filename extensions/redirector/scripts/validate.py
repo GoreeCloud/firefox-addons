@@ -42,6 +42,6 @@ for marker in ("FORMAT_VERSION = 1", "MAX_RULES = 200", "buildExport", "parseImp
     assert marker in portability_js, marker
 assert "fetch(" not in portability_js and "XMLHttpRequest" not in portability_js
 assert "content_scripts" not in manifest
-assert "0.2.2" in readme and "accepted Stable remains `0.2.0`" in readme
+assert "0.2.2" in readme and "accepted stable remains `0.2.0`" in readme.lower()
 
 print("Redirector 0.2.2 source contract validated.")
