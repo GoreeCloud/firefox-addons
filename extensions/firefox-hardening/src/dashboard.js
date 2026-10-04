@@ -113,7 +113,7 @@
   }
 
   async function restore() {
-    if (!confirm("Release all browser settings currently controlled by GoreeCloud Firefox Hardening? Firefox will fall back to the next controlling source or its defaults.")) return;
+    if (!confirm("Release all browser settings currently controlled by GoreeCloud Browser Hardening? Firefox will fall back to the next controlling source or its defaults.")) return;
     setBusy(true);
     $("#status").textContent = "Restoring extension-controlled settings…";
     try {
