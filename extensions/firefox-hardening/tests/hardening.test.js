@@ -90,6 +90,35 @@ test("settings controlled elsewhere are never overwritten", async () => {
   assert.equal(results.find((item) => item.id === "networkPredictionEnabled").status, "not-controllable");
 });
 
+test("change preview identifies selectable changes, conflicts, and already-compliant targets", async () => {
+  const browser = fakeBrowser();
+  browser.privacy.network.networkPredictionEnabled.value = false;
+  browser.privacy.websites.hyperlinkAuditingEnabled.levelOfControl = "controlled_by_other_extensions";
+  const rows = await H.inspectAll(browser, "balanced");
+  const plan = H.buildChangePlan(rows);
+  assert.equal(plan.find((item) => item.id === "networkPredictionEnabled").status, "already-compliant");
+  assert.equal(plan.find((item) => item.id === "hyperlinkAuditingEnabled").status, "conflict");
+  assert.equal(plan.find((item) => item.id === "trackingProtectionMode").status, "change");
+  assert.equal(plan.find((item) => item.id === "trackingProtectionMode").selectable, true);
+  assert.equal(plan.find((item) => item.id === "resistFingerprinting").status, "unchanged");
+});
+
+test("per-setting opt-out excludes only reviewed targets and rejects unknown IDs", async () => {
+  const browser = fakeBrowser();
+  const results = await H.applyProfile(browser, "balanced", {
+    excludedSettingIds: ["networkPredictionEnabled", "cookieConfig"]
+  });
+  assert.equal(browser.privacy.network.networkPredictionEnabled.value, true);
+  assert.equal(browser.privacy.websites.hyperlinkAuditingEnabled.value, false);
+  assert.deepEqual(browser.privacy.websites.cookieConfig.value, { behavior: "allow_all", nonPersistentCookies: false });
+  assert.equal(results.find((item) => item.id === "networkPredictionEnabled").status, "excluded");
+  assert.equal(results.find((item) => item.id === "cookieConfig").status, "excluded");
+  await assert.rejects(
+    () => H.applyProfile(browser, "balanced", { excludedSettingIds: ["not-a-setting"] }),
+    /Unknown hardening setting/
+  );
+});
+
 test("restore clears only values owned by this extension", async () => {
   const browser = fakeBrowser();
   await H.applyProfile(browser, "strict");
