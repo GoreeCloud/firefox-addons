@@ -93,7 +93,7 @@
     const source = input && typeof input === "object" ? input : {};
     const snippets = Array.isArray(source.snippets)
       ? uniqueSnippetIds(source.snippets.slice(0, MAX_SNIPPETS).map(normalizeSnippet).filter(Boolean))
-      : DEFAULTS.snippets.map((item) => ({ ...item }));
+      : uniqueSnippetIds(DEFAULTS.snippets.map(normalizeSnippet).filter(Boolean));
 
     return {
       focusMode: Boolean(source.focusMode ?? DEFAULTS.focusMode),
