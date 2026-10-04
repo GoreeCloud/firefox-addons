@@ -37,6 +37,16 @@ test("creates timed routing pauses and expires them deterministically", () => {
   assert.equal(getRoutingPause(config, now + 5 * 60_000), null);
 });
 
+test("custom routing pauses accept bounded user-selected minutes", () => {
+  const now = Date.parse("2026-10-03T12:00:00Z");
+  const pause = createRoutingPause("custom-minutes", { durationMinutes: 90, now });
+  assert.equal(pause.mode, "timed");
+  assert.equal(pause.durationMinutes, 90);
+  assert.equal(Date.parse(pause.expiresAt), now + 90 * 60_000);
+  assert.throws(() => createRoutingPause("custom-minutes", { durationMinutes: 0, now }), /between 1 and 720/);
+  assert.throws(() => createRoutingPause("custom-minutes", { durationMinutes: 721, now }), /between 1 and 720/);
+});
+
 test("site-only pause applies only to the exact hostname", () => {
   const now = Date.parse("2026-09-12T08:00:00Z");
   const pause = createRoutingPause("site", { hostname: "docs.example.com", now });
