@@ -2,6 +2,13 @@ name: Browser Hardening Mozilla Signing
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/firefox-hardening-mozilla-signing.yml'
+      - 'extensions/firefox-hardening/tests/signed_restart_smoke.py'
+      - 'docs/extension-inventory.json'
 
 permissions:
   contents: read
@@ -12,10 +19,10 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  FIREFOX_HARDENING_RELEASE_VERSION: '0.1.0'
-  FIREFOX_HARDENING_RELEASE_SOURCE_REVISION: '7726d8ee91ae72dc81b4c407a6c1572c9bdc790c'
-  FIREFOX_HARDENING_RELEASE_CANDIDATE_SHA256: '52333b66989c61da92342f7f386c2a2f0a6718585cab96c7037f04d1760d93ba'
-  FIREFOX_HARDENING_QUALIFICATION_RUN_ID: '37166231119'
+  FIREFOX_HARDENING_RELEASE_VERSION: '0.1.1'
+  FIREFOX_HARDENING_RELEASE_SOURCE_REVISION: '2c4f18cf22f534f21bed7db3861dfee1174c9a2a'
+  FIREFOX_HARDENING_RELEASE_CANDIDATE_SHA256: 'bb7c6b3523dbf0576ef04fb197b352ace64dd0b2db376d7b9ed17a0d6c79f971'
+  FIREFOX_HARDENING_QUALIFICATION_RUN_ID: '37168484117'
 
 jobs:
   sign-and-restart:
