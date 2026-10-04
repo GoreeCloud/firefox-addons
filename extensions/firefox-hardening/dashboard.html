@@ -23,6 +23,18 @@
       </div>
     </header>
 
+    <section id="onboardingPanel" class="panel onboarding-panel" aria-labelledby="onboardingHeading">
+      <div>
+        <p class="eyebrow">First-use guidance</p>
+        <h2 id="onboardingHeading">Review before Browser Hardening changes Firefox</h2>
+        <p>Profiles are starting points, not mandatory bundles. Review every targeted setting, keep only the changes you want, and apply them explicitly. Your opt-outs stay local on this Firefox profile.</p>
+      </div>
+      <div class="button-row">
+        <button id="onboardingReview" class="primary" type="button">Review Balanced</button>
+        <button id="onboardingDismiss" class="secondary" type="button">Dismiss guidance</button>
+      </div>
+    </section>
+
     <section class="hero-grid">
       <article class="panel score-panel">
         <p class="eyebrow">Hardening score</p>
@@ -44,7 +56,7 @@
     <section class="panel" aria-labelledby="profilesHeading">
       <div class="section-heading dashboard-heading">
         <div>
-          <p class="eyebrow">Quick apply</p>
+          <p class="eyebrow">Review before apply</p>
           <h2 id="profilesHeading">Hardening profiles</h2>
         </div>
         <span id="selectedBadge" class="badge">Balanced</span>
@@ -64,6 +76,24 @@
         </button>
       </div>
       <p id="profileDescription" class="muted"></p>
+      <p class="muted small-text">Selecting a profile opens a review. Nothing changes until you choose Apply reviewed changes.</p>
+    </section>
+
+    <section id="previewPanel" class="panel review-panel" aria-labelledby="previewTitle" hidden>
+      <div class="section-heading dashboard-heading">
+        <div>
+          <p class="eyebrow">Change preview</p>
+          <h2 id="previewTitle">Review profile</h2>
+        </div>
+        <span id="previewBadge" class="badge">No changes applied</span>
+      </div>
+      <p id="previewSummary"></p>
+      <p id="previewRisk" class="muted small-text"></p>
+      <div id="previewList" class="review-list" role="group" aria-label="Profile setting choices"></div>
+      <div class="button-row review-actions">
+        <button id="previewApply" class="primary" type="button">Apply reviewed changes</button>
+        <button id="previewCancel" class="secondary" type="button">Cancel</button>
+      </div>
     </section>
 
     <section class="panel" aria-labelledby="settingsHeading">
@@ -94,7 +124,7 @@
           <button id="downloadPolicy" class="primary" type="button"><span aria-hidden="true">↓</span> Save policies.json</button>
         </div>
       </div>
-      <p>Firefox does not expose every browser preference to WebExtensions. The generated <code>policies.json</code> uses Firefox's native enterprise policy engine for additional startup-level controls. Review before deployment; policy files take effect after Firefox restarts.</p>
+      <p>Firefox does not expose every browser preference to WebExtensions. The generated <code>policies.json</code> uses Firefox's native enterprise policy engine for additional startup-level controls and respects saved per-setting opt-outs where an equivalent policy exists. Review before deployment; policy files take effect after Firefox restarts.</p>
       <textarea id="policyOutput" rows="18" spellcheck="false" aria-label="Generated policies.json"></textarea>
       <details class="install-help">
         <summary>Installation locations</summary>
