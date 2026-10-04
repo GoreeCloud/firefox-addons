@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">GoreeCloud Firefox Hardening</title>
+  <defs>
+    <linearGradient id="g" x1="20" y1="14" x2="106" y2="116" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#65d7ff"/>
+      <stop offset="1" stop-color="#7a5cff"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#g)" d="M64 8 108 25v31c0 29-17 50-44 64C37 106 20 85 20 56V25L64 8Z"/>
+  <path fill="#0f1730" d="M64 22 95 34v22c0 21-11 37-31 49-20-12-31-28-31-49V34l31-12Z"/>
+  <path fill="#eef7ff" d="m55 79-15-15 9-9 7 7 23-25 9 8-33 34Z"/>
+</svg>
