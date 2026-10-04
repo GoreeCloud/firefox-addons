@@ -39,3 +39,8 @@ select { width: 100%; min-height: 40px; padding: 0 11px; border-radius: 12px; bo
 footer { display: flex; justify-content: space-between; padding: 6px 3px 0; color: var(--muted); font-size: 10px; }
 @media (prefers-reduced-motion: reduce) { .switch span, .switch span::after { transition: none; } }
 .details { margin-top: 6px; font-size: 11px; font-weight: 650; color: var(--muted); }
+
+.history-list { display: grid; gap: 8px; }
+.history-item { display: grid; gap: 2px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 11px; }
+.history-item:first-child { padding-top: 0; border-top: 0; }
+.history-item span { color: var(--muted); }
