@@ -10,6 +10,31 @@ let statusPoll = null;
 
 function render(settings) {
   $("version").textContent = `v${browser.runtime.getManifest().version}`;
+  const retry = $("retryFailed");
+  const failedCount = settings.lastResult?.failures?.length || 0;
+  retry.hidden = failedCount === 0;
+  retry.textContent = failedCount ? `Retry ${failedCount} failed source${failedCount === 1 ? "" : "s"}` : "Retry failed sources";
+
+  const history = $("runHistory");
+  history.replaceChildren();
+  const recent = Array.isArray(settings.runHistory) ? settings.runHistory.slice(0, 5) : [];
+  if (!recent.length) {
+    const empty = document.createElement("span");
+    empty.className = "muted";
+    empty.textContent = "No run history yet.";
+    history.append(empty);
+  } else {
+    for (const entry of recent) {
+      const row = document.createElement("div");
+      row.className = "history-item";
+      const summary = document.createElement("strong");
+      summary.textContent = `${entry.count || 0}/${entry.total || 0} requested${entry.failures?.length ? ` · ${entry.failures.length} failed` : ""}`;
+      const meta = document.createElement("span");
+      meta.textContent = `${entry.reason === "retry" ? "Retry" : "Manual"} · ${entry.at ? new Date(entry.at).toLocaleString() : "Unknown time"}`;
+      row.append(summary, meta);
+      history.append(row);
+    }
+  }
 
   if (!settings.lastResult) {
     $("status").textContent = "Not run yet.";
@@ -65,13 +90,12 @@ function startStatusPolling() {
   statusPoll = setInterval(refreshRuntimeStatus, 400);
 }
 
-$("runNow").addEventListener("click", async () => {
+async function runMessage(type) {
   requestPending = true;
   renderRunButton({ running: true });
   startStatusPolling();
-
   try {
-    const result = await browser.runtime.sendMessage({ type: "GOREECLOUD_RUN_NOW" });
+    const result = await browser.runtime.sendMessage({ type });
     if (!result?.ok && !result?.count) {
       $("status").textContent = result?.message || "Run failed.";
     }
@@ -82,7 +106,10 @@ $("runNow").addEventListener("click", async () => {
     requestPending = false;
     await refreshRuntimeStatus();
   }
-});
+}
+
+$("runNow").addEventListener("click", () => runMessage("GOREECLOUD_RUN_NOW"));
+$("retryFailed").addEventListener("click", () => runMessage("GOREECLOUD_RETRY_FAILED"));
 
 browser.storage.onChanged.addListener(() => load());
 
