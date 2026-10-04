@@ -123,6 +123,12 @@
     return CONTROL_LEVELS.has(levelOfControl);
   }
 
+  function normalizeExcludedSettingIds(value) {
+    const input = value instanceof Set ? [...value] : Array.isArray(value) ? value : [];
+    const known = new Set(SETTINGS.map((setting) => setting.id));
+    return new Set(input.filter((id) => typeof id === "string" && known.has(id)));
+  }
+
   async function inspectSetting(browserApi, setting, profileId) {
     const api = resolvePath(browserApi, setting.path);
     const target = targetFor(setting, profileId);
@@ -158,20 +164,50 @@
     return rows;
   }
 
-  function score(rows) {
-    const targeted = rows.filter((row) => row.target != null && row.supported);
+  function buildChangePlan(rows, excludedSettingIds = []) {
+    const excluded = normalizeExcludedSettingIds(excludedSettingIds);
+    return (Array.isArray(rows) ? rows : []).map((row) => {
+      let status = "change";
+      if (row.target == null) status = "unchanged";
+      else if (!row.supported) status = "unsupported";
+      else if (row.compliant) status = "already-compliant";
+      else if (!canControl(row.levelOfControl)) status = "conflict";
+      const selectable = row.target != null && row.supported && canControl(row.levelOfControl);
+      return {
+        id: row.id,
+        label: row.label,
+        group: row.group,
+        description: row.description,
+        current: clone(row.value),
+        target: clone(row.target),
+        levelOfControl: row.levelOfControl,
+        status,
+        selectable,
+        selectedByDefault: selectable && !excluded.has(row.id)
+      };
+    });
+  }
+
+  function score(rows, excludedSettingIds = []) {
+    const excluded = normalizeExcludedSettingIds(excludedSettingIds);
+    const targeted = rows.filter((row) => row.target != null && row.supported && !excluded.has(row.id));
     if (!targeted.length) return { matched: 0, total: 0, percent: 0 };
     const matched = targeted.filter((row) => row.compliant).length;
     return { matched, total: targeted.length, percent: Math.round((matched / targeted.length) * 100) };
   }
 
-  async function applyProfile(browserApi, profileId) {
+  async function applyProfile(browserApi, profileId, options = {}) {
     if (!PROFILES[profileId]) throw new Error(`Unknown hardening profile: ${profileId}`);
+    const excluded = normalizeExcludedSettingIds(options.excludedSettingIds);
     const results = [];
     for (const setting of SETTINGS) {
       const target = targetFor(setting, profileId);
       if (target == null) {
         results.push({ id: setting.id, status: "unchanged" });
+        continue;
+      }
+      if (excluded.has(setting.id)) {
+        results.push({ id: setting.id, status: "excluded" });
         continue;
       }
       const api = resolvePath(browserApi, setting.path);
@@ -221,52 +257,61 @@
     return results;
   }
 
-  function policyFor(profileId) {
+  function policyFor(profileId, excludedSettingIds = []) {
     if (!PROFILES[profileId]) throw new Error(`Unknown hardening profile: ${profileId}`);
     const strict = profileId !== "balanced";
     const maximum = profileId === "maximum";
+    const excluded = normalizeExcludedSettingIds(excludedSettingIds);
     const policies = {
       DisableFirefoxStudies: true,
       DisableTelemetry: true,
-      NetworkPrediction: false,
-      HttpsOnlyMode: "enabled",
-      Cookies: {
+      HttpsOnlyMode: "enabled"
+    };
+
+    if (!excluded.has("networkPredictionEnabled")) policies.NetworkPrediction = false;
+    if (!excluded.has("cookieConfig")) {
+      policies.Cookies = {
         Behavior: "reject-tracker-and-partition-foreign",
         BehaviorPrivateBrowsing: "reject-tracker-and-partition-foreign",
         Locked: false
-      },
-      EnableTrackingProtection: {
+      };
+    }
+    if (!excluded.has("trackingProtectionMode")) {
+      policies.EnableTrackingProtection = {
         Value: true,
         Locked: false,
         Cryptomining: true,
         Fingerprinting: true,
         EmailTracking: true,
         Category: strict ? "strict" : "standard"
-      }
-    };
-
-    if (strict) {
+      };
+    }
+    if (strict && !excluded.has("webNotificationsDisabled")) {
       policies.Permissions = {
         Notifications: {
           BlockNewRequests: true,
           Locked: false
         }
       };
-      policies.Preferences = {
-        "privacy.resistFingerprinting": { Value: true, Status: "default" }
-      };
     }
 
-    if (maximum) {
-      policies.Preferences["media.peerconnection.enabled"] = { Value: false, Status: "default" };
-      policies.Preferences["signon.rememberSignons"] = { Value: false, Status: "default" };
+    const preferences = {};
+    if (strict && !excluded.has("resistFingerprinting")) {
+      preferences["privacy.resistFingerprinting"] = { Value: true, Status: "default" };
     }
+    if (maximum && !excluded.has("peerConnectionEnabled")) {
+      preferences["media.peerconnection.enabled"] = { Value: false, Status: "default" };
+    }
+    if (maximum && !excluded.has("passwordSavingEnabled")) {
+      preferences["signon.rememberSignons"] = { Value: false, Status: "default" };
+    }
+    if (Object.keys(preferences).length) policies.Preferences = preferences;
 
     return { policies };
   }
 
-  function serializePolicy(profileId) {
-    return `${JSON.stringify(policyFor(profileId), null, 2)}\n`;
+  function serializePolicy(profileId, excludedSettingIds = []) {
+    return `${JSON.stringify(policyFor(profileId, excludedSettingIds), null, 2)}\n`;
   }
 
   function formatValue(value) {
@@ -282,12 +327,14 @@
     PROFILES,
     SETTINGS,
     applyProfile,
+    buildChangePlan,
     canControl,
     clearManaged,
     deepEqual,
     formatValue,
     inspectAll,
     inspectSetting,
+    normalizeExcludedSettingIds,
     policyFor,
     resolvePath,
     score,
