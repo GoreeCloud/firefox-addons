@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Real Firefox runtime qualification for GoreeCloud Browser Hardening 0.1.0."""
+"""Real Firefox runtime qualification for GoreeCloud Browser Hardening 0.1.1."""
 
 from __future__ import annotations
 
@@ -199,6 +199,9 @@ def main() -> int:
         "profiles": {},
         "restoreAccepted": False,
         "policyGenerationAccepted": False,
+        "policyAuditAccepted": False,
+        "compatibilityDiagnosticsAccepted": False,
+        "deploymentGuideAccepted": False,
         "popupAccepted": False,
         "runtimeAccepted": False,
     }
