@@ -190,7 +190,7 @@ def main() -> int:
         "product": "GoreeCloud Firefox Hardening",
         "version": EXPECTED_VERSION,
         "firefoxAddonId": EXPECTED_ADDON_ID,
-        "sourceRevision": os.environ.get("GITHUB_SHA", ""),
+        "sourceRevision": os.environ.get("FIREFOX_HARDENING_SOURCE_REVISION", os.environ.get("GITHUB_SHA", "")),
         "candidateSha256": candidate_digest,
         "temporaryUnsignedInstall": False,
         "profiles": {},
