@@ -1,6 +1,6 @@
-# GoreeCloud Firefox Hardening
+# GoreeCloud Browser Hardening
 
-GoreeCloud Firefox Hardening is a local-first Firefox hardening manager designed as a native alternative to maintaining a large `user.js` file by hand.
+GoreeCloud Browser Hardening is a local-first Firefox hardening manager designed as a native alternative to maintaining a large `user.js` file by hand.
 
 It is **not** a fork of arkenfox/user.js and does not copy or redistribute arkenfox preference lists. The design instead uses supported Firefox interfaces directly:
 
@@ -9,7 +9,7 @@ It is **not** a fork of arkenfox/user.js and does not copy or redistribute arken
 
 ## Source status
 
-Version 0.1.0 remains a **source candidate** and is not yet an accepted Stable or Mozilla-signed release. Real-Firefox unsigned release qualification passed on exact source revision `05c73782d9edb072fda3f6872406cb6809099011` in workflow run `37165320162`, using deterministic candidate SHA-256 `82043d51fafed43635b480f7530a5f5c2ea3ef7bd16a7f79fa2eb62ca63a1151` and Firefox 156.0. Mozilla signing, persistent-install/full-restart acceptance, and final lifecycle promotion remain separate gates.
+Version 0.1.0 remains a **source candidate** and is not yet an accepted Stable or Mozilla-signed release. The earlier display-name candidate passed real-Firefox unsigned qualification in run `37165320162`, but Mozilla Add-ons rejected its add-on name because it contained the Firefox trademark. The current `GoreeCloud Browser Hardening` candidate changes packaged identity text and therefore requires fresh exact-candidate qualification before signing. Mozilla signing, persistent-install/full-restart acceptance, and final lifecycle promotion remain separate gates.
 
 ## Current capabilities
 
@@ -21,7 +21,7 @@ Version 0.1.0 remains a **source candidate** and is not yet an accepted Stable o
 - Tracking protection, hyperlink-auditing, speculative-network, anti-fingerprinting, web-notification, WebRTC, and password-saving controls where the selected profile applies them.
 - Native `policies.json` generation for telemetry/studies controls, network prediction, HTTPS-Only Mode, cookies, tracking protection, notification prompts, anti-fingerprinting, and Maximum-mode WebRTC/password-saving preferences.
 - No host permissions, content scripts, page inspection, browsing-history collection, remote configuration, or telemetry.
-- Automated real-Firefox qualification of all three profiles, policy generation, popup privacy copy, and reversible restore against the deterministic unsigned XPI.
+- Automated real-Firefox qualification covering all three profiles, policy generation, popup privacy copy, and reversible restore.
 
 ## Profiles
 
@@ -43,7 +43,7 @@ Run the local core tests:
 node --test extensions/firefox-hardening/tests/*.test.js
 ```
 
-Run repository validation, core tests, and build a deterministic unsigned candidate:
+Run repository validation, extension validation, and build a deterministic unsigned candidate:
 
 ```bash
 python shared/scripts/validate_repository.py
