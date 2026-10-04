@@ -9,7 +9,7 @@ It is **not** a fork of arkenfox/user.js and does not copy or redistribute arken
 
 ## Source status
 
-Version 0.1.0 is a **source candidate**. It is not an accepted Stable, Mozilla-signed, or release-qualified build.
+Version 0.1.0 remains a **source candidate** and is not yet an accepted Stable or Mozilla-signed release. Real-Firefox unsigned release qualification passed on exact source revision `05c73782d9edb072fda3f6872406cb6809099011` in workflow run `37165320162`, using deterministic candidate SHA-256 `82043d51fafed43635b480f7530a5f5c2ea3ef7bd16a7f79fa2eb62ca63a1151` and Firefox 156.0. Mozilla signing, persistent-install/full-restart acceptance, and final lifecycle promotion remain separate gates.
 
 ## Current capabilities
 
@@ -21,6 +21,7 @@ Version 0.1.0 is a **source candidate**. It is not an accepted Stable, Mozilla-s
 - Tracking protection, hyperlink-auditing, speculative-network, anti-fingerprinting, web-notification, WebRTC, and password-saving controls where the selected profile applies them.
 - Native `policies.json` generation for telemetry/studies controls, network prediction, HTTPS-Only Mode, cookies, tracking protection, notification prompts, anti-fingerprinting, and Maximum-mode WebRTC/password-saving preferences.
 - No host permissions, content scripts, page inspection, browsing-history collection, remote configuration, or telemetry.
+- Automated real-Firefox qualification of all three profiles, policy generation, popup privacy copy, and reversible restore against the deterministic unsigned XPI.
 
 ## Profiles
 
@@ -42,14 +43,16 @@ Run the local core tests:
 node --test extensions/firefox-hardening/tests/*.test.js
 ```
 
-Run repository validation and build a deterministic unsigned candidate:
+Run repository validation, core tests, and build a deterministic unsigned candidate:
 
 ```bash
 python shared/scripts/validate_repository.py
+python extensions/firefox-hardening/scripts/validate.py
+node --test extensions/firefox-hardening/tests/*.test.js
 python shared/scripts/package_extension.py firefox-hardening
 ```
 
-Packaging success does not establish Mozilla signing or Stable acceptance.
+Packaging or unsigned runtime qualification does not establish Mozilla signing or Stable acceptance. The governed signing workflow additionally verifies signed payload parity and persistent-install/full-restart behavior before lifecycle promotion can be considered.
 
 ## Privacy and security
 
