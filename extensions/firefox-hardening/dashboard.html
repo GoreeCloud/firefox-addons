@@ -146,6 +146,23 @@
       <div id="compatibilityList" class="diagnostic-list" aria-live="polite"></div>
     </section>
 
+    <section class="panel" aria-labelledby="auditHeading">
+      <div class="section-heading dashboard-heading">
+        <div>
+          <p class="eyebrow">Read-only comparison</p>
+          <h2 id="auditHeading">Existing policies.json audit</h2>
+        </div>
+        <span id="policyAuditSummary" class="badge">No policy loaded</span>
+      </div>
+      <p>Paste an existing Firefox Enterprise Policy file to compare it with the selected Browser Hardening profile. The imported text remains local to this page session and is never applied automatically.</p>
+      <textarea id="policyAuditInput" rows="9" spellcheck="false" aria-label="Existing policies.json to audit" placeholder="Paste an existing policies.json here."></textarea>
+      <div class="button-row">
+        <button id="auditPolicy" class="primary" type="button">Audit policy</button>
+        <button id="clearPolicyAudit" class="secondary" type="button">Clear</button>
+      </div>
+      <div id="policyDiffList" class="policy-diff-list" aria-live="polite"></div>
+    </section>
+
     <div id="status" class="status-line page-status" role="status"></div>
   </main>
   <script src="src/hardening.js"></script>
