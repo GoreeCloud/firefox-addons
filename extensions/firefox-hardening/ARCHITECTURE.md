@@ -6,9 +6,9 @@ GoreeCloud Browser Hardening owns browser-configuration hardening. It does not d
 
 ## Runtime layers
 
-1. `src/hardening.js` — pure setting catalog, profile targets, control-ownership checks, scan/apply/restore behavior, scoring, and deterministic Firefox Enterprise Policy generation.
-2. `src/popup.js` — compact profile/score surface using the shared core.
-3. `src/dashboard.js` — full live-state table, conflict reporting, reversible restore, and explicit policy export.
+1. `src/hardening.js` — pure setting catalog, profile targets, control-ownership checks, change-plan generation, opt-out-aware scan/apply/restore behavior, scoring, and deterministic Firefox Enterprise Policy generation.
+2. `src/popup.js` — compact profile/score surface that opens dashboard review instead of mutating settings directly.
+3. `src/dashboard.js` — full live-state table, non-mutating change preview, persistent local opt-outs, first-use guidance, conflict reporting, reversible restore, and explicit policy export.
 4. `popup.html` / `dashboard.html` / `styles.css` — local Glaze-aligned presentation with Reduced Motion support and no remote assets.
 
 There is no background worker, content script, host permission, or network interceptor.
@@ -23,14 +23,14 @@ Restore calls `clear()` only when Firefox reports `controlled_by_this_extension`
 
 Profile targets are explicit per setting. `null` means the profile deliberately leaves that browser setting unchanged; it does not mean false.
 
-Balanced targets only the lower-breakage baseline. Strict adds anti-fingerprinting and web-notification defaults. Maximum adds disruptive WebRTC/password-saving changes.
+Balanced targets only the lower-breakage baseline. Strict adds anti-fingerprinting and web-notification defaults. Maximum adds disruptive WebRTC/password-saving changes. Before application, the dashboard materializes a change plan from live Firefox state. User opt-outs are stored locally and suppress both WebExtension writes and matching generated policy controls.
 
 ## Enterprise Policy boundary
 
 WebExtensions do not expose every Firefox preference. The core therefore generates an independent native `policies.json` document for a user or administrator to review and deploy. The extension does not write to Firefox installation directories or attempt privilege escalation.
 
-The generated policy uses named Firefox Enterprise Policy keys where available and uses the `Preferences` policy only for settings without a dedicated policy in the selected profile. Policy export is a configuration artifact, not evidence that the policy has been installed or accepted by a target Firefox runtime.
+The generated policy uses named Firefox Enterprise Policy keys where available and uses the `Preferences` policy only for settings without a dedicated policy in the selected profile. Saved opt-outs remove the corresponding policy entry where an equivalent control exists. Policy export is a configuration artifact, not evidence that the policy has been installed or accepted by a target Firefox runtime.
 
 ## Release boundary
 
-Version 0.1.0 is a source candidate. Repository validation, JavaScript tests, and deterministic XPI packaging are necessary source checks but do not establish Mozilla signing, persistent-install acceptance, restart acceptance, target-environment acceptance, or Stable promotion.
+Version 0.1.1 is the current source candidate. Version 0.1.0 has signed persistent-install/full-restart evidence but was not promoted to Stable because post-gate user-facing rename defects required a new source version. Repository validation, JavaScript tests, deterministic packaging, and prior-version signing evidence do not establish 0.1.1 signing or Stable promotion.

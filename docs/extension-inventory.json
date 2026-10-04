@@ -27,8 +27,8 @@
       "name": "GoreeCloud Browser Hardening",
       "directory": "extensions/firefox-hardening",
       "gecko_id": "firefox-hardening@goreecloud.com",
-      "source_version": "0.1.0",
-      "source_state": "stable",
+      "source_version": "0.1.1",
+      "source_state": "source-candidate",
       "accepted_stable_version": "0.1.0",
       "legacy_repository": null
     },

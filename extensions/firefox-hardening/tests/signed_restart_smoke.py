@@ -17,7 +17,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 import runtime_smoke as runtime
 
 EXPECTED_ADDON_ID = "firefox-hardening@goreecloud.com"
-EXPECTED_VERSION = "0.1.0"
+EXPECTED_VERSION = "0.1.1"
 CONTROL_LEVELS = {"controllable_by_this_extension", "controlled_by_this_extension"}
 STRICT_TARGETS = {
     "networkPredictionEnabled": False,

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
-  <title id="title">GoreeCloud Firefox Hardening</title>
+  <title id="title">GoreeCloud Browser Hardening</title>
   <defs>
     <linearGradient id="g" x1="20" y1="14" x2="106" y2="116" gradientUnits="userSpaceOnUse">
       <stop stop-color="#65d7ff"/>

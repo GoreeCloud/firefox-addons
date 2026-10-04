@@ -2,13 +2,15 @@
   "use strict";
   const H = globalThis.FirefoxHardeningCore;
   let selectedProfile = "balanced";
+  let excludedSettingIds = [];
 
   const $ = (selector) => document.querySelector(selector);
 
   async function loadSelectedProfile() {
     try {
-      const stored = await browser.storage.local.get("selectedProfile");
+      const stored = await browser.storage.local.get(["selectedProfile", "hardeningExcludedSettingIds"]);
       if (H.PROFILES[stored.selectedProfile]) selectedProfile = stored.selectedProfile;
+      excludedSettingIds = [...H.normalizeExcludedSettingIds(stored.hardeningExcludedSettingIds || [])].sort();
     } catch {}
   }
 
@@ -28,7 +30,7 @@
   async function refresh() {
     updateProfileText();
     const rows = await H.inspectAll(browser, selectedProfile);
-    const result = H.score(rows);
+    const result = H.score(rows, excludedSettingIds);
     $("#score").textContent = String(result.percent);
     $("#scoreRing").style.setProperty("--score", `${result.percent * 3.6}deg`);
     const blocked = rows.filter((row) => row.target != null && row.supported && !row.compliant && !H.canControl(row.levelOfControl)).length;
@@ -40,21 +42,14 @@
   async function chooseProfile(profileId) {
     const profile = H.PROFILES[profileId];
     if (!profile) return;
-    if (profileId === "maximum" && !confirm("Maximum mode can break video calls and disables Firefox password-saving prompts. Apply it anyway?")) return;
     setBusy(true);
-    $("#status").textContent = `Applying ${profile.label}…`;
+    $("#status").textContent = `Opening ${profile.label} review…`;
     try {
-      const results = await H.applyProfile(browser, profileId);
-      selectedProfile = profileId;
-      await browser.storage.local.set({ selectedProfile });
-      const changed = results.filter((item) => item.status === "applied").length;
-      const blocked = results.filter((item) => item.status === "not-controllable").length;
-      $("#status").textContent = blocked
-        ? `${changed} changed; ${blocked} setting(s) are controlled elsewhere.`
-        : `${profile.label} applied. ${changed} setting(s) changed.`;
-      await refresh();
+      await browser.storage.local.set({ pendingProfilePreview: profileId });
+      await browser.runtime.openOptionsPage();
+      $("#status").textContent = "Review opened. No Firefox setting changed from the popup.";
     } catch (error) {
-      $("#status").textContent = `Could not apply profile: ${error.message || error}`;
+      $("#status").textContent = `Could not open review: ${error.message || error}`;
     } finally {
       setBusy(false);
     }

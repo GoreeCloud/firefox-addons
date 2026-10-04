@@ -2,6 +2,9 @@
   "use strict";
   const H = globalThis.FirefoxHardeningCore;
   let selectedProfile = "balanced";
+  let excludedSettingIds = [];
+  let previewProfileId = null;
+  let previewPlan = [];
 
   const $ = (selector) => document.querySelector(selector);
 
@@ -21,6 +24,7 @@
   }
 
   function statusClass(row) {
+    if (row.target != null && excludedSettingIds.includes(row.id)) return "status-neutral";
     if (!row.supported && row.target != null) return "status-warn";
     if (row.target == null) return "status-neutral";
     if (row.compliant) return "status-good";
@@ -29,6 +33,7 @@
   }
 
   function statusText(row) {
+    if (row.target != null && excludedSettingIds.includes(row.id)) return "Opted out";
     if (!row.supported && row.target != null) return "Unavailable";
     if (row.target == null) return "Not changed";
     if (row.compliant) return "Matches";
@@ -65,9 +70,12 @@
 
   function updateProfilePresentation() {
     const profile = H.PROFILES[selectedProfile];
-    $("#selectedBadge").textContent = profile.label;
+    const optOutCount = excludedSettingIds.length;
+    $("#selectedBadge").textContent = optOutCount
+      ? `${profile.label} · ${optOutCount} opt-out${optOutCount === 1 ? "" : "s"}`
+      : profile.label;
     $("#profileDescription").textContent = profile.summary;
-    $("#policyOutput").value = H.serializePolicy(selectedProfile);
+    $("#policyOutput").value = H.serializePolicy(selectedProfile, excludedSettingIds);
     for (const button of document.querySelectorAll("[data-profile]")) {
       button.dataset.active = String(button.dataset.profile === selectedProfile);
     }
@@ -77,43 +85,155 @@
     updateProfilePresentation();
     const rows = await H.inspectAll(browser, selectedProfile);
     renderRows(rows);
-    const result = H.score(rows);
+    const result = H.score(rows, excludedSettingIds);
     $("#score").textContent = String(result.percent);
-    $("#scoreSummary").textContent = `${result.matched} of ${result.total} available profile targets currently match.`;
+    const optOutText = excludedSettingIds.length
+      ? ` · ${excludedSettingIds.length} saved opt-out${excludedSettingIds.length === 1 ? "" : "s"}`
+      : "";
+    $("#scoreSummary").textContent = `${result.matched} of ${result.total} selected profile targets currently match${optOutText}.`;
     const owned = rows.filter((row) => row.levelOfControl === "controlled_by_this_extension").length;
     const conflicts = rows.filter((row) => row.target != null && row.supported && !row.compliant && !H.canControl(row.levelOfControl)).length;
     $("#controlSummary").textContent = conflicts ? `${owned} owned · ${conflicts} conflict(s)` : `${owned} setting(s) currently owned by this extension`;
   }
 
-  async function loadSelectedProfile() {
+  async function loadState() {
     try {
-      const stored = await browser.storage.local.get("selectedProfile");
+      const stored = await browser.storage.local.get([
+        "selectedProfile",
+        "hardeningExcludedSettingIds",
+        "pendingProfilePreview",
+        "hardeningOnboardingComplete"
+      ]);
       if (H.PROFILES[stored.selectedProfile]) selectedProfile = stored.selectedProfile;
-    } catch {}
+      excludedSettingIds = [...H.normalizeExcludedSettingIds(stored.hardeningExcludedSettingIds || [])].sort();
+      $("#onboardingPanel").hidden = stored.hardeningOnboardingComplete === true;
+      if (H.PROFILES[stored.pendingProfilePreview]) previewProfileId = stored.pendingProfilePreview;
+      if (previewProfileId) await browser.storage.local.remove("pendingProfilePreview");
+    } catch {
+      $("#onboardingPanel").hidden = false;
+    }
   }
 
-  async function apply(profileId) {
+  function previewStatusText(item) {
+    return ({
+      change: "Will change",
+      conflict: "Controlled elsewhere",
+      unsupported: "Unavailable in this Firefox",
+      "already-compliant": "Already matches",
+      unchanged: "Not part of this profile"
+    })[item.status] || item.status;
+  }
+
+  function renderPreview() {
+    const panel = $("#previewPanel");
+    const list = $("#previewList");
+    const profile = H.PROFILES[previewProfileId];
+    list.textContent = "";
+    const targets = previewPlan.filter((item) => item.target != null);
+    const changes = targets.filter((item) => item.status === "change").length;
+    const conflicts = targets.filter((item) => item.status === "conflict").length;
+    $("#previewTitle").textContent = `Review ${profile.label}`;
+    $("#previewBadge").textContent = "No changes applied";
+    $("#previewSummary").textContent = `${changes} setting(s) can change now · ${conflicts} conflict(s). Uncheck any setting you do not want Browser Hardening to manage.`;
+    $("#previewRisk").textContent = profile.risk === "high"
+      ? "Maximum can break WebRTC calling/conferencing and disable Firefox password-saving offers."
+      : profile.summary;
+
+    for (const item of targets) {
+      const row = document.createElement("label");
+      row.className = "review-row";
+      const check = document.createElement("input");
+      check.type = "checkbox";
+      check.dataset.settingId = item.id;
+      check.disabled = !item.selectable;
+      check.checked = item.selectedByDefault;
+      const copy = document.createElement("span");
+      copy.className = "review-copy";
+      const heading = document.createElement("strong");
+      heading.textContent = item.label;
+      const details = document.createElement("small");
+      details.textContent = `${H.formatValue(item.current)} → ${H.formatValue(item.target)} · ${previewStatusText(item)}`;
+      copy.append(heading, details);
+      row.append(check, copy);
+      list.append(row);
+    }
+    panel.hidden = false;
+    panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  async function startPreview(profileId) {
     const profile = H.PROFILES[profileId];
     if (!profile) return;
-    if (profileId === "maximum" && !confirm("Maximum mode can break WebRTC-based calling/conferencing and disables Firefox password-saving prompts. Continue?")) return;
     setBusy(true);
-    $("#status").textContent = `Applying ${profile.label}…`;
+    $("#status").textContent = `Preparing ${profile.label} review…`;
     try {
-      const results = await H.applyProfile(browser, profileId);
-      selectedProfile = profileId;
-      await browser.storage.local.set({ selectedProfile });
-      const applied = results.filter((item) => item.status === "applied").length;
-      const conflicts = results.filter((item) => item.status === "not-controllable").length;
-      const failures = results.filter((item) => item.status === "failed").length;
-      $("#status").textContent = `${profile.label}: ${applied} changed, ${conflicts} conflict(s), ${failures} failure(s).`;
-      await refresh();
+      previewProfileId = profileId;
+      const rows = await H.inspectAll(browser, profileId);
+      previewPlan = H.buildChangePlan(rows, excludedSettingIds);
+      renderPreview();
+      $("#status").textContent = "Review ready. No Firefox setting has changed.";
+    } catch (error) {
+      $("#status").textContent = `Could not prepare review: ${error.message || error}`;
     } finally {
       setBusy(false);
     }
   }
 
+  function cancelPreview() {
+    previewProfileId = null;
+    previewPlan = [];
+    $("#previewPanel").hidden = true;
+    $("#status").textContent = "Review canceled. No Firefox setting changed.";
+  }
+
+  async function applyPreview() {
+    if (!previewProfileId) return;
+    const profile = H.PROFILES[previewProfileId];
+    const nextExcluded = new Set(excludedSettingIds);
+    for (const item of previewPlan) {
+      if (!item.selectable) continue;
+      const checkbox = document.querySelector(`#previewList input[data-setting-id="${item.id}"]`);
+      if (checkbox?.checked) nextExcluded.delete(item.id);
+      else nextExcluded.add(item.id);
+    }
+
+    setBusy(true);
+    $("#status").textContent = `Applying reviewed ${profile.label} changes…`;
+    try {
+      const exclusions = [...nextExcluded].sort();
+      const results = await H.applyProfile(browser, previewProfileId, { excludedSettingIds: exclusions });
+      selectedProfile = previewProfileId;
+      excludedSettingIds = exclusions;
+      await browser.storage.local.set({
+        selectedProfile,
+        hardeningExcludedSettingIds: excludedSettingIds,
+        hardeningOnboardingComplete: true
+      });
+      const applied = results.filter((item) => item.status === "applied").length;
+      const conflicts = results.filter((item) => item.status === "not-controllable").length;
+      const failures = results.filter((item) => item.status === "failed").length;
+      const excluded = results.filter((item) => item.status === "excluded").length;
+      previewProfileId = null;
+      previewPlan = [];
+      $("#previewPanel").hidden = true;
+      $("#onboardingPanel").hidden = true;
+      $("#status").textContent = `${profile.label}: ${applied} changed, ${excluded} opted out, ${conflicts} conflict(s), ${failures} failure(s).`;
+      await refresh();
+    } catch (error) {
+      $("#status").textContent = `Could not apply reviewed profile: ${error.message || error}`;
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function finishOnboarding() {
+    await browser.storage.local.set({ hardeningOnboardingComplete: true });
+    $("#onboardingPanel").hidden = true;
+    $("#status").textContent = "First-use guidance dismissed. Profiles still require review before application.";
+  }
+
   async function restore() {
-    if (!confirm("Release all browser settings currently controlled by GoreeCloud Firefox Hardening? Firefox will fall back to the next controlling source or its defaults.")) return;
+    if (!confirm("Release all browser settings currently controlled by GoreeCloud Browser Hardening? Firefox will fall back to the next controlling source or its defaults.")) return;
     setBusy(true);
     $("#status").textContent = "Restoring extension-controlled settings…";
     try {
@@ -142,14 +262,19 @@
     $("#status").textContent = "Saved generated policies.json.";
   }
 
-  document.querySelectorAll("[data-profile]").forEach((button) => button.addEventListener("click", () => apply(button.dataset.profile)));
+  document.querySelectorAll("[data-profile]").forEach((button) => button.addEventListener("click", () => startPreview(button.dataset.profile)));
   $("#rescan").addEventListener("click", refresh);
   $("#restore").addEventListener("click", restore);
   $("#copyPolicy").addEventListener("click", copyPolicy);
   $("#downloadPolicy").addEventListener("click", downloadPolicy);
+  $("#previewApply").addEventListener("click", applyPreview);
+  $("#previewCancel").addEventListener("click", cancelPreview);
+  $("#onboardingReview").addEventListener("click", () => startPreview("balanced"));
+  $("#onboardingDismiss").addEventListener("click", finishOnboarding);
 
   (async () => {
-    await loadSelectedProfile();
+    await loadState();
     await refresh();
+    if (previewProfileId) await startPreview(previewProfileId);
   })();
 })();

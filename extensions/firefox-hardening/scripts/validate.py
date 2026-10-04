@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "manifest.json"
 EXPECTED_NAME = "GoreeCloud Browser Hardening"
 EXPECTED_ID = "firefox-hardening@goreecloud.com"
-EXPECTED_VERSION = "0.1.0"
+EXPECTED_VERSION = "0.1.1"
 EXPECTED_PERMISSIONS = {"browserSettings", "privacy", "storage"}
 
 def fail(message: str) -> None:
@@ -49,6 +49,20 @@ def main() -> None:
     for rel in required_files:
         if not (ROOT / rel).is_file():
             fail(f"missing required file: {rel}")
+    runtime_text = "\n".join(
+        (ROOT / rel).read_text(encoding="utf-8")
+        for rel in ("popup.html", "dashboard.html", "src/popup.js", "src/dashboard.js", "icons/firefox-hardening.svg")
+    )
+    if "GoreeCloud Firefox Hardening" in runtime_text:
+        fail("stale pre-rename product name remains in user-facing runtime source")
+    dashboard = (ROOT / "dashboard.html").read_text(encoding="utf-8")
+    dashboard_js = (ROOT / "src/dashboard.js").read_text(encoding="utf-8")
+    for marker in ("previewPanel", "previewList", "onboardingPanel"):
+        if marker not in dashboard:
+            fail(f"missing reviewed-apply UI marker: {marker}")
+    for marker in ("hardeningExcludedSettingIds", "buildChangePlan", "pendingProfilePreview"):
+        if marker not in dashboard_js:
+            fail(f"missing reviewed-apply behavior marker: {marker}")
     print("Browser Hardening source contract validated.")
 
 if __name__ == "__main__":

@@ -124,3 +124,48 @@ test("policy output is native policies.json and profile-aware", () => {
   assert.equal(maximum.policies.Preferences["media.peerconnection.enabled"].Value, false);
   assert.equal(maximum.policies.Preferences["signon.rememberSignons"].Value, false);
 });
+
+test("review plan keeps controllable targets selectable and persists opt-out defaults", async () => {
+  const browser = fakeBrowser();
+  const rows = await H.inspectAll(browser, "strict");
+  const plan = H.buildChangePlan(rows, ["networkPredictionEnabled"]);
+  const network = plan.find((item) => item.id === "networkPredictionEnabled");
+  const rfp = plan.find((item) => item.id === "resistFingerprinting");
+  assert.equal(network.selectable, true);
+  assert.equal(network.selectedByDefault, false);
+  assert.equal(rfp.selectable, true);
+  assert.equal(rfp.selectedByDefault, true);
+});
+
+test("profile application skips user opt-outs without widening authority", async () => {
+  const browser = fakeBrowser();
+  const results = await H.applyProfile(browser, "balanced", {
+    excludedSettingIds: ["networkPredictionEnabled"]
+  });
+  assert.equal(browser.privacy.network.networkPredictionEnabled.value, true);
+  assert.equal(browser.privacy.network.networkPredictionEnabled.setCalls.length, 0);
+  assert.equal(results.find((item) => item.id === "networkPredictionEnabled").status, "excluded");
+  assert.equal(browser.privacy.websites.trackingProtectionMode.value, "always");
+});
+
+test("score and policy output respect saved opt-outs", async () => {
+  const browser = fakeBrowser();
+  await H.applyProfile(browser, "strict", { excludedSettingIds: ["networkPredictionEnabled"] });
+  const rows = await H.inspectAll(browser, "strict");
+  assert.deepEqual(H.score(rows, ["networkPredictionEnabled"]), { matched: 5, total: 5, percent: 100 });
+
+  const policy = H.policyFor("maximum", [
+    "networkPredictionEnabled",
+    "cookieConfig",
+    "trackingProtectionMode",
+    "webNotificationsDisabled",
+    "resistFingerprinting",
+    "peerConnectionEnabled",
+    "passwordSavingEnabled"
+  ]);
+  assert.equal(policy.policies.NetworkPrediction, undefined);
+  assert.equal(policy.policies.Cookies, undefined);
+  assert.equal(policy.policies.EnableTrackingProtection, undefined);
+  assert.equal(policy.policies.Permissions, undefined);
+  assert.equal(policy.policies.Preferences, undefined);
+});
