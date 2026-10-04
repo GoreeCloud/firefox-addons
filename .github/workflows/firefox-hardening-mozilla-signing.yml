@@ -1,0 +1,364 @@
+name: Firefox Hardening Mozilla Signing
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/firefox-hardening-mozilla-signing.yml'
+      - 'docs/extension-inventory.json'
+
+permissions:
+  contents: read
+  statuses: write
+
+concurrency:
+  group: firefox-hardening-mozilla-signing
+  cancel-in-progress: false
+
+env:
+  FIREFOX_HARDENING_RELEASE_VERSION: '0.1.0'
+  FIREFOX_HARDENING_RELEASE_SOURCE_REVISION: '05c73782d9edb072fda3f6872406cb6809099011'
+  FIREFOX_HARDENING_RELEASE_CANDIDATE_SHA256: '82043d51fafed43635b480f7530a5f5c2ea3ef7bd16a7f79fa2eb62ca63a1151'
+  FIREFOX_HARDENING_QUALIFICATION_RUN_ID: '37165320162'
+
+jobs:
+  sign-and-restart:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish signing gate pending status
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import urllib.request
+
+          repository = os.environ["GITHUB_REPOSITORY"]
+          sha = os.environ["GITHUB_SHA"]
+          run_url = f"{os.environ['GITHUB_SERVER_URL']}/{repository}/actions/runs/{os.environ['GITHUB_RUN_ID']}"
+          request = urllib.request.Request(
+              f"https://api.github.com/repos/{repository}/statuses/{sha}",
+              data=json.dumps({
+                  "state": "pending",
+                  "context": "goreecloud/firefox-hardening-mozilla-signing",
+                  "description": "Mozilla signing and full-restart acceptance running",
+                  "target_url": run_url,
+              }).encode("utf-8"),
+              headers={
+                  "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+                  "Accept": "application/vnd.github+json",
+                  "X-GitHub-Api-Version": "2022-11-28",
+                  "Content-Type": "application/json",
+                  "User-Agent": "GoreeCloud-Firefox-Hardening-Signing",
+              },
+              method="POST",
+          )
+          with urllib.request.urlopen(request, timeout=30) as response:
+              if response.status not in {200, 201}:
+                  raise SystemExit(f"could not publish pending signing status: HTTP {response.status}")
+          PY
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: latest
+
+      - uses: browser-actions/setup-geckodriver@latest
+
+      - name: Bind signing workflow to authoritative main and accepted source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin main
+          main_sha="$(git rev-parse origin/main)"
+          if [[ "$GITHUB_SHA" != "$main_sha" ]]; then
+            echo '::error::Firefox Hardening signing must run from authoritative main.'
+            echo "Workflow revision: $GITHUB_SHA"
+            echo "Authoritative main: $main_sha"
+            exit 1
+          fi
+          git cat-file -e "$FIREFOX_HARDENING_RELEASE_SOURCE_REVISION^{commit}"
+          git merge-base --is-ancestor "$FIREFOX_HARDENING_RELEASE_SOURCE_REVISION" "$GITHUB_SHA"
+          echo "FIREFOX_HARDENING_WORKFLOW_REVISION=$GITHUB_SHA" >> "$GITHUB_ENV"
+
+      - name: Check out accepted release source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout --detach "$FIREFOX_HARDENING_RELEASE_SOURCE_REVISION"
+
+      - name: Restore current signing acceptance helpers
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p extensions/firefox-hardening/tests
+          git show "$FIREFOX_HARDENING_WORKFLOW_REVISION":extensions/firefox-hardening/tests/verify_signed_xpi.py > extensions/firefox-hardening/tests/verify_signed_xpi.py
+          git show "$FIREFOX_HARDENING_WORKFLOW_REVISION":extensions/firefox-hardening/tests/amo_signed_version_recovery.py > extensions/firefox-hardening/tests/amo_signed_version_recovery.py
+          git show "$FIREFOX_HARDENING_WORKFLOW_REVISION":extensions/firefox-hardening/tests/signed_restart_smoke.py > extensions/firefox-hardening/tests/signed_restart_smoke.py
+
+      - name: Resolve exact release version
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(python -c 'import json; print(json.load(open("extensions/firefox-hardening/manifest.json", encoding="utf-8"))["version"])')"
+          if [[ "$VERSION" != "$FIREFOX_HARDENING_RELEASE_VERSION" ]]; then
+            echo "::error::Signing workflow is bound to $FIREFOX_HARDENING_RELEASE_VERSION but source is $VERSION."
+            exit 1
+          fi
+          echo "FIREFOX_HARDENING_VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Validate exact source and signing helpers
+        run: |
+          python shared/scripts/validate_repository.py
+          python extensions/firefox-hardening/scripts/validate.py
+          node --test extensions/firefox-hardening/tests/*.test.js
+          find extensions/firefox-hardening -type f -name '*.js' -print0 | while IFS= read -r -d '' file; do node --check "$file"; done
+          python -m py_compile \
+            extensions/firefox-hardening/scripts/validate.py \
+            extensions/firefox-hardening/tests/runtime_smoke.py \
+            extensions/firefox-hardening/tests/verify_signed_xpi.py \
+            extensions/firefox-hardening/tests/amo_signed_version_recovery.py \
+            extensions/firefox-hardening/tests/signed_restart_smoke.py
+
+      - name: Build deterministic unsigned candidate
+        run: python shared/scripts/package_extension.py firefox-hardening --output-dir dist/candidate
+
+      - name: Bind exact candidate digest and stage Mozilla signing source
+        shell: bash
+        run: |
+          set -euo pipefail
+          candidate="dist/candidate/goreecloud-firefox-hardening-$FIREFOX_HARDENING_VERSION.xpi"
+          test -f "$candidate"
+          mkdir -p signing-source dist/mozilla
+          python - "$candidate" "$FIREFOX_HARDENING_RELEASE_CANDIDATE_SHA256" <<'PY'
+          import hashlib
+          import json
+          import sys
+          import zipfile
+          from pathlib import Path
+
+          candidate = Path(sys.argv[1])
+          accepted_digest = sys.argv[2]
+          digest = hashlib.sha256(candidate.read_bytes()).hexdigest()
+          if digest != accepted_digest:
+              raise SystemExit(f"accepted candidate digest mismatch: expected {accepted_digest}, rebuilt {digest}")
+          with zipfile.ZipFile(candidate) as archive:
+              bad = archive.testzip()
+              if bad:
+                  raise SystemExit(f"candidate archive integrity failure: {bad}")
+              archive.extractall("signing-source")
+          manifest = json.loads(Path("signing-source/manifest.json").read_text(encoding="utf-8"))
+          addon_id = manifest.get("browser_specific_settings", {}).get("gecko", {}).get("id")
+          if addon_id != "firefox-hardening@goreecloud.com":
+              raise SystemExit(f"unexpected Firefox add-on ID: {addon_id!r}")
+          Path("dist/candidate-sha256.txt").write_text(f"{digest}  {candidate.name}\n", encoding="utf-8")
+          print(f"Candidate SHA-256: {digest}")
+          PY
+          unzip -t "$candidate"
+
+      - name: Re-run real Firefox qualification on exact signing candidate
+        env:
+          FIREFOX_HARDENING_SOURCE_REVISION: ${{ env.FIREFOX_HARDENING_RELEASE_SOURCE_REVISION }}
+        run: |
+          python -m pip install --disable-pip-version-check selenium
+          python extensions/firefox-hardening/tests/runtime_smoke.py             "dist/candidate/goreecloud-firefox-hardening-$FIREFOX_HARDENING_VERSION.xpi"
+
+      - name: Require Mozilla Add-ons signing credentials
+        env:
+          AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
+          AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$AMO_JWT_ISSUER" || -z "$AMO_JWT_SECRET" ]]; then
+            echo '::error::Missing AMO_JWT_ISSUER and/or AMO_JWT_SECRET repository secrets.'
+            exit 1
+          fi
+
+      - name: Submit exact candidate to Mozilla or recover existing signed version
+        env:
+          WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
+          WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+          AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
+          AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          signing_output="$({ npx --yes web-ext@10.5.0 sign             --source-dir signing-source             --artifacts-dir dist/mozilla             --channel=unlisted             --approval-timeout=900000             --timeout=900000; } 2>&1)"
+          signing_status=$?
+          set -e
+          printf '%s\n' "$signing_output"
+
+          if [[ "$signing_status" -eq 0 ]]; then
+            printf 'new-submission\n' > dist/mozilla-signing-source.txt
+            exit 0
+          fi
+
+          if ! grep -Fq "Version $FIREFOX_HARDENING_VERSION already exists." <<<"$signing_output"; then
+            echo '::error::Mozilla signing failed for a reason other than an already-existing exact version.'
+            exit "$signing_status"
+          fi
+
+          echo "Mozilla already has $FIREFOX_HARDENING_VERSION; recovering the approved unlisted signed XPI."
+          python extensions/firefox-hardening/tests/amo_signed_version_recovery.py             "$FIREFOX_HARDENING_VERSION" dist/mozilla
+
+      - name: Verify Mozilla-signed XPI parity and identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          candidate="dist/candidate/goreecloud-firefox-hardening-$FIREFOX_HARDENING_VERSION.xpi"
+          signed="$(find dist/mozilla -maxdepth 1 -type f -name '*.xpi' -print -quit)"
+          test -n "$signed"
+          python extensions/firefox-hardening/tests/verify_signed_xpi.py             "$FIREFOX_HARDENING_VERSION" "$candidate" "$signed"
+          unzip -t "dist/goreecloud-firefox-hardening-$FIREFOX_HARDENING_VERSION-signed.xpi"
+
+      - name: Persistent signed install and full Firefox restart acceptance
+        env:
+          FIREFOX_HARDENING_SOURCE_REVISION: ${{ env.FIREFOX_HARDENING_RELEASE_SOURCE_REVISION }}
+        run: |
+          python extensions/firefox-hardening/tests/signed_restart_smoke.py             "dist/goreecloud-firefox-hardening-$FIREFOX_HARDENING_VERSION-signed.xpi"
+
+      - name: Capture current lifecycle metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          git show "$FIREFOX_HARDENING_WORKFLOW_REVISION":docs/extension-inventory.json > dist/current-extension-inventory.json
+          python -m json.tool dist/current-extension-inventory.json >/dev/null
+
+      - name: Build signed release evidence record
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          version = os.environ["FIREFOX_HARDENING_VERSION"]
+          source_revision = os.environ["FIREFOX_HARDENING_RELEASE_SOURCE_REVISION"]
+          workflow_revision = os.environ["FIREFOX_HARDENING_WORKFLOW_REVISION"]
+          candidate_line = Path("dist/candidate-sha256.txt").read_text(encoding="utf-8").strip()
+          signed_line = Path("dist/signed-sha256.txt").read_text(encoding="utf-8").strip()
+          signing_source = Path("dist/mozilla-signing-source.txt").read_text(encoding="utf-8").strip()
+          parity = json.loads(Path("dist/signed-xpi-parity.json").read_text(encoding="utf-8"))
+          runtime = json.loads(Path("dist/firefox-hardening-runtime-acceptance.json").read_text(encoding="utf-8"))
+          restart = json.loads(Path("dist/firefox-hardening-signed-restart.json").read_text(encoding="utf-8"))
+          inventory = json.loads(Path("dist/current-extension-inventory.json").read_text(encoding="utf-8"))
+          entry = next((item for item in inventory.get("extensions", []) if item.get("slug") == "firefox-hardening"), None)
+          if entry is None or entry.get("source_version") != version:
+              raise SystemExit("Firefox Hardening inventory/source version mismatch")
+          stable_promoted = (
+              entry.get("source_state") == "stable"
+              and entry.get("accepted_stable_version") == version
+          )
+          record = {
+              "schemaVersion": 1,
+              "product": "GoreeCloud Firefox Hardening",
+              "version": version,
+              "sourceRevision": source_revision,
+              "workflowRevision": workflow_revision,
+              "sourceState": entry.get("source_state"),
+              "acceptedStableVersion": entry.get("accepted_stable_version"),
+              "qualificationRunId": int(os.environ["FIREFOX_HARDENING_QUALIFICATION_RUN_ID"]),
+              "githubWorkflowRunId": int(os.environ["GITHUB_RUN_ID"]),
+              "candidateSha256": candidate_line.split()[0],
+              "signedSha256": signed_line.split()[0],
+              "firefoxAddonId": "firefox-hardening@goreecloud.com",
+              "mozillaSigned": True,
+              "mozillaSigningSource": signing_source,
+              "signedNonManifestPayloadMatchesCandidateByteForByte": True,
+              "signedManifestGovernedParityAccepted": True,
+              "signedXpiParity": parity,
+              "unsignedRuntimeAccepted": runtime.get("runtimeAccepted") is True,
+              "persistentInstallRestartAccepted": restart.get("persistentInstallRestartAccepted") is True,
+              "signedRestartAcceptance": restart,
+              "stablePromoted": stable_promoted,
+          }
+          amo_metadata = Path("dist/amo-existing-version-metadata.json")
+          if amo_metadata.exists():
+              record["amoExistingVersion"] = json.loads(amo_metadata.read_text(encoding="utf-8"))
+          Path("dist/firefox-hardening-signing-evidence.json").write_text(
+              json.dumps(record, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+          print(json.dumps(record, indent=2, sort_keys=True))
+          PY
+
+      - name: Retain signed release evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: goreecloud-firefox-hardening-${{ env.FIREFOX_HARDENING_VERSION }}-mozilla-signed
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            dist/goreecloud-firefox-hardening-*-signed.xpi
+            dist/candidate-sha256.txt
+            dist/signed-sha256.txt
+            dist/mozilla-signing-source.txt
+            dist/amo-existing-version-metadata.json
+            dist/signed-xpi-parity.json
+            dist/firefox-hardening-runtime-acceptance.json
+            dist/firefox-hardening-signed-restart.json
+            dist/firefox-hardening-signing-evidence.json
+            dist/current-extension-inventory.json
+
+      - name: Publish authoritative signing gate result
+        if: ${{ always() }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JOB_STATUS: ${{ job.status }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import urllib.request
+          from pathlib import Path
+
+          job_status = os.environ.get("JOB_STATUS", "failure")
+          state = "success" if job_status == "success" else ("error" if job_status == "cancelled" else "failure")
+          description = "Mozilla signing/full-restart gate passed" if state == "success" else "Mozilla signing/full-restart gate failed"
+          signed = Path("dist/signed-sha256.txt")
+          if state == "success" and signed.is_file():
+              digest = signed.read_text(encoding="utf-8").strip().split()[0]
+              if len(digest) == 64:
+                  description = f"Passed · signed {digest[:12]}"
+          repository = os.environ["GITHUB_REPOSITORY"]
+          sha = os.environ["GITHUB_SHA"]
+          run_url = f"{os.environ['GITHUB_SERVER_URL']}/{repository}/actions/runs/{os.environ['GITHUB_RUN_ID']}"
+          request = urllib.request.Request(
+              f"https://api.github.com/repos/{repository}/statuses/{sha}",
+              data=json.dumps({
+                  "state": state,
+                  "context": "goreecloud/firefox-hardening-mozilla-signing",
+                  "description": description,
+                  "target_url": run_url,
+              }).encode("utf-8"),
+              headers={
+                  "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+                  "Accept": "application/vnd.github+json",
+                  "X-GitHub-Api-Version": "2022-11-28",
+                  "Content-Type": "application/json",
+                  "User-Agent": "GoreeCloud-Firefox-Hardening-Signing",
+              },
+              method="POST",
+          )
+          with urllib.request.urlopen(request, timeout=30) as response:
+              if response.status not in {200, 201}:
+                  raise SystemExit(f"could not publish final signing status: HTTP {response.status}")
+          PY
