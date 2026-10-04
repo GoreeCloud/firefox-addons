@@ -19,6 +19,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 EXPECTED_ADDON_ID = "firefox-hardening@goreecloud.com"
 EXPECTED_VERSION = "0.1.0"
+ACCEPTED_SOURCE_REVISION = "05c73782d9edb072fda3f6872406cb6809099011"
 FIXED_EXTENSION_UUID = "7fe4782b-b376-4f78-93a7-8af6c942dbe9"
 
 
@@ -191,7 +192,7 @@ def main() -> int:
         "product": "GoreeCloud Firefox Hardening",
         "version": EXPECTED_VERSION,
         "firefoxAddonId": EXPECTED_ADDON_ID,
-        "sourceRevision": os.environ.get("FIREFOX_HARDENING_RELEASE_SOURCE_REVISION", ""),
+        "sourceRevision": os.environ.get("FIREFOX_HARDENING_RELEASE_SOURCE_REVISION", ACCEPTED_SOURCE_REVISION),
         "signedSha256": hashlib.sha256(signed_xpi.read_bytes()).hexdigest(),
         "persistentInstallAccepted": False,
         "preRestartBalancedAccepted": False,
