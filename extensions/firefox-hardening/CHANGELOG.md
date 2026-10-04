@@ -2,7 +2,7 @@
 
 ## 0.1.0 — Source candidate
 
-- Introduced the first-party GoreeCloud Firefox Hardening extension.
+- Introduced the first-party GoreeCloud Browser Hardening extension.
 - Added native Firefox BrowserSetting scan/apply/restore architecture.
 - Added Balanced, Strict, and Maximum profiles with explicit breakage boundaries.
 - Added deterministic Firefox Enterprise `policies.json` generation.
