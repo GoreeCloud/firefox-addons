@@ -20,3 +20,18 @@ button,textarea{font:inherit}button{color:inherit}.muted{color:var(--muted)}.sma
 .onboarding-panel[hidden],.review-panel[hidden]{display:none}
 .onboarding-panel>div:first-child{max-width:760px}.review-list{display:grid;gap:8px;margin:14px 0}.review-row{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:flex-start;padding:12px;border:1px solid var(--border);border-radius:14px;background:rgba(12,20,40,.55);cursor:pointer}.review-row:has(input:disabled){opacity:.68;cursor:not-allowed}.review-row input{margin-top:4px;accent-color:var(--accent)}.review-copy strong,.review-copy small{display:block}.review-copy small{margin-top:3px;color:var(--muted)}.review-actions{margin-top:14px}
 @media(max-width:900px){.onboarding-panel{align-items:flex-start;flex-direction:column}.onboarding-panel .button-row{width:100%}.onboarding-panel .button-row button{flex:1}}
+
+select{min-height:42px;padding:8px 34px 8px 11px;border:1px solid var(--border);border-radius:12px;background:var(--panel-2);color:var(--text);font:inherit}
+select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.diagnostic-list,.policy-diff-list{display:grid;gap:10px;margin-top:12px}
+.diagnostic-card,.policy-diff-row{padding:13px 14px;border:1px solid var(--border);border-radius:14px;background:rgba(12,20,40,.55)}
+.diagnostic-card.severity-high{border-color:rgba(255,141,149,.38)}
+.diagnostic-card.severity-medium{border-color:rgba(255,211,122,.28)}
+.diagnostic-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.diagnostic-heading strong{min-width:0;overflow-wrap:anywhere}
+.diagnostic-card p{margin:6px 0 0}
+.policy-diff-values{display:block;margin-top:7px;color:var(--muted);overflow-wrap:anywhere}
+.policy-diff-row.diff-extra{border-color:rgba(109,220,255,.26)}
+.policy-diff-row.diff-missing,.policy-diff-row.diff-different{border-color:rgba(255,211,122,.30)}
+#policyAuditInput,#deploymentOutput{min-height:150px}
+#deploymentOutput[readonly]{opacity:.96}
