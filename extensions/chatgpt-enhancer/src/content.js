@@ -425,7 +425,7 @@
     showPanel("Prompt snippets", (host) => {
       const input = document.createElement("input");
       input.type = "search";
-      input.placeholder = "Search snippet names and text…";
+      input.placeholder = "Search snippet names, tags, and text…";
       input.setAttribute("aria-label", "Search prompt snippets");
 
       const results = document.createElement("div");
@@ -434,7 +434,7 @@
       const render = () => {
         const query = input.value.trim().toLowerCase();
         const matches = settings.snippets.filter((snippet) =>
-          !query || `${snippet.name} ${snippet.body}`.toLowerCase().includes(query)
+          !query || `${snippet.name} ${snippet.tags.join(" ")} ${snippet.body}`.toLowerCase().includes(query)
         );
         results.replaceChildren();
 
@@ -455,7 +455,13 @@
           title.textContent = snippet.name;
           const preview = document.createElement("span");
           preview.textContent = snippet.body.slice(0, 180);
-          button.append(title, preview);
+          button.append(title);
+          if (snippet.tags.length) {
+            const tagLine = document.createElement("small");
+            tagLine.textContent = snippet.tags.map((tag) => `#${tag}`).join(" · ");
+            button.append(tagLine);
+          }
+          button.append(preview);
           button.addEventListener("click", () => {
             if (setComposerText(snippet.body, true)) {
               closeCommandCenter();
