@@ -18,6 +18,18 @@ import runtime_smoke as runtime
 
 EXPECTED_ADDON_ID = "firefox-hardening@goreecloud.com"
 EXPECTED_VERSION = "0.1.0"
+CONTROLLABLE_LEVELS = {"controllable_by_this_extension", "controlled_by_this_extension"}
+STRICT_TARGETS = {
+    "networkPredictionEnabled": False,
+    "hyperlinkAuditingEnabled": False,
+    "trackingProtectionMode": "always",
+    "cookieConfig": {
+        "behavior": "reject_trackers_and_partition_foreign",
+        "nonPersistentCookies": False,
+    },
+    "resistFingerprinting": True,
+    "webNotificationsDisabled": True,
+}
 
 
 def require(condition: bool, name: str, detail: str = "") -> None:
@@ -27,18 +39,68 @@ def require(condition: bool, name: str, detail: str = "") -> None:
     print(f"PASS {name}")
 
 
-def targeted_controlled(snapshot: dict, names: list[str], phase: str) -> None:
-    for name in names:
+def changed_from_baseline(snapshot: dict) -> list[str]:
+    changed: list[str] = []
+    for name, target in STRICT_TARGETS.items():
         item = snapshot.get(name)
-        require(isinstance(item, dict) and "error" not in item, f"{phase} {name} API available", repr(item))
         require(
-            item.get("levelOfControl") == "controlled_by_this_extension",
-            f"{phase} {name} owned by signed extension",
+            isinstance(item, dict) and "error" not in item,
+            f"baseline {name} API available",
             repr(item),
         )
+        require(
+            item.get("levelOfControl") in CONTROLLABLE_LEVELS,
+            f"baseline {name} is controllable in clean profile",
+            repr(item),
+        )
+        if item.get("value") != target:
+            changed.append(name)
+    require(bool(changed), "Strict profile changes at least one clean-profile setting", repr(snapshot))
+    print(f"INFO Strict settings changed from baseline: {changed!r}")
+    return changed
 
 
-def strict_runtime_checks(driver: webdriver.Firefox, phase: str) -> dict:
+def assert_control_semantics(
+    snapshot: dict,
+    changed_names: list[str],
+    phase: str,
+) -> None:
+    changed = set(changed_names)
+    for name in STRICT_TARGETS:
+        item = snapshot.get(name)
+        require(
+            isinstance(item, dict) and "error" not in item,
+            f"{phase} {name} API available",
+            repr(item),
+        )
+        level = item.get("levelOfControl")
+        require(
+            level in CONTROLLABLE_LEVELS,
+            f"{phase} {name} remains extension-controllable",
+            repr(item),
+        )
+        if name in changed:
+            require(
+                level == "controlled_by_this_extension",
+                f"{phase} {name} remains owned after extension changed it",
+                repr(item),
+            )
+        else:
+            # applyProfile deliberately skips BrowserSetting.set() when Firefox
+            # already has the target value. A no-op target may therefore remain
+            # merely controllable rather than becoming extension-owned.
+            require(
+                level in CONTROLLABLE_LEVELS,
+                f"{phase} {name} no-op control state accepted",
+                repr(item),
+            )
+
+
+def strict_runtime_checks(
+    driver: webdriver.Firefox,
+    phase: str,
+    changed_names: list[str],
+) -> dict:
     runtime.navigate_extension(driver, "dashboard.html")
     WebDriverWait(driver, 15).until(lambda d: d.find_element("css selector", "#settingsBody"))
     WebDriverWait(driver, 15).until(
@@ -50,25 +112,10 @@ def strict_runtime_checks(driver: webdriver.Firefox, phase: str) -> dict:
     runtime.assert_value(snapshot, "networkPredictionEnabled", False)
     runtime.assert_value(snapshot, "hyperlinkAuditingEnabled", False)
     runtime.assert_value(snapshot, "trackingProtectionMode", "always")
-    runtime.assert_value(
-        snapshot,
-        "cookieConfig",
-        {"behavior": "reject_trackers_and_partition_foreign", "nonPersistentCookies": False},
-    )
+    runtime.assert_value(snapshot, "cookieConfig", STRICT_TARGETS["cookieConfig"])
     runtime.assert_value(snapshot, "resistFingerprinting", True)
     runtime.assert_value(snapshot, "webNotificationsDisabled", True)
-    targeted_controlled(
-        snapshot,
-        [
-            "networkPredictionEnabled",
-            "hyperlinkAuditingEnabled",
-            "trackingProtectionMode",
-            "cookieConfig",
-            "resistFingerprinting",
-            "webNotificationsDisabled",
-        ],
-        phase,
-    )
+    assert_control_semantics(snapshot, changed_names, phase)
     require(True, f"{phase} Strict profile runtime state")
     return snapshot
 
@@ -94,6 +141,7 @@ def main() -> int:
         "postRestartStrictAccepted": False,
         "postRestartRestoreAccepted": False,
         "persistentInstallRestartAccepted": False,
+        "strictSettingsChangedFromBaseline": [],
     }
 
     with tempfile.TemporaryDirectory(prefix="firefox-hardening-signed-profile-") as profile_tmp:
@@ -115,8 +163,12 @@ def main() -> int:
 
             runtime.navigate_extension(first, "dashboard.html")
             WebDriverWait(first, 15).until(lambda d: d.find_element("css selector", "#settingsBody"))
+            baseline = runtime.setting_snapshot(first)
+            changed_names = changed_from_baseline(baseline)
+            result["strictSettingsChangedFromBaseline"] = changed_names
+
             runtime.click_profile(first, "strict")
-            strict_runtime_checks(first, "pre-restart")
+            strict_runtime_checks(first, "pre-restart", changed_names)
             result["preRestartStrictAccepted"] = True
 
             first.quit()
@@ -134,7 +186,7 @@ def main() -> int:
             result["postRestartAddonActive"] = True
             result["postRestartFirefoxVersion"] = second.capabilities.get("browserVersion", "")
 
-            strict_runtime_checks(second, "post-restart")
+            strict_runtime_checks(second, "post-restart", changed_names)
             result["postRestartStrictAccepted"] = True
 
             second.find_element("css selector", "#restore").click()
