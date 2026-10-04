@@ -10,6 +10,7 @@ const REASON_LABELS = new Map([
   ["audible", "Audio"],
   ["hidden", "Hidden"],
   ["incognito", "Private"],
+  ["protected", "Protected"],
   ["tree-child", "Tree child"],
   ["tree-parent", "Tree parent"],
   ["excluded", "Excluded"]
@@ -82,7 +83,7 @@ function duplicateCard(duplicateSet) {
   const policy = document.createElement("div");
   policy.className = "duplicate-policy";
   policy.textContent = duplicateSet.mode === DUPLICATE_MODES.EXACT_URL
-    ? "Exact URL only. Active, pinned, audible, hidden/private, and tree-linked tabs are excluded from cleanup."
+    ? "Exact URL only. Active, pinned, audible, hidden/private, protected, and tree-linked tabs are excluded from cleanup."
     : "Tracking-normalized mode ignores only utm_* and recognized click-tracking parameters. Path, fragment, and every other query parameter remain significant. Existing cleanup guards still apply.";
 
   const cleanup = document.createElement("button");

@@ -31,6 +31,7 @@ async function handleControlMessage(message) {
         config: await mutate((current) =>
           applyRoutingPause(current, message.mode, {
             hostname: message.hostname,
+            durationMinutes: message.durationMinutes,
             now: Date.now()
           })
         )

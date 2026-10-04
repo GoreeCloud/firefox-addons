@@ -44,7 +44,7 @@ async function recordResult(result) {
   });
 }
 
-async function sendResync(tabId) {
+async function sendResync(tabId, sources = null, reason = "manual") {
   if (runInProgress) {
     return {
       ok: false,
@@ -53,7 +53,7 @@ async function sendResync(tabId) {
       failures: [],
       message: "A resync run is already in progress.",
       durationMs: 0,
-      reason: "manual"
+      reason
     };
   }
 
@@ -63,7 +63,8 @@ async function sendResync(tabId) {
   try {
     const response = await browser.tabs.sendMessage(tabId, {
       type: "GOREECLOUD_RESYNC_ALL",
-      reason: "manual"
+      reason,
+      sources: Array.isArray(sources) ? sources : null
     });
 
     const result = {
@@ -73,7 +74,7 @@ async function sendResync(tabId) {
       failures: response?.failures || [],
       message: response?.message || "No result returned.",
       durationMs: Date.now() - startedAt,
-      reason: "manual"
+      reason
     };
 
     await recordResult(result);
@@ -86,7 +87,7 @@ async function sendResync(tabId) {
       failures: [],
       message: error?.message || String(error),
       durationMs: Date.now() - startedAt,
-      reason: "manual"
+      reason
     };
     await recordResult(result);
     return result;
@@ -139,5 +140,33 @@ browser.runtime.onMessage.addListener(async message => {
       };
     }
     return sendResync(tab.id);
+  }
+
+  if (message?.type === "GOREECLOUD_RETRY_FAILED") {
+    const settings = await getSettings();
+    const sources = [...new Set((settings.lastResult?.failures || [])
+      .map((failure) => failure?.source)
+      .filter((source) => typeof source === "string" && source))];
+    if (!sources.length) {
+      return {
+        ok: false,
+        count: 0,
+        total: 0,
+        failures: [],
+        message: "The last run has no failed sources to retry."
+      };
+    }
+
+    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    if (!tab?.id || !validSourcesUrl(tab.url || "")) {
+      return {
+        ok: false,
+        count: 0,
+        total: sources.length,
+        failures: sources.map((source) => ({ source, error: "Open the matching ChatGPT Project Sources page first." })),
+        message: "Open the ChatGPT Project Sources page for the failed run first."
+      };
+    }
+    return sendResync(tab.id, sources, "retry");
   }
 });

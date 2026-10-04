@@ -33,6 +33,25 @@ test("normalization clamps numeric settings and bounds snippets", () => {
   assert.equal(normalized.snippets[0].body.length, 8000);
 });
 
+test("snippet tags are bounded, deduplicated, and remain local-portable settings", () => {
+  const Settings = loadSettings();
+  const normalized = Settings.normalize({
+    snippets: [{
+      id: "tagged",
+      name: "Tagged",
+      body: "Body",
+      tags: [" Review ", "review", "coding", "x".repeat(80), "writing", "privacy", "tests", "docs", "extra", "overflow"]
+    }]
+  });
+  assert.deepEqual(
+    Array.from(normalized.snippets[0].tags),
+    ["Review", "coding", "x".repeat(32), "writing", "privacy", "tests", "docs", "extra"]
+  );
+
+  const envelope = Settings.buildSettingsExport(normalized, "2026-10-03T12:00:00.000Z");
+  assert.deepEqual(Array.from(envelope.settings.snippets[0].tags), Array.from(normalized.snippets[0].tags));
+});
+
 test("normalization preserves duplicate snippet content with unique IDs", () => {
   const Settings = loadSettings();
   const normalized = Settings.normalize({
@@ -103,7 +122,7 @@ test("settings import normalizes untrusted backup values", () => {
       contentWidth: -50,
       fontScale: "not-a-number",
       snippets: [
-        { id: "<bad id>", name: "   Valid name   ", body: "  Valid body  " },
+        { id: "<bad id>", name: "   Valid name   ", body: "  Valid body  ", tags: " one, Two, one " },
         { id: "empty", name: "", body: "ignored" }
       ]
     }
@@ -115,4 +134,5 @@ test("settings import normalizes untrusted backup values", () => {
   assert.equal(imported.snippets[0].id, "-bad-id-");
   assert.equal(imported.snippets[0].name, "Valid name");
   assert.equal(imported.snippets[0].body, "Valid body");
+  assert.deepEqual(Array.from(imported.snippets[0].tags), ["one", "Two"]);
 });

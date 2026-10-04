@@ -209,6 +209,8 @@ browser.runtime.onMessage.addListener(async (message) => {
       return browser.tabs.update(message.tabId, { pinned: Boolean(message.pinned) });
     case "atm:set-muted":
       return browser.tabs.update(message.tabId, { muted: Boolean(message.muted) });
+    case "atm:set-cleanup-protected":
+      return browserState.setCleanupProtected(message.tabId, Boolean(message.protected));
     case "atm:set-tree-parent":
       return browserState.setTreeParent(message.tabId, message.parentTabId ?? null);
     default:

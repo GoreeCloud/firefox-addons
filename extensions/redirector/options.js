@@ -1,6 +1,8 @@
 const BUILTIN_RULESET_ID = "goreecloud_builtin";
 const CUSTOM_RULE_ID_START = 1000;
 const STORAGE_KEY = "customRedirects";
+const Portability = globalThis.GoreeRedirectorPortability;
+const MAX_IMPORT_BYTES = 1024 * 1024;
 
 const builtinToggle = document.querySelector("#builtin-toggle");
 const ruleList = document.querySelector("#rule-list");
@@ -15,6 +17,10 @@ const ruleEnabled = document.querySelector("#rule-enabled");
 const formStatus = document.querySelector("#form-status");
 const cancelEdit = document.querySelector("#cancel-edit");
 const versionPill = document.querySelector("#version-pill");
+const testUrl = document.querySelector("#test-url");
+const testStatus = document.querySelector("#test-status");
+const backupStatus = document.querySelector("#backup-status");
+const importFile = document.querySelector("#import-file");
 
 function escapeRegex(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -251,6 +257,99 @@ builtinToggle.addEventListener("change", async () => {
 
 newRuleButton.addEventListener("click", () => showEditor());
 cancelEdit.addEventListener("click", hideEditor);
+
+document.querySelector("#test-rule").addEventListener("click", async () => {
+  try {
+    const enabled = await browser.declarativeNetRequest.getEnabledRulesets();
+    const result = Portability.preview(
+      testUrl.value,
+      await getStoredRules(),
+      enabled.includes(BUILTIN_RULESET_ID)
+    );
+    testStatus.textContent = result.matched
+      ? `Matches “${result.name}” → ${result.destination}`
+      : "No enabled redirect rule matches this URL.";
+  } catch (error) {
+    testStatus.textContent = error.message;
+  }
+});
+
+document.querySelector("#export-rules").addEventListener("click", async () => {
+  try {
+    const enabled = await browser.declarativeNetRequest.getEnabledRulesets();
+    const envelope = Portability.buildExport({
+      builtinEnabled: enabled.includes(BUILTIN_RULESET_ID),
+      rules: await getStoredRules()
+    });
+    const blob = new Blob([JSON.stringify(envelope, null, 2) + "\n"], { type: "application/json;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "goreecloud-redirector-backup.json";
+    anchor.rel = "noopener";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    backupStatus.textContent = "Redirect backup download started.";
+  } catch (error) {
+    backupStatus.textContent = error.message;
+  }
+});
+
+document.querySelector("#import-rules").addEventListener("click", () => {
+  importFile.value = "";
+  importFile.click();
+});
+
+importFile.addEventListener("change", async () => {
+  const file = importFile.files?.[0];
+  if (!file) return;
+  try {
+    if (file.size > MAX_IMPORT_BYTES) throw new Error("Redirect backup is larger than the 1 MiB import limit.");
+    const imported = Portability.parseImport(await file.text());
+    if (!confirm(`Replace your current custom redirects with ${imported.rules.length} imported rule${imported.rules.length === 1 ? "" : "s"}?`)) {
+      backupStatus.textContent = "Import cancelled.";
+      return;
+    }
+
+    const previous = await getStoredRules();
+    const existingDynamic = await browser.declarativeNetRequest.getDynamicRules();
+    const removeRuleIds = existingDynamic.map((rule) => rule.id).filter((id) => id >= CUSTOM_RULE_ID_START);
+    const nextRules = [];
+    const addRules = [];
+    let pausedForPermission = 0;
+
+    for (let index = 0; index < imported.rules.length; index += 1) {
+      const importedRule = imported.rules[index];
+      const id = CUSTOM_RULE_ID_START + index;
+      const permitted = await browser.permissions.contains({ origins: [importedRule.permissionOrigin] });
+      const enabled = importedRule.enabled && permitted;
+      if (importedRule.enabled && !permitted) pausedForPermission += 1;
+      const nextRule = { ...importedRule, id, enabled };
+      nextRules.push(nextRule);
+      if (enabled) addRules.push(toDnrRule(nextRule));
+    }
+
+    await browser.declarativeNetRequest.updateDynamicRules({ removeRuleIds, addRules });
+    await setStoredRules(nextRules);
+    await setBuiltinEnabled(imported.builtinEnabled);
+    for (const origin of new Set(previous.map((rule) => rule.permissionOrigin).filter(Boolean))) {
+      await releaseUnusedPermission(origin, nextRules);
+    }
+
+    hideEditor();
+    await refreshBuiltin();
+    await renderRules();
+    backupStatus.textContent = pausedForPermission
+      ? `Imported ${nextRules.length} rules; ${pausedForPermission} restored paused until you explicitly enable them and grant their source-site permission.`
+      : `Imported ${nextRules.length} rules.`;
+  } catch (error) {
+    backupStatus.textContent = error.message;
+  } finally {
+    importFile.value = "";
+  }
+});
 
 ruleForm.addEventListener("submit", async (event) => {
   event.preventDefault();
