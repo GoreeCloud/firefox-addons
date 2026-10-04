@@ -25,7 +25,15 @@ assert.equal(strict.siteOverrides["example.com"].blockThirdPartyFrames, true);
 assert.equal(strict.siteOverrides["example.com"].cosmeticFiltering, true);
 assert.equal(P.profileFor(strict, "example.com"), "strict");
 
-const compatible = P.applyProfile(strict, "example.com", "compatible");
+const lockdown = P.applyProfile(strict, "example.com", "lockdown");
+assert.equal(lockdown.siteOverrides["example.com"].enabled, false);
+assert.equal(lockdown.siteOverrides["example.com"].blockThirdPartyScripts, true);
+assert.equal(lockdown.siteOverrides["example.com"].blockThirdPartyFrames, true);
+assert.equal(lockdown.siteOverrides["example.com"].blockMedia, true);
+assert.equal(lockdown.siteOverrides["example.com"].blockAnnoyances, true);
+assert.equal(P.profileFor(lockdown, "example.com"), "lockdown");
+
+const compatible = P.applyProfile(lockdown, "example.com", "compatible");
 assert.equal(compatible.siteOverrides["example.com"].enabled, false);
 assert.equal(compatible.siteOverrides["example.com"].blockTrackers, true);
 assert.equal(compatible.siteOverrides["example.com"].stripTrackingParams, true);
