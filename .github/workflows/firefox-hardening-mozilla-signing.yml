@@ -1,0 +1,35 @@
+name: Firefox Hardening Mozilla Signing
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/firefox-hardening-mozilla-signing.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  sign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build exact candidate
+        run: python shared/scripts/package_extension.py firefox-hardening --output-dir dist/candidate
+      - name: Verify accepted candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="dist/candidate/goreecloud-firefox-hardening-0.1.0.xpi"
+          echo "82043d51fafed43635b480f7530a5f5c2ea3ef7bd16a7f79fa2eb62ca63a1151  $file" | sha256sum -c -
+          mkdir -p signing-source dist/mozilla
+          unzip -q "$file" -d signing-source
+      - name: Mozilla unlisted signing
+        env:
+          WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
+          WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+        run: npx --yes web-ext@10.5.0 sign --source-dir signing-source --artifacts-dir dist/mozilla --channel=unlisted --approval-timeout=900000 --timeout=900000
