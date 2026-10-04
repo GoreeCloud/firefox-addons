@@ -49,7 +49,7 @@ def main() -> None:
     for rel in required_files:
         if not (ROOT / rel).is_file():
             fail(f"missing required file: {rel}")
-    print("Firefox Hardening source contract validated.")
+    print("Browser Hardening source contract validated.")
 
 if __name__ == "__main__":
     main()
