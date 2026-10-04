@@ -11,12 +11,12 @@ def fail(message: str) -> None:
 
 def main() -> None:
     manifest = json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))
-routing_controls = (ROOT / "src/routing-controls.js").read_text(encoding="utf-8")
+    routing_controls = (ROOT / "src/routing-controls.js").read_text(encoding="utf-8")
     if manifest.get("manifest_version") != 3:
         fail("Manifest V3 is required")
     if manifest.get("name") != "GoreeCloud Webspaces":
         fail("unexpected extension name")
-if "custom-minutes" not in routing_controls:
+    if "custom-minutes" not in routing_controls or "durationMinutes" not in routing_controls:
         fail("0.1.15 must retain bounded custom routing-pause support")
     if manifest.get("version") != "0.1.15":
         fail("source version must remain synchronized with canonical inventory")
