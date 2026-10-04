@@ -274,6 +274,16 @@ def main() -> int:
             require("password" in diagnostics_text.lower(), "Maximum compatibility diagnostics include password-saving impact", diagnostics_text)
             result["compatibilityDiagnosticsAccepted"] = True
 
+            driver.execute_script(
+                "document.querySelector('#policyAuditInput').value = arguments[0]",
+                policy_text,
+            )
+            driver.find_element("css selector", "#auditPolicy").click()
+            WebDriverWait(driver, 10).until(
+                lambda d: d.find_element("css selector", "#policyAuditSummary").text.strip() == "Matches selected profile"
+            )
+            result["policyAuditAccepted"] = True
+
             driver.find_element("css selector", "#restore").click()
             WebDriverWait(driver, 5).until(lambda d: d.switch_to.alert)
             driver.switch_to.alert.accept()
