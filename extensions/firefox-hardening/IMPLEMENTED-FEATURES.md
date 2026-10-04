@@ -12,3 +12,4 @@
 - Zero host permissions and zero browsing-content access.
 - Node unit tests for profile behavior, conflicts, restore semantics, scoring, and policy generation.
 - Automated real-Firefox unsigned release qualification covering Balanced, Strict, Maximum, policy generation, popup privacy messaging, and reversible restore for the exact deterministic 0.1.0 candidate.
+- Governed Mozilla-signed unlisted XPI parity verification, persistent installation, full Firefox restart without reinstalling, post-restart Strict-profile verification, and extension-control release acceptance for 0.1.0.
