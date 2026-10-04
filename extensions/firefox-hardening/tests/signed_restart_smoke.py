@@ -18,6 +18,15 @@ import runtime_smoke as runtime
 
 EXPECTED_ADDON_ID = "firefox-hardening@goreecloud.com"
 EXPECTED_VERSION = "0.1.0"
+CONTROL_LEVELS = {"controllable_by_this_extension", "controlled_by_this_extension"}
+STRICT_TARGETS = {
+    "networkPredictionEnabled": False,
+    "hyperlinkAuditingEnabled": False,
+    "trackingProtectionMode": "always",
+    "cookieConfig": {"behavior": "reject_trackers_and_partition_foreign", "nonPersistentCookies": False},
+    "resistFingerprinting": True,
+    "webNotificationsDisabled": True,
+}
 
 
 def require(condition: bool, name: str, detail: str = "") -> None:
@@ -27,18 +36,41 @@ def require(condition: bool, name: str, detail: str = "") -> None:
     print(f"PASS {name}")
 
 
-def targeted_controlled(snapshot: dict, names: list[str], phase: str) -> None:
-    for name in names:
+def expected_owned_settings(snapshot: dict) -> set[str]:
+    expected: set[str] = set()
+    for name, target in STRICT_TARGETS.items():
         item = snapshot.get(name)
-        require(isinstance(item, dict) and "error" not in item, f"{phase} {name} API available", repr(item))
+        require(isinstance(item, dict) and "error" not in item, f"pre-apply {name} API available", repr(item))
         require(
-            item.get("levelOfControl") == "controlled_by_this_extension",
-            f"{phase} {name} owned by signed extension",
+            item.get("levelOfControl") in CONTROL_LEVELS,
+            f"pre-apply {name} is locally controllable",
             repr(item),
         )
+        if item.get("value") != target:
+            expected.add(name)
+    return expected
 
 
-def strict_runtime_checks(driver: webdriver.Firefox, phase: str) -> dict:
+def verify_target_control(snapshot: dict, expected_owned: set[str], phase: str) -> None:
+    for name in STRICT_TARGETS:
+        item = snapshot.get(name)
+        require(isinstance(item, dict) and "error" not in item, f"{phase} {name} API available", repr(item))
+        level = item.get("levelOfControl")
+        if name in expected_owned:
+            require(
+                level == "controlled_by_this_extension",
+                f"{phase} {name} remains owned after Browser Hardening changed it",
+                repr(item),
+            )
+        else:
+            require(
+                level in CONTROL_LEVELS,
+                f"{phase} {name} remains locally controllable when no write was needed",
+                repr(item),
+            )
+
+
+def strict_runtime_checks(driver: webdriver.Firefox, phase: str, expected_owned: set[str]) -> dict:
     runtime.navigate_extension(driver, "dashboard.html")
     WebDriverWait(driver, 15).until(lambda d: d.find_element("css selector", "#settingsBody"))
     WebDriverWait(driver, 15).until(
@@ -57,18 +89,7 @@ def strict_runtime_checks(driver: webdriver.Firefox, phase: str) -> dict:
     )
     runtime.assert_value(snapshot, "resistFingerprinting", True)
     runtime.assert_value(snapshot, "webNotificationsDisabled", True)
-    targeted_controlled(
-        snapshot,
-        [
-            "networkPredictionEnabled",
-            "hyperlinkAuditingEnabled",
-            "trackingProtectionMode",
-            "cookieConfig",
-            "resistFingerprinting",
-            "webNotificationsDisabled",
-        ],
-        phase,
-    )
+    verify_target_control(snapshot, expected_owned, phase)
     require(True, f"{phase} Strict profile runtime state")
     return snapshot
 
@@ -115,9 +136,12 @@ def main() -> int:
 
             runtime.navigate_extension(first, "dashboard.html")
             WebDriverWait(first, 15).until(lambda d: d.find_element("css selector", "#settingsBody"))
+            pre_apply = runtime.setting_snapshot(first)
+            expected_owned = expected_owned_settings(pre_apply)
             runtime.click_profile(first, "strict")
-            strict_runtime_checks(first, "pre-restart")
+            strict_runtime_checks(first, "pre-restart", expected_owned)
             result["preRestartStrictAccepted"] = True
+            result["settingsChangedByExtension"] = sorted(expected_owned)
 
             first.quit()
             first = None
@@ -134,7 +158,7 @@ def main() -> int:
             result["postRestartAddonActive"] = True
             result["postRestartFirefoxVersion"] = second.capabilities.get("browserVersion", "")
 
-            strict_runtime_checks(second, "post-restart")
+            strict_runtime_checks(second, "post-restart", expected_owned)
             result["postRestartStrictAccepted"] = True
 
             second.find_element("css selector", "#restore").click()
@@ -150,6 +174,14 @@ def main() -> int:
                 if isinstance(item, dict) and item.get("levelOfControl") == "controlled_by_this_extension"
             ]
             require(not controlled, "post-restart restore released signed extension settings", repr(controlled))
+            for name in expected_owned:
+                item = restored.get(name)
+                original = pre_apply.get(name)
+                require(
+                    isinstance(item, dict) and isinstance(original, dict) and item.get("value") == original.get("value"),
+                    f"post-restart restore returned {name} to its pre-apply value",
+                    repr({"original": original, "restored": item}),
+                )
             result["postRestartRestoreAccepted"] = True
 
             result["persistentInstallRestartAccepted"] = all(
@@ -175,5 +207,34 @@ def main() -> int:
     return 0
 
 
+def self_test() -> int:
+    before = {
+        name: {"value": target, "levelOfControl": "controllable_by_this_extension"}
+        for name, target in STRICT_TARGETS.items()
+    }
+    before["networkPredictionEnabled"] = {"value": True, "levelOfControl": "controllable_by_this_extension"}
+    expected = expected_owned_settings(before)
+    require(expected == {"networkPredictionEnabled"}, "self-test identifies settings requiring a write", repr(expected))
+
+    after = {
+        name: {"value": target, "levelOfControl": "controllable_by_this_extension"}
+        for name, target in STRICT_TARGETS.items()
+    }
+    after["networkPredictionEnabled"]["levelOfControl"] = "controlled_by_this_extension"
+    verify_target_control(after, expected, "self-test")
+
+    blocked = {name: dict(item) for name, item in after.items()}
+    blocked["hyperlinkAuditingEnabled"]["levelOfControl"] = "controlled_by_other_extensions"
+    try:
+        verify_target_control(blocked, expected, "self-test-blocked")
+    except AssertionError:
+        print("PASS self-test rejects externally controlled already-compliant targets")
+    else:
+        raise AssertionError("FAIL self-test must reject externally controlled targets")
+    return 0
+
+
 if __name__ == "__main__":
+    if len(sys.argv) == 2 and sys.argv[1] == "--self-test":
+        raise SystemExit(self_test())
     raise SystemExit(main())
