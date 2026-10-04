@@ -1,4 +1,4 @@
-# Implemented Features — 0.1.1 Source Candidate
+# Implemented Features — 0.1.1 Stable
 
 - Native Firefox `privacy` and `browserSettings` setting inspection.
 - `levelOfControl` conflict detection before writes.
@@ -23,3 +23,4 @@
 - Read-only existing-policy audit and selected-profile diff.
 - Profile-aware compatibility diagnostics for higher-impact controls.
 - Linux, Windows, and macOS Enterprise Policy deployment guides.
+- Governed Mozilla-signed 0.1.1 acceptance: run `37170617536` accepted exact source `3927516c82970d1b6e59adf314949cb4e2a233d6`, unsigned SHA-256 `4789363331792d596776ca2d3b2979369a142edafd959726992cf56b8a3a1052`, signed SHA-256 `12fc5e9481365c123bbc0487609907d6473f0e16ad1b761ecf732e4313f80632`, signed payload parity, persistent installation, full Firefox restart, post-restart Strict behavior, and ownership release.
