@@ -83,7 +83,7 @@ See [`docs/MOZILLA_SIGNING.md`](docs/MOZILLA_SIGNING.md). Each extension keeps a
 
 ### GoreeCloud Browser Hardening 0.1.0
 
-Browser Hardening 0.1.0 is a source candidate, not an accepted Stable release. It introduces a native Firefox configuration-hardening model based on supported WebExtension `privacy`/`browserSettings` APIs plus explicit Firefox Enterprise `policies.json` export for startup-level controls that WebExtensions cannot own. It requests no host permissions and does not access page contents or browsing history. Stable status remains gated on Mozilla signing, persistent installation, restart acceptance, and governed target-environment validation.
+Browser Hardening 0.1.0 is a source candidate, not an accepted Stable release. It introduces a native Firefox configuration-hardening model based on supported WebExtension `privacy`/`browserSettings` APIs plus explicit Firefox Enterprise `policies.json` export for startup-level controls that WebExtensions cannot own. It requests no host permissions and does not access page contents or browsing history. The pre-rename candidate passed unsigned Firefox qualification, but AMO signing run `37165746695` rejected the former add-on display name because it contained the Firefox trademark and produced no signed XPI. The user-facing name is now GoreeCloud Browser Hardening; the revised candidate requires fresh exact-source qualification and digest binding before Mozilla signing, persistent-install/restart acceptance, and final Stable consideration.
 
 ### GoreeCloud Advanced Tab Manager 0.1.13
 
