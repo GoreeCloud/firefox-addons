@@ -9,7 +9,7 @@ It is **not** a fork of arkenfox/user.js and does not copy or redistribute arken
 
 ## Source status
 
-Version 0.1.0 remains a **source candidate** and is not yet an accepted Stable or Mozilla-signed release. After the trademark-safe rename to **GoreeCloud Browser Hardening**, exact source revision `7726d8ee91ae72dc81b4c407a6c1572c9bdc790c` passed fresh real-Firefox unsigned qualification in workflow run `37166231119`. The deterministic renamed candidate SHA-256 is `52333b66989c61da92342f7f386c2a2f0a6718585cab96c7037f04d1760d93ba`, tested with Firefox 156.0. The Mozilla-signing workflow is rebound to this exact candidate; signed payload parity, persistent-install/full-restart acceptance, and final lifecycle promotion remain separate gates.
+Version 0.1.0 is the **accepted Stable release for Mozilla unlisted/self-distribution**, subject to final post-promotion lifecycle readback. Exact source revision `7726d8ee91ae72dc81b4c407a6c1572c9bdc790c` passed real-Firefox qualification in run `37166231119`; deterministic unsigned SHA-256 is `52333b66989c61da92342f7f386c2a2f0a6718585cab96c7037f04d1760d93ba`. Governed signing/restart run `37167368897` recovered the approved Mozilla-signed XPI, verified signed payload parity, persistent installation, a full Firefox 156.0 restart without reinstalling, post-restart Strict-profile behavior, and Restore release of all extension-owned settings. Signed SHA-256 is `d123228b15a58762895540342d063e012195eedd2d65bf1a937e8b634604f0ae`.
 
 ## Current capabilities
 
@@ -22,6 +22,7 @@ Version 0.1.0 remains a **source candidate** and is not yet an accepted Stable o
 - Native `policies.json` generation for telemetry/studies controls, network prediction, HTTPS-Only Mode, cookies, tracking protection, notification prompts, anti-fingerprinting, and Maximum-mode WebRTC/password-saving preferences.
 - No host permissions, content scripts, page inspection, browsing-history collection, remote configuration, or telemetry.
 - Automated real-Firefox qualification of all three profiles, policy generation, popup privacy copy, and reversible restore against the deterministic unsigned XPI.
+- Mozilla-signed unlisted XPI parity verification plus persistent-install, full-process restart, post-restart Strict-profile, and Restore acceptance.
 
 ## Profiles
 
