@@ -163,6 +163,25 @@
       <div id="policyDiffList" class="policy-diff-list" aria-live="polite"></div>
     </section>
 
+    <section class="panel" aria-labelledby="deploymentHeading">
+      <div class="section-heading dashboard-heading">
+        <div>
+          <p class="eyebrow">Managed deployment</p>
+          <h2 id="deploymentHeading">Platform deployment guide</h2>
+        </div>
+        <div class="button-row">
+          <select id="deploymentPlatform" aria-label="Deployment platform">
+            <option value="linux">Linux</option>
+            <option value="windows">Windows</option>
+            <option value="macos">macOS</option>
+          </select>
+          <button id="copyDeployment" class="secondary" type="button"><span aria-hidden="true">⧉</span> Copy guide</button>
+        </div>
+      </div>
+      <p>Generate a local deployment checklist for the selected profile and platform.</p>
+      <textarea id="deploymentOutput" rows="10" readonly aria-label="Platform deployment guide"></textarea>
+    </section>
+
     <div id="status" class="status-line page-status" role="status"></div>
   </main>
   <script src="src/hardening.js"></script>
