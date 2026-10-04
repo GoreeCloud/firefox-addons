@@ -269,6 +269,11 @@ def main() -> int:
             )
             result["policyGenerationAccepted"] = True
 
+            diagnostics_text = driver.find_element("css selector", "#compatibilityList").text
+            require("WebRTC" in diagnostics_text, "Maximum compatibility diagnostics include WebRTC impact", diagnostics_text)
+            require("password" in diagnostics_text.lower(), "Maximum compatibility diagnostics include password-saving impact", diagnostics_text)
+            result["compatibilityDiagnosticsAccepted"] = True
+
             driver.find_element("css selector", "#restore").click()
             WebDriverWait(driver, 5).until(lambda d: d.switch_to.alert)
             driver.switch_to.alert.accept()
