@@ -1,4 +1,4 @@
-# Implemented Features — 0.1.0 Source Candidate
+# Implemented Features — 0.1.1 Source Candidate
 
 - Native Firefox `privacy` and `browserSettings` setting inspection.
 - `levelOfControl` conflict detection before writes.
@@ -12,3 +12,10 @@
 - Zero host permissions and zero browsing-content access.
 - Node unit tests for profile behavior, conflicts, restore semantics, scoring, and policy generation.
 - Automated real-Firefox unsigned release qualification covering Balanced, Strict, Maximum, policy generation, popup privacy messaging, and reversible restore for the exact deterministic 0.1.0 candidate.
+
+- Reviewed profile application: selecting a profile opens an explicit current-value → target-value preview before any write.
+- Per-setting local opt-outs that persist across reviewed applications and are honored by WebExtension application and generated policy output where equivalent controls exist.
+- Popup profile actions route to the dashboard review instead of mutating Firefox directly.
+- First-use guidance explains the reviewed-apply model and can be dismissed after the user understands the flow.
+- Completed user-facing rename cleanup for the SVG accessibility title and Restore confirmation.
+- Historical 0.1.0 signed evidence retained without Stable promotion: governed run `37167368897` accepted Mozilla signing, payload parity, persistent installation, full restart, and ownership release for the exact 0.1.0 candidate.
