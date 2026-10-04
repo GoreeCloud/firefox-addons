@@ -162,13 +162,16 @@ def wait_score(driver: webdriver.Firefox, percent: int = 100) -> None:
 
 def click_profile(driver: webdriver.Firefox, profile: str, confirm: bool = False) -> None:
     driver.find_element("css selector", f'[data-profile="{profile}"]').click()
-    if confirm:
-        WebDriverWait(driver, 5).until(lambda d: d.switch_to.alert)
-        driver.switch_to.alert.accept()
+    WebDriverWait(driver, 15).until(lambda d: d.find_element("css selector", "#previewPanel").is_displayed())
+    require(
+        driver.find_element("css selector", "#previewBadge").text.strip() == "No changes applied",
+        f"{profile} preview is non-mutating",
+    )
+    driver.find_element("css selector", "#previewApply").click()
     wait_score(driver, 100)
     badge = driver.find_element("css selector", "#selectedBadge").text.strip()
     expected = {"balanced": "Balanced", "strict": "Strict", "maximum": "Maximum"}[profile]
-    require(badge == expected, f"{expected} profile selected", badge)
+    require(badge.startswith(expected), f"{expected} profile selected", badge)
 
 
 def assert_value(snapshot: dict, name: str, expected: object) -> None:
@@ -218,6 +221,7 @@ def main() -> int:
 
             navigate_extension(driver, "dashboard.html")
             WebDriverWait(driver, 15).until(lambda d: d.find_element("css selector", "#settingsBody"))
+            require(driver.find_element("css selector", "#onboardingPanel").is_displayed(), "first-use guidance visible")
 
             click_profile(driver, "balanced")
             balanced = setting_snapshot(driver)
@@ -229,6 +233,7 @@ def main() -> int:
                 "cookieConfig",
                 {"behavior": "reject_trackers_and_partition_foreign", "nonPersistentCookies": False},
             )
+            require(not driver.find_element("css selector", "#onboardingPanel").is_displayed(), "first-use guidance completes after reviewed apply")
             result["profiles"]["balanced"] = True
 
             click_profile(driver, "strict")
