@@ -53,9 +53,11 @@ function ensureRoutingControls() {
         <select id="manager-pause-mode" class="glz-select">
           <option value="five-minutes">5 minutes</option>
           <option value="thirty-minutes">30 minutes</option>
+          <option value="custom-minutes">Custom minutes…</option>
           <option value="restart">Until Firefox restarts</option>
           <option value="indefinite">Indefinitely</option>
         </select>
+        <input id="manager-pause-minutes" class="glz-select pause-custom-minutes" type="number" min="1" max="720" step="1" value="60" aria-label="Custom routing pause minutes" hidden>
         <button id="manager-pause" class="glz-button" type="button">Pause</button>
         <button id="manager-resume" class="glz-button" type="button" hidden>Resume</button>
       </div>
@@ -142,8 +144,17 @@ document.querySelector("#routing-enabled")?.addEventListener("change", async (ev
   await sync();
 }, { capture: true });
 
+document.querySelector("#manager-pause-mode")?.addEventListener("change", (event) => {
+  const custom = document.querySelector("#manager-pause-minutes");
+  if (custom) custom.hidden = event.target.value !== "custom-minutes";
+});
+
 document.querySelector("#manager-pause")?.addEventListener("click", async () => {
-  await send("webspaces-controls:pause", { mode: document.querySelector("#manager-pause-mode").value });
+  const mode = document.querySelector("#manager-pause-mode").value;
+  const durationMinutes = mode === "custom-minutes"
+    ? Number(document.querySelector("#manager-pause-minutes")?.value)
+    : undefined;
+  await send("webspaces-controls:pause", { mode, durationMinutes });
   await sync();
 });
 
