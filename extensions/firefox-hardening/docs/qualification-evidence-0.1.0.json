@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "product": "GoreeCloud Firefox Hardening",
+  "version": "0.1.0",
+  "firefoxAddonId": "firefox-hardening@goreecloud.com",
+  "sourceRevision": "05c73782d9edb072fda3f6872406cb6809099011",
+  "candidateSha256": "82043d51fafed43635b480f7530a5f5c2ea3ef7bd16a7f79fa2eb62ca63a1151",
+  "qualificationWorkflowRunId": 37165320162,
+  "qualificationArtifactId": 11289212468,
+  "qualificationArtifactDigest": "sha256:d5eebcbcef1e4cfa180e10b8cf9f9e3cad04838f4b985be2927382cea642b403",
+  "firefoxVersionObserved": "156.0",
+  "temporaryUnsignedInstallAccepted": true,
+  "balancedProfileAccepted": true,
+  "strictProfileAccepted": true,
+  "maximumProfileAccepted": true,
+  "policyGenerationAccepted": true,
+  "restoreAccepted": true,
+  "popupAccepted": true,
+  "runtimeAccepted": true,
+  "mozillaSigned": false,
+  "persistentInstallRestartAccepted": false,
+  "stablePromoted": false
+}
