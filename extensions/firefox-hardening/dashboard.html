@@ -154,8 +154,12 @@
         </div>
         <span id="policyAuditSummary" class="badge">No policy loaded</span>
       </div>
-      <p>Paste an existing Firefox Enterprise Policy file to compare it with the selected Browser Hardening profile. The imported text remains local to this page session and is never applied automatically.</p>
-      <textarea id="policyAuditInput" rows="9" spellcheck="false" aria-label="Existing policies.json to audit" placeholder="Paste an existing policies.json here."></textarea>
+      <p>Load or paste an existing Firefox Enterprise Policy file to compare it with the selected Browser Hardening profile. Imported policy text remains local to this page session and is never applied automatically.</p>
+      <label class="file-picker">
+        <span>Load policies.json</span>
+        <input id="policyFile" type="file" accept=".json,application/json">
+      </label>
+      <textarea id="policyAuditInput" rows="9" spellcheck="false" aria-label="Existing policies.json to audit" placeholder="Paste an existing policies.json here, or load one above."></textarea>
       <div class="button-row">
         <button id="auditPolicy" class="primary" type="button">Audit policy</button>
         <button id="clearPolicyAudit" class="secondary" type="button">Clear</button>
