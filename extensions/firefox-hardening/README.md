@@ -1,6 +1,6 @@
-# GoreeCloud Firefox Hardening
+# GoreeCloud Browser Hardening
 
-GoreeCloud Firefox Hardening is a local-first Firefox hardening manager designed as a native alternative to maintaining a large `user.js` file by hand.
+GoreeCloud Browser Hardening is a local-first Firefox hardening manager designed as a native alternative to maintaining a large `user.js` file by hand.
 
 It is **not** a fork of arkenfox/user.js and does not copy or redistribute arkenfox preference lists. The design instead uses supported Firefox interfaces directly:
 
