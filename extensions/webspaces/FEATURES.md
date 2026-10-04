@@ -1,5 +1,11 @@
 # GoreeCloud Webspaces — Features
 
+## Implemented in 0.1.15 source candidate
+
+- **Custom timed routing pause:** users can pause automatic routing for a validated custom duration from 1 through 720 minutes in both the popup and manager.
+- The custom duration reuses the existing transient routing-pause authority and does not change Webspace identity ownership, routing precedence, portability format, or Firefox permissions.
+- 0.1.15 is source-candidate work only. Accepted Stable remains 0.1.14 until the exact candidate completes the applicable release gates.
+
 ## Implemented in Stable 0.1.14
 
 - Built-in **Standard, GoreeCloud, Google, Microsoft, Meta, and Proton** Webspaces.
