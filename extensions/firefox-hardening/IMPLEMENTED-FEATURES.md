@@ -20,3 +20,6 @@
 - First-use guidance explains the reviewed-apply model and can be dismissed after the user understands the flow.
 - Completed user-facing rename cleanup for the SVG accessibility title and Restore confirmation.
 - Stable 0.1.0 rollback evidence retained: governed run `37167368897` accepted Mozilla signing, payload parity, persistent installation, full restart, and ownership release for the exact 0.1.0 payload, later promoted by PR #178. Final governed lifecycle readback run `37167984845` re-verified the same signed payload and recorded `stablePromoted: true`.
+- Read-only existing-policy audit and selected-profile diff.
+- Profile-aware compatibility diagnostics for higher-impact controls.
+- Linux, Windows, and macOS Enterprise Policy deployment guides.
