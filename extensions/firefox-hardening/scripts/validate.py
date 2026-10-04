@@ -57,10 +57,10 @@ def main() -> None:
         fail("stale pre-rename product name remains in user-facing runtime source")
     dashboard = (ROOT / "dashboard.html").read_text(encoding="utf-8")
     dashboard_js = (ROOT / "src/dashboard.js").read_text(encoding="utf-8")
-    for marker in ("previewPanel", "previewList", "onboardingPanel"):
+    for marker in ("previewPanel", "previewList", "onboardingPanel", "compatibilityList", "policyAuditInput", "policyFile", "deploymentOutput"):
         if marker not in dashboard:
             fail(f"missing reviewed-apply UI marker: {marker}")
-    for marker in ("hardeningExcludedSettingIds", "buildChangePlan", "pendingProfilePreview"):
+    for marker in ("hardeningExcludedSettingIds", "buildChangePlan", "pendingProfilePreview", "policyDiff", "compatibilityDiagnostics", "deploymentGuide", "loadPolicyFile"):
         if marker not in dashboard_js:
             fail(f"missing reviewed-apply behavior marker: {marker}")
     print("Browser Hardening source contract validated.")
