@@ -8,6 +8,8 @@ on:
       - 'shared/scripts/validate_repository.py'
       - 'docs/extension-inventory.json'
       - '.github/workflows/firefox-hardening-release-qualification.yml'
+      - '.github/workflows/firefox-hardening-mozilla-signing.yml'
+      - '.github/workflows/firefox-hardening-mozilla-signing.yml'
   push:
     branches: [main]
     paths:
