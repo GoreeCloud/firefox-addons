@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Real Firefox runtime qualification for GoreeCloud Firefox Hardening 0.1.0."""
+"""Real Firefox runtime qualification for GoreeCloud Browser Hardening 0.1.0."""
 
 from __future__ import annotations
 
@@ -187,7 +187,7 @@ def main() -> int:
 
     result: dict[str, object] = {
         "schemaVersion": 1,
-        "product": "GoreeCloud Firefox Hardening",
+        "product": "GoreeCloud Browser Hardening",
         "version": EXPECTED_VERSION,
         "firefoxAddonId": EXPECTED_ADDON_ID,
         "sourceRevision": os.environ.get("FIREFOX_HARDENING_SOURCE_REVISION", os.environ.get("GITHUB_SHA", "")),
