@@ -284,6 +284,10 @@ def main() -> int:
             )
             result["policyAuditAccepted"] = True
 
+            deployment_text = driver.find_element("css selector", "#deploymentOutput").get_attribute("value")
+            require("Linux" in deployment_text and "Target:" in deployment_text, "Linux deployment guide rendered", deployment_text)
+            result["deploymentGuideAccepted"] = True
+
             driver.find_element("css selector", "#restore").click()
             WebDriverWait(driver, 5).until(lambda d: d.switch_to.alert)
             driver.switch_to.alert.accept()
