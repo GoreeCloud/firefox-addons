@@ -45,13 +45,15 @@ shared/
 
 | Extension | Current directory | Firefox add-on ID | Source state | Ownership / disposition |
 | --- | --- | --- | --- | --- |
-| GoreeCloud Advanced Tab Manager | `extensions/advanced-tab-manager/` | `advanced-tab-manager@goreecloud.com` | **Stable 0.1.13** accepted for Mozilla unlisted/self-distribution | Standalone Firefox product; remains here |
-| GoreeCloud ChatGPT Enhancer | `extensions/chatgpt-enhancer/` | `chatgpt-enhancer@goreecloud.com` | **Source candidate 0.1.2**; no accepted Stable release | Standalone Firefox product; remains here |
+| GoreeCloud Advanced Tab Manager | `extensions/advanced-tab-manager/` | `advanced-tab-manager@goreecloud.com` | **Source candidate 0.1.14**; accepted Stable remains 0.1.13 | Standalone Firefox product; remains here |
+| GoreeCloud ChatGPT Enhancer | `extensions/chatgpt-enhancer/` | `chatgpt-enhancer@goreecloud.com` | **Source candidate 0.1.3**; no accepted Stable release | Standalone Firefox product; remains here |
 | GoreeCloud Firefox Hardening | `extensions/firefox-hardening/` | `firefox-hardening@goreecloud.com` | **Source candidate 0.1.0**; no accepted Stable release | Standalone native Firefox hardening manager; remains here |
-| GoreeCloud Privacy Shield | `extensions/privacy-shield/` | `privacy-shield@goreecloud.com` | Stable 0.2.0 accepted for Mozilla unlisted/self-distribution | Platform adapter; retained here pending explicit platform-boundary review |
-| GoreeCloud Redirector | `extensions/redirector/` | `redirector@goreecloud.com` | Canonical source | Standalone Firefox product; canonical here; isolated legacy repository retired 2026-09-18 after history/provenance preservation |
-| GoreeCloud Source Resync | `extensions/source-resync/` | `source-resync@goreecloud.com` | Canonical source | Standalone Firefox product; canonical here; former standalone repository retired 2026-09-18 after history/release preservation |
-| GoreeCloud Webspaces | `extensions/webspaces/` | `webspaces@goreecloud.com` | **Stable 0.1.14** accepted for Mozilla unlisted/self-distribution | Standalone Firefox product; remains here |
+| GoreeCloud Privacy Shield | `extensions/privacy-shield/` | `privacy-shield@goreecloud.com` | **Source candidate 0.2.1**; accepted Stable remains 0.2.0 | Platform adapter; retained here pending explicit platform-boundary review |
+| GoreeCloud Redirector | `extensions/redirector/` | `redirector@goreecloud.com` | **Canonical source 0.2.2**; accepted Stable remains 0.2.0 | Standalone Firefox product; canonical here; isolated legacy repository retired 2026-09-18 after history/provenance preservation |
+| GoreeCloud Source Resync | `extensions/source-resync/` | `source-resync@goreecloud.com` | **Canonical source 1.1.3**; no accepted Stable release recorded here | Standalone Firefox product; canonical here; former standalone repository retired 2026-09-18 after history/release preservation |
+| GoreeCloud Webspaces | `extensions/webspaces/` | `webspaces@goreecloud.com` | **Source candidate 0.1.15**; accepted Stable remains 0.1.14 | Standalone Firefox product; remains here |
+
+The current source-candidate improvement slice adds durable duplicate-cleanup protection in Advanced Tab Manager, tagged prompt snippets in ChatGPT Enhancer, safer review controls in Firefox Hardening, local redirect backup/testing in Redirector, failed-source retry/history in Source Resync, a Lockdown site profile in Privacy Shield, and custom timed routing pauses in Webspaces. These source changes do not inherit Stable status from earlier signed releases.
 
 Machine-readable inventory lives in [`docs/extension-inventory.json`](docs/extension-inventory.json). Inventory schema v2 records each checked-in manifest version and source lifecycle state separately from independently accepted Mozilla-signed Stable versions, preventing a newer source candidate from silently inheriting older release status.
 

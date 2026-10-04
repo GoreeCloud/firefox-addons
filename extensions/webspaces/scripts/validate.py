@@ -11,11 +11,14 @@ def fail(message: str) -> None:
 
 def main() -> None:
     manifest = json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))
+    routing_controls = (ROOT / "src/routing-controls.js").read_text(encoding="utf-8")
     if manifest.get("manifest_version") != 3:
         fail("Manifest V3 is required")
     if manifest.get("name") != "GoreeCloud Webspaces":
         fail("unexpected extension name")
-    if manifest.get("version") != "0.1.14":
+    if "custom-minutes" not in routing_controls or "durationMinutes" not in routing_controls:
+        fail("0.1.15 must retain bounded custom routing-pause support")
+    if manifest.get("version") != "0.1.15":
         fail("source version must remain synchronized with canonical inventory")
     if manifest.get("browser_specific_settings", {}).get("gecko", {}).get("id") != "webspaces@goreecloud.com":
         fail("unexpected Firefox add-on ID")
@@ -44,7 +47,7 @@ def main() -> None:
         "src/commands-background.js",
         "src/isolation-health-background.js",
     ]:
-        fail("0.1.14 background modules are not registered in the required order")
+        fail("0.1.15 background modules are not registered in the required order")
 
     expected_commands = {
         "open-webspaces-launcher",
@@ -61,7 +64,7 @@ def main() -> None:
         fail("unexpected Webspaces command registry")
     for command in manifest.get("commands", {}).values():
         if command.get("suggested_key"):
-            fail("0.1.14 must leave shortcut assignment under explicit Firefox/user control")
+            fail("0.1.15 must leave shortcut assignment under explicit Firefox/user control")
 
     required_files = [
         "README.md",
@@ -173,10 +176,10 @@ def main() -> None:
         "isolation-health-ui.js",
         "isolation-health.css",
         "provider-logos.js",
-        "GoreeCloud Webspaces 0.1.14",
+        "GoreeCloud Webspaces 0.1.15",
     ]:
         if token not in options:
-            fail(f"manager is missing required 0.1.14 control or module: {token}")
+            fail(f"manager is missing required 0.1.15 control or module: {token}")
     if "source candidate" in options.lower():
         fail("release-quality manager UI must use a lifecycle-neutral version label")
 
@@ -194,9 +197,9 @@ def main() -> None:
     current_identity_ui = (ROOT / "ui/current-webspace-ui.js").read_text(encoding="utf-8")
 
     if 'STANDARD_WEBSPACE_ID = "standard"' not in constants or 'name: "Standard"' not in constants:
-        fail("0.1.14 must retain the built-in Standard Webspace")
+        fail("0.1.15 must retain the built-in Standard Webspace")
     if 'id: "proton"' not in constants or 'name: "Proton"' not in constants:
-        fail("0.1.14 must include the built-in Proton Webspace")
+        fail("0.1.15 must include the built-in Proton Webspace")
     for domain in ["proton.me", "protonmail.com", "protonvpn.com"]:
         if domain not in provider_rules:
             fail(f"Proton provider routing is missing {domain}")
@@ -237,7 +240,7 @@ def main() -> None:
         fail("shortcut manager must use Firefox command APIs and expose Proton")
 
     print(
-        "Validated GoreeCloud Webspaces 0.1.14 release candidate: current-identity reconciliation, "
+        "Validated GoreeCloud Webspaces 0.1.15 release candidate: current-identity reconciliation, "
         "provider branding, Proton routing, Standard fallback, per-Webspace isolation, and lifecycle-neutral packaged UI."
     )
 

@@ -44,6 +44,10 @@ jobs:
         run: node --test extensions/advanced-tab-manager/tests/*.test.mjs
       - name: Qualify Advanced Tab Manager deterministic large-session core
         run: node extensions/advanced-tab-manager/scripts/large-session-qualification.mjs
+      - name: Validate Redirector source contract
+        run: python extensions/redirector/scripts/validate.py
+      - name: Validate Source Resync source contract
+        run: python extensions/source-resync/scripts/validate.py
       - name: Validate Webspaces source contract
         run: python extensions/webspaces/scripts/validate.py
       - name: Test Webspaces routing and management core
@@ -71,6 +75,8 @@ jobs:
           find extensions -type f -name '*.js' -print0 | while IFS= read -r -d '' file; do
             node --check "$file"
           done
+      - name: Test Redirector local portability and preview
+        run: node --test extensions/redirector/tests/*.test.mjs
       - name: Build deterministic unsigned packages
         run: |
           python shared/scripts/package_extension.py advanced-tab-manager

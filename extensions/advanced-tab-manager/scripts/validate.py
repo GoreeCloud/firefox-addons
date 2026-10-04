@@ -11,7 +11,7 @@ inventory_entry = next(item for item in inventory["extensions"] if item["slug"] 
 
 assert manifest["manifest_version"] == 3
 assert manifest["name"] == "GoreeCloud Advanced Tab Manager"
-assert manifest["version"] == "0.1.13"
+assert manifest["version"] == "0.1.14"
 assert manifest["homepage_url"] == "https://github.com/GoreeCloud/firefox-addons"
 assert manifest["browser_specific_settings"]["gecko"]["id"] == "advanced-tab-manager@goreecloud.com"
 assert manifest["browser_specific_settings"]["gecko"]["strict_min_version"] == "139.0"
@@ -20,13 +20,13 @@ expected_icon = "icons/advanced-tab-manager.svg"
 assert manifest["icons"] == {size: expected_icon for size in ("16", "32", "48", "64", "96", "128")}
 assert manifest["action"].get("default_icon") == expected_icon
 assert set(manifest["permissions"]) == {"activeTab", "alarms", "menus", "scripting", "sessions", "storage", "tabGroups", "tabs"}
-assert not manifest.get("host_permissions"), "Stable source must not request host permissions"
-assert "content_scripts" not in manifest, "Stable source must not inspect page content"
+assert not manifest.get("host_permissions"), "candidate source must not request host permissions"
+assert "content_scripts" not in manifest, "candidate source must not inspect page content"
 assert "unlimitedStorage" not in manifest["permissions"], "bounded Stable saved state must not request unlimited storage"
 assert "persistent" not in manifest["background"], "Manifest V3 background must not declare unsupported persistent"
 assert manifest["background"].get("type") == "module"
-assert inventory_entry["source_version"] == "0.1.13"
-assert inventory_entry["source_state"] == "stable"
+assert inventory_entry["source_version"] == "0.1.14"
+assert inventory_entry["source_state"] == "source-candidate"
 assert inventory_entry["accepted_stable_version"] == "0.1.13"
 
 required = [
@@ -211,7 +211,7 @@ assert "Local backup and portability" in manager_html and 'id="export-backup"' i
 assert 'id="apply-import"' in manager_html and 'id="clear-import"' in manager_html
 assert "prefers-reduced-transparency" in manager_css and "forced-colors" in manager_css
 assert "browser.tabs.create" in manager_link and "src/manager/manager.html" in manager_link
-assert 'id="open-manager"' in popup_html and "0.1.13" in popup_html and 'id="metric-tabs"' in popup_html
+assert 'id="open-manager"' in popup_html and "0.1.14" in popup_html and 'id="metric-tabs"' in popup_html
 assert 'id="residency-status"' in popup_html and "summarizeTabResidency" in popup_js
 assert "source candidate" not in popup_html.lower(), "packaged popup must be lifecycle-neutral for release signing"
 assert "development source only" not in manager_html.lower(), "packaged Manager must be lifecycle-neutral for release signing"
@@ -237,7 +237,7 @@ assert 'sourceVersion: "0.1.11"' not in large_session_qualification, "large-sess
 assert "representative Firefox rendered/runtime performance remains separate" in large_session_qualification
 
 assert 'EXPECTED_ADDON_ID = "advanced-tab-manager@goreecloud.com"' in runtime_smoke
-assert 'EXPECTED_VERSION = "0.1.13"' in runtime_smoke
+assert 'EXPECTED_VERSION = "0.1.14"' in runtime_smoke
 assert 'EXPECTED_ICON_PATH = "icons/advanced-tab-manager.svg"' in runtime_smoke
 assert "def firefox_addon_identity(" in runtime_smoke
 assert "AddonManager.getAddonByID" in runtime_smoke
@@ -442,4 +442,4 @@ assert "NoRedirect" in amo_recovery and "/api/v4/file/" in amo_recovery
 assert '"Authorization": f"JWT {token}"' in amo_recovery
 assert 'mirror_request = Request(location, headers={"User-Agent": USER_AGENT})' in amo_recovery
 
-print("Validated Advanced Tab Manager Stable 0.1.13 while preserving Stable 0.1.12 rollback evidence.")
+print("Validated Advanced Tab Manager 0.1.14 source candidate while preserving accepted Stable 0.1.13 evidence and historical rollback provenance.")

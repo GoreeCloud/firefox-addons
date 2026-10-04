@@ -1,5 +1,10 @@
 # GoreeCloud Privacy Shield for Firefox
 
+**Current source version:** `0.2.1`  
+**Source state:** `source-candidate`  
+**Accepted Stable version:** `0.2.0`  
+**Canonical repository:** `GoreeCloud/firefox-addons`
+
 GoreeCloud Privacy Shield is the first-party Firefox adapter for GoreeCloud's platform-wide Privacy Shield privacy identity. It provides local-first browser privacy controls without replacing Firefox/Gecko security boundaries or claiming authority outside the browser runtime.
 
 ## Implemented foundation
@@ -16,7 +21,7 @@ GoreeCloud Privacy Shield is the first-party Firefox adapter for GoreeCloud's pl
 - support for hosts-style, common ABP domain rules, wildcard/regex URL rules, exceptions, and cosmetic rules;
 - cosmetic filtering, persistent element picker rules, a temporary element zapper, one-click **Undo last hide**, and a **Hidden elements** manager for reviewing/restoring saved cosmetic rules;
 - an optional, off-by-default reviewed annoyance layer for selected sign-in/promotional overlays, initially Google One Tap-style prompts on Pinterest;
-- per-site protection override plus **Standard**, **Strict**, and **Compatible** site modes with one-click site reset;
+- per-site protection override plus **Standard**, **Strict**, **Lockdown**, and **Compatible** site modes with one-click site reset;
 - controls for third-party scripts, third-party frames, and media/object requests;
 - a local-only ephemeral **Activity Logger** covering both network decisions and privacy-safe page-filter events, with default URL redaction, optional stricter **Privacy view**, domain/type/verdict filters, safe-URL copy, explicit temporary full-URL reveal, and distinct ping/beacon reasons;
 - popup **Protection details** that summarizes current-tab protection reason counts from already-redacted in-memory logger metadata without displaying request URLs or page content;
@@ -33,10 +38,11 @@ GoreeCloud Privacy Shield is the first-party Firefox adapter for GoreeCloud's pl
 
 **Copy clean URL** applies the same reviewed Privacy Shield URL-cleaning function used by navigation and link cleanup, then writes only the resulting current-page URL to the local clipboard. It does not contact a remote shortening, redirect, or analytics service.
 
-The popup exposes three per-site protection modes:
+The popup exposes four per-site protection modes:
 
 - **Standard** removes profile-managed site overrides and follows the user's normal/global Privacy Shield settings.
 - **Strict** retains the normal protection set and additionally enables third-party script and third-party frame blocking for that site. It does not automatically enable the reviewed annoyance layer or media blocking.
+- **Lockdown** enables the strongest built-in site profile, including third-party script/frame blocking, media/object blocking, cosmetic filtering, reviewed annoyance controls, URL cleaning, ping/beacon blocking, ETag resistance, and local reviewed resource substitution. It is explicitly opt-in because site breakage is more likely.
 - **Compatible** keeps tracker, malware, miner, URL-cleaning, ping/beacon, ETag, popup, and ad-request protections while disabling cosmetic filtering and reviewed local-resource substitution and leaving third-party script/frame/media blocking off to reduce page-altering behavior.
 
 Changing a site mode preserves the independent site enabled/disabled state. **Reset site** removes the complete host-specific override and returns the site to global Privacy Shield settings. Site modes are stored in the existing local `siteOverrides` settings structure; no browsing-history store or new network service is introduced.
@@ -101,7 +107,7 @@ The initial parser supports a useful subset rather than claiming complete uBlock
 
 This adapter requires broad HTTP/HTTPS host access because its documented role is to inspect, clean, cancel, redirect, and modify requests across ordinary websites. The exception is documented in `BROAD_HOST_PERMISSION_REVIEW.md` and enforced by repository validation.
 
-The 0.2.0 quick-control/support-diagnostics candidate adds no new extension permission. Clipboard use remains covered by the existing `clipboardWrite` permission, per-site modes reuse existing local settings, Protection details reuse the existing privacy-safe in-memory logger boundary, and support snapshots are built locally from bounded derived state.
+The 0.2.1 Lockdown-profile candidate adds no new extension permission. The earlier 0.2.0 quick-control/support-diagnostics work likewise used the existing authority. Clipboard use remains covered by the existing `clipboardWrite` permission, per-site modes reuse existing local settings, Protection details reuse the existing privacy-safe in-memory logger boundary, and support snapshots are built locally from bounded derived state.
 
 ## Development and release status
 
@@ -122,6 +128,6 @@ node --check extensions/privacy-shield/src/support-snapshot.js
 python shared/scripts/package_extension.py privacy-shield
 ```
 
-Privacy Shield **0.1.1** remains the current Stable Firefox release for Mozilla unlisted/self-distribution within the accepted Firefox 155.0.1 evidence. The signed artifact passed persistent installation, full restart acceptance, real MV3 event-page termination/wake recovery, and target-environment popup-counter verification.
+Privacy Shield **0.2.0** is the accepted Stable Firefox release for Mozilla unlisted/self-distribution under its recorded signing, persistent-install, full-restart, target-environment, and promotion evidence.
 
-Privacy Shield **0.2.0** is a feature **candidate** adding popup quick controls, site protection modes, site reset, live Protection-details refresh, local protection-state presentation, and privacy-safe support snapshots. It is not Stable and must pass exact candidate repository/runtime validation, compatibility review, Mozilla signing, persistent-install/restart acceptance, and user-facing acceptance before it may supersede 0.1.1. Source validation or unsigned packaging alone never creates a Stable claim.
+Privacy Shield **0.2.1** is a source candidate adding the opt-in Lockdown site profile. It does not inherit Stable status from 0.2.0 and must independently pass the applicable repository/runtime, compatibility, privacy/security, signing, persistent-install/restart, and user-facing acceptance gates before promotion. Source validation or unsigned packaging alone never creates a Stable claim.

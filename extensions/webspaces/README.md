@@ -1,11 +1,15 @@
 # GoreeCloud Webspaces
 
-**Canonical repository:** `GoreeCloud/goreecloud-firefox-extensions`  
+**Canonical repository:** `GoreeCloud/firefox-addons`  
 **Component path:** `extensions/webspaces/`  
-**Source lifecycle:** Stable  
+**Source lifecycle:** Source candidate  
 **Firefox add-on ID:** `webspaces@goreecloud.com`  
-**Source version:** `0.1.14`  
+**Source version:** `0.1.15`  
 **Accepted Stable version:** `0.1.14`
+
+## 0.1.15 source candidate
+
+0.1.15 adds a user-selected timed routing pause from 1 through 720 minutes in both the popup and manager. The duration is validated in the routing core and reuses the existing transient routing-pause model; it does not change Firefox contextual-identity ownership, routing precedence, persisted portability format, or extension permissions. Accepted Stable remains 0.1.14 until the exact 0.1.15 candidate completes the applicable release gates.
 
 GoreeCloud Webspaces is a Firefox extension for isolated browsing environments, deterministic website routing, and multi-account separation. Firefox contextual identities are the browser isolation mechanism; GoreeCloud Webspaces is the product, management surface, routing authority, and user-facing abstraction.
 
@@ -33,7 +37,7 @@ The accepted unsigned XPI SHA-256 is `ac605e4781a6dcc605d6c7474989e5f125cee12448
 - Configuration schema 2 remains current. Startup reconciliation creates any missing required built-in contextual identity without reusing another Webspace's cookie store.
 - Firefox-registered commands cover the launcher, Standard, GoreeCloud, Google, Microsoft, Meta, Proton, routing pause/resume, and the manager; shortcut assignment remains under explicit Firefox/user control.
 
-The broader implemented slice includes race-hardened tab migration; 5/30-minute, site, restart-scoped, and indefinite routing pauses; bulk assignment; **Why this Webspace?**; context-menu actions; persistent and temporary custom Webspaces; Close & Forget; appearance editing; duplicate, lock/unlock, reset, and custom deletion; searchable/editable site assignments; local conflict detection and rule testing; managed-tab counts; and portable JSON configuration import/export.
+The broader implemented slice includes race-hardened tab migration; 5/30-minute, custom 1–720-minute, site, restart-scoped, and indefinite routing pauses; bulk assignment; **Why this Webspace?**; context-menu actions; persistent and temporary custom Webspaces; Close & Forget; appearance editing; duplicate, lock/unlock, reset, and custom deletion; searchable/editable site assignments; local conflict detection and rule testing; managed-tab counts; and portable JSON configuration import/export.
 
 ## Stable acceptance evidence
 

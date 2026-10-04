@@ -46,10 +46,12 @@ function ensureControls() {
         <select id="routing-pause-mode" class="glz-select" aria-label="Routing pause duration">
           <option value="five-minutes">5 minutes</option>
           <option value="thirty-minutes">30 minutes</option>
+          <option value="custom-minutes">Custom minutes…</option>
           <option value="site">This site</option>
           <option value="restart">Until Firefox restarts</option>
           <option value="indefinite">Indefinitely</option>
         </select>
+        <input id="routing-pause-minutes" class="glz-select pause-custom-minutes" type="number" min="1" max="720" step="1" value="60" aria-label="Custom routing pause minutes" hidden>
         <button id="pause-routing" class="glz-button compact" type="button">Pause</button>
         <button id="resume-routing" class="glz-button compact" type="button" hidden>Resume</button>
       </div>
@@ -94,11 +96,19 @@ async function sync() {
 
 ensureControls();
 
+document.querySelector("#routing-pause-mode")?.addEventListener("change", (event) => {
+  const custom = document.querySelector("#routing-pause-minutes");
+  if (custom) custom.hidden = event.target.value !== "custom-minutes";
+});
+
 document.querySelector("#pause-routing")?.addEventListener("click", async () => {
   try {
     const { hostname } = await currentContext();
     const mode = document.querySelector("#routing-pause-mode").value;
-    await send("webspaces-controls:pause", { mode, hostname });
+    const durationMinutes = mode === "custom-minutes"
+      ? Number(document.querySelector("#routing-pause-minutes")?.value)
+      : undefined;
+    await send("webspaces-controls:pause", { mode, hostname, durationMinutes });
     await sync();
   } catch (error) {
     const status = document.querySelector("#routing-pause-status");

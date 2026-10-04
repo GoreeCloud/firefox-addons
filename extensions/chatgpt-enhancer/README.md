@@ -2,7 +2,7 @@
 
 GoreeCloud ChatGPT Enhancer is a local-first Firefox extension that improves the ChatGPT web experience with faster navigation, local conversation tools, reusable prompts, reading controls, and accessibility-aware workspace options.
 
-**Current source version:** 0.1.2  
+**Current source version:** 0.1.3  
 **Current lifecycle:** Source candidate  
 **Firefox add-on ID:** `chatgpt-enhancer@goreecloud.com`  
 **Supported web origin:** `https://chatgpt.com/*`
@@ -24,7 +24,7 @@ The extension operates entirely in Firefox on the ChatGPT page and in its own lo
 - **Conversation outline** — list user prompts and jump directly to them.
 - **Response copy** — copy the last loaded assistant response.
 - **Markdown export** — copy or download the currently loaded conversation as Markdown.
-- **Prompt snippets** — maintain and search a local reusable instruction library, then insert a snippet into the composer.
+- **Prompt snippets** — maintain and search a local reusable instruction library, add up to eight bounded local tags per snippet, search by name/tag/text, then insert a snippet into the composer.
 - **Integration health** — inspect privacy-safe selector/count diagnostics when ChatGPT changes its interface.
 - **Local settings portability** — export/import presentation settings and prompt snippets with strict extension/schema validation; drafts are excluded.
 - **Opt-in draft recovery** — save prompt drafts locally by conversation path and restore them explicitly.
@@ -109,4 +109,4 @@ This source-level target is not a claim of formal Glaze consumer acceptance. The
 
 ## Release boundary
 
-Version 0.1.2 remains a source candidate until applicable repository checks, current-site Firefox runtime testing, privacy/security review, Glaze UI consumer acceptance where required, Mozilla signing, persistent installation, full Firefox restart, and post-restart behavior are verified under the governed release workflow.
+Version 0.1.3 remains a source candidate until applicable repository checks, current-site Firefox runtime testing, privacy/security review, Glaze UI consumer acceptance where required, Mozilla signing, persistent installation, full Firefox restart, and post-restart behavior are verified under the governed release workflow.

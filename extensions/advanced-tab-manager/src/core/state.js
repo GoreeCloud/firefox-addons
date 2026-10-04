@@ -1,6 +1,6 @@
 export const TAB_GROUP_ID_NONE = -1;
 
-export function normalizeTab(tab, logicalId = null, treeParentLogicalId = null) {
+export function normalizeTab(tab, logicalId = null, treeParentLogicalId = null, cleanupProtected = false) {
   return {
     id: tab.id,
     logicalId,
@@ -18,6 +18,7 @@ export function normalizeTab(tab, logicalId = null, treeParentLogicalId = null) 
     autoDiscardable: tab.autoDiscardable !== false,
     hidden: Boolean(tab.hidden),
     incognito: Boolean(tab.incognito),
+    cleanupProtected: Boolean(cleanupProtected),
     title: tab.title || "Untitled tab",
     url: tab.url || "",
     favIconUrl: tab.favIconUrl || ""
@@ -34,7 +35,7 @@ export function normalizeGroup(group) {
   };
 }
 
-export function buildSnapshot({ windows, groups, logicalIds = new Map(), treeParents = new Map(), capturedAt = Date.now() }) {
+export function buildSnapshot({ windows, groups, logicalIds = new Map(), treeParents = new Map(), cleanupProtectedTabIds = new Set(), capturedAt = Date.now() }) {
   const normalizedWindows = windows
     .filter((window) => window.type === undefined || window.type === "normal")
     .map((window) => ({
@@ -42,7 +43,12 @@ export function buildSnapshot({ windows, groups, logicalIds = new Map(), treePar
       focused: Boolean(window.focused),
       incognito: Boolean(window.incognito),
       tabs: (window.tabs || [])
-        .map((tab) => normalizeTab(tab, logicalIds.get(tab.id) || null, treeParents.get(tab.id) || null))
+        .map((tab) => normalizeTab(
+          tab,
+          logicalIds.get(tab.id) || null,
+          treeParents.get(tab.id) || null,
+          cleanupProtectedTabIds.has(tab.id)
+        ))
         .sort((a, b) => a.index - b.index)
     }))
     .sort((a, b) => Number(b.focused) - Number(a.focused) || a.id - b.id);

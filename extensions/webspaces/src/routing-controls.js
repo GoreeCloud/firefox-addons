@@ -6,6 +6,7 @@ const THIRTY_MINUTES_MS = 30 * 60 * 1000;
 export const ROUTING_PAUSE_MODES = Object.freeze([
   "five-minutes",
   "thirty-minutes",
+  "custom-minutes",
   "site",
   "restart",
   "indefinite"
@@ -15,7 +16,7 @@ function clone(config) {
   return structuredClone(config);
 }
 
-export function createRoutingPause(mode, { hostname = null, now = Date.now() } = {}) {
+export function createRoutingPause(mode, { hostname = null, durationMinutes: requestedDurationMinutes = null, now = Date.now() } = {}) {
   if (!ROUTING_PAUSE_MODES.includes(mode)) {
     throw new Error("Unsupported routing pause mode.");
   }
@@ -32,10 +33,19 @@ export function createRoutingPause(mode, { hostname = null, now = Date.now() } =
     return { mode: "restart", createdAt: new Date(now).toISOString() };
   }
 
-  const duration = mode === "five-minutes" ? FIVE_MINUTES_MS : THIRTY_MINUTES_MS;
+  let durationMinutes;
+  if (mode === "custom-minutes") {
+    durationMinutes = Number(requestedDurationMinutes);
+  } else {
+    durationMinutes = mode === "five-minutes" ? FIVE_MINUTES_MS / 60000 : THIRTY_MINUTES_MS / 60000;
+  }
+  if (!Number.isInteger(durationMinutes) || durationMinutes < 1 || durationMinutes > 720) {
+    throw new Error("Custom routing pause must be between 1 and 720 minutes.");
+  }
+  const duration = durationMinutes * 60 * 1000;
   return {
     mode: "timed",
-    durationMinutes: duration / 60000,
+    durationMinutes,
     createdAt: new Date(now).toISOString(),
     expiresAt: new Date(now + duration).toISOString()
   };

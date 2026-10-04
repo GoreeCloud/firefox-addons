@@ -60,9 +60,10 @@
       <form id="snippet-form" class="snippet-form">
         <label><span>Name</span><input id="snippet-name" maxlength="80" required placeholder="e.g. Verify claims"></label>
         <label><span>Prompt text</span><textarea id="snippet-body" maxlength="8000" rows="5" required placeholder="Write a reusable instruction…"></textarea></label>
+        <label><span>Tags</span><input id="snippet-tags" maxlength="320" placeholder="review, coding, writing"><small>Optional · up to 8 comma-separated local tags</small></label>
         <button type="submit" class="primary">Add snippet</button>
       </form>
-      <label class="filter-field"><span>Search saved snippets</span><input id="snippet-filter" type="search" autocomplete="off" placeholder="Filter by name or prompt text…"></label>
+      <label class="filter-field"><span>Search saved snippets</span><input id="snippet-filter" type="search" autocomplete="off" placeholder="Filter by name, tag, or prompt text…"></label>
       <div id="snippet-list" class="snippet-list" aria-live="polite"></div>
     </section>
 

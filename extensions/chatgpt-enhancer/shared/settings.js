@@ -11,6 +11,8 @@
   const MAX_SNIPPETS = 50;
   const MAX_SNIPPET_NAME = 80;
   const MAX_SNIPPET_BODY = 8000;
+  const MAX_SNIPPET_TAGS = 8;
+  const MAX_SNIPPET_TAG_LENGTH = 32;
 
   const DEFAULTS = Object.freeze({
     focusMode: false,
@@ -53,7 +55,20 @@
     if (!name || !body) return null;
     const rawId = String(snippet.id || `snippet-${index + 1}`);
     const id = rawId.replace(/[^a-zA-Z0-9_-]/g, "-").slice(0, 96) || `snippet-${index + 1}`;
-    return { id, name, body };
+    const rawTags = Array.isArray(snippet.tags)
+      ? snippet.tags
+      : String(snippet.tags || "").split(",");
+    const seenTags = new Set();
+    const tags = [];
+    for (const rawTag of rawTags) {
+      const tag = String(rawTag || "").trim().replace(/\s+/g, " ").slice(0, MAX_SNIPPET_TAG_LENGTH);
+      const key = tag.toLocaleLowerCase();
+      if (!tag || seenTags.has(key)) continue;
+      seenTags.add(key);
+      tags.push(tag);
+      if (tags.length >= MAX_SNIPPET_TAGS) break;
+    }
+    return { id, name, body, tags };
   }
 
   function uniqueSnippetIds(snippets) {
@@ -78,7 +93,7 @@
     const source = input && typeof input === "object" ? input : {};
     const snippets = Array.isArray(source.snippets)
       ? uniqueSnippetIds(source.snippets.slice(0, MAX_SNIPPETS).map(normalizeSnippet).filter(Boolean))
-      : DEFAULTS.snippets.map((item) => ({ ...item }));
+      : uniqueSnippetIds(DEFAULTS.snippets.map(normalizeSnippet).filter(Boolean));
 
     return {
       focusMode: Boolean(source.focusMode ?? DEFAULTS.focusMode),

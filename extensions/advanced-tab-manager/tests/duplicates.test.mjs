@@ -70,6 +70,18 @@ test("blocks active, pinned, audible, hidden, incognito, and tree-linked tabs", 
   assert.deepEqual(set.members[7].blockedReasons, []);
 });
 
+test("durably protected tabs are excluded from reviewed duplicate cleanup", () => {
+  const set = buildExactDuplicateReview(snapshot([
+    tab(1, "https://example.com"),
+    tab(2, "https://example.com", { cleanupProtected: true }),
+    tab(3, "https://example.com")
+  ])).sets[0];
+  assert.deepEqual(set.members[1].blockedReasons, ["protected"]);
+  const plan = planExactDuplicateCleanup(set, { keepTabId: 3 });
+  assert.deepEqual(plan.closeTabIds, [1]);
+  assert.deepEqual(plan.blocked, [{ tabId: 2, reasons: ["protected"] }]);
+});
+
 test("uses the first guarded tab as the conservative default keeper", () => {
   const set = buildExactDuplicateReview(snapshot([
     tab(1, "https://example.com"),

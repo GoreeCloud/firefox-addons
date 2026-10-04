@@ -35,7 +35,7 @@
   function renderSnippets() {
     const query = snippetFilter.value.trim().toLowerCase();
     const matches = settings.snippets.filter((snippet) =>
-      !query || `${snippet.name} ${snippet.body}`.toLowerCase().includes(query)
+      !query || `${snippet.name} ${snippet.tags.join(" ")} ${snippet.body}`.toLowerCase().includes(query)
     );
 
     snippetList.replaceChildren();
@@ -62,7 +62,13 @@
       name.textContent = snippet.name;
       const text = document.createElement("p");
       text.textContent = snippet.body;
-      body.append(name, text);
+      body.append(name);
+      if (snippet.tags.length) {
+        const tags = document.createElement("small");
+        tags.textContent = snippet.tags.map((tag) => `#${tag}`).join(" · ");
+        body.append(tags);
+      }
+      body.append(text);
       const remove = document.createElement("button");
       remove.type = "button";
       remove.className = "icon-button";
@@ -155,7 +161,8 @@
     const snippet = {
       id: typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `snippet-${Date.now()}`,
       name: name.value,
-      body: body.value
+      body: body.value,
+      tags: document.getElementById("snippet-tags").value
     };
     settings = await Settings.patch({ snippets: [...settings.snippets, snippet] });
     event.currentTarget.reset();
