@@ -134,6 +134,58 @@
       </details>
     </section>
 
+    <section class="panel" aria-labelledby="compatibilityHeading">
+      <div class="section-heading dashboard-heading">
+        <div>
+          <p class="eyebrow">Breakage awareness</p>
+          <h2 id="compatibilityHeading">Compatibility diagnostics</h2>
+        </div>
+        <span id="compatibilityBadge" class="badge">Scanning profile</span>
+      </div>
+      <p>Profile-aware warnings explain controls that can change site behavior. Diagnostics are derived locally from the selected profile and saved opt-outs.</p>
+      <div id="compatibilityList" class="diagnostic-list" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="auditHeading">
+      <div class="section-heading dashboard-heading">
+        <div>
+          <p class="eyebrow">Read-only comparison</p>
+          <h2 id="auditHeading">Existing policies.json audit</h2>
+        </div>
+        <span id="policyAuditSummary" class="badge">No policy loaded</span>
+      </div>
+      <p>Load or paste an existing Firefox Enterprise Policy file to compare it with the selected Browser Hardening profile. Imported policy text remains local to this page session and is never applied automatically.</p>
+      <label class="file-picker">
+        <span>Load policies.json</span>
+        <input id="policyFile" type="file" accept=".json,application/json">
+      </label>
+      <textarea id="policyAuditInput" rows="9" spellcheck="false" aria-label="Existing policies.json to audit" placeholder="Paste an existing policies.json here, or load one above."></textarea>
+      <div class="button-row">
+        <button id="auditPolicy" class="primary" type="button">Audit policy</button>
+        <button id="clearPolicyAudit" class="secondary" type="button">Clear</button>
+      </div>
+      <div id="policyDiffList" class="policy-diff-list" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="deploymentHeading">
+      <div class="section-heading dashboard-heading">
+        <div>
+          <p class="eyebrow">Managed deployment</p>
+          <h2 id="deploymentHeading">Platform deployment guide</h2>
+        </div>
+        <div class="button-row">
+          <select id="deploymentPlatform" aria-label="Deployment platform">
+            <option value="linux">Linux</option>
+            <option value="windows">Windows</option>
+            <option value="macos">macOS</option>
+          </select>
+          <button id="copyDeployment" class="secondary" type="button"><span aria-hidden="true">⧉</span> Copy guide</button>
+        </div>
+      </div>
+      <p>Generate a local deployment checklist for the selected profile and platform.</p>
+      <textarea id="deploymentOutput" rows="10" readonly aria-label="Platform deployment guide"></textarea>
+    </section>
+
     <div id="status" class="status-line page-status" role="status"></div>
   </main>
   <script src="src/hardening.js"></script>

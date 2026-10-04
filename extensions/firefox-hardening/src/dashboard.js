@@ -76,9 +76,145 @@
       : profile.label;
     $("#profileDescription").textContent = profile.summary;
     $("#policyOutput").value = H.serializePolicy(selectedProfile, excludedSettingIds);
+    renderCompatibility();
+    renderDeploymentGuide();
+    if ($("#policyAuditInput")?.value.trim()) auditPolicy(true);
     for (const button of document.querySelectorAll("[data-profile]")) {
       button.dataset.active = String(button.dataset.profile === selectedProfile);
     }
+  }
+
+  function renderCompatibility() {
+    const list = $("#compatibilityList");
+    if (!list) return;
+    const diagnostics = H.compatibilityDiagnostics(selectedProfile, excludedSettingIds);
+    list.textContent = "";
+    $("#compatibilityBadge").textContent = diagnostics.length
+      ? `${diagnostics.length} warning${diagnostics.length === 1 ? "" : "s"}`
+      : "No elevated warnings";
+
+    if (!diagnostics.length) {
+      const empty = document.createElement("p");
+      empty.className = "muted small-text";
+      empty.textContent = "The selected profile has no elevated compatibility warnings beyond its documented baseline.";
+      list.append(empty);
+      return;
+    }
+
+    for (const item of diagnostics) {
+      const article = document.createElement("article");
+      article.className = `diagnostic-card severity-${item.severity}`;
+      const heading = document.createElement("div");
+      heading.className = "diagnostic-heading";
+      const title = document.createElement("strong");
+      title.textContent = item.title;
+      const badge = document.createElement("span");
+      badge.className = "state-pill status-warn";
+      badge.textContent = item.severity === "high" ? "High impact" : "Review";
+      heading.append(title, badge);
+      const detail = document.createElement("p");
+      detail.className = "muted small-text";
+      detail.textContent = item.detail;
+      article.append(heading, detail);
+      list.append(article);
+    }
+  }
+
+  function renderDeploymentGuide() {
+    const output = $("#deploymentOutput");
+    const platform = $("#deploymentPlatform");
+    if (!output || !platform) return;
+    output.value = H.deploymentGuide(platform.value, selectedProfile, excludedSettingIds);
+  }
+
+  function renderPolicyDiff(entries) {
+    const list = $("#policyDiffList");
+    list.textContent = "";
+    const summary = H.summarizePolicyDiff(entries);
+    $("#policyAuditSummary").textContent = summary.differences
+      ? `${summary.differences} difference${summary.differences === 1 ? "" : "s"}`
+      : "Matches selected profile";
+
+    const differences = entries.filter((entry) => entry.status !== "match");
+    if (!differences.length) {
+      const exact = document.createElement("p");
+      exact.className = "muted small-text";
+      exact.textContent = `All ${summary.match} compared policy values match the selected profile.`;
+      list.append(exact);
+      return;
+    }
+
+    for (const entry of differences) {
+      const row = document.createElement("article");
+      row.className = `policy-diff-row diff-${entry.status}`;
+      const heading = document.createElement("div");
+      heading.className = "diagnostic-heading";
+      const path = document.createElement("strong");
+      path.textContent = entry.path;
+      const status = document.createElement("span");
+      status.className = "state-pill status-warn";
+      status.textContent = ({
+        different: "Different",
+        missing: "Missing",
+        extra: "Extra"
+      })[entry.status] || entry.status;
+      heading.append(path, status);
+
+      const values = document.createElement("small");
+      values.className = "policy-diff-values";
+      values.textContent = `Expected: ${H.formatValue(entry.expected)} · Existing: ${H.formatValue(entry.imported)}`;
+      row.append(heading, values);
+      list.append(row);
+    }
+  }
+
+  function auditPolicy(quiet = false) {
+    const input = $("#policyAuditInput");
+    if (!input?.value.trim()) {
+      $("#policyAuditSummary").textContent = "No policy loaded";
+      $("#policyDiffList").textContent = "";
+      if (!quiet) $("#status").textContent = "Paste a policies.json document before auditing.";
+      return;
+    }
+    try {
+      const entries = H.policyDiff(selectedProfile, input.value, excludedSettingIds);
+      renderPolicyDiff(entries);
+      if (!quiet) {
+        const summary = H.summarizePolicyDiff(entries);
+        $("#status").textContent = summary.differences
+          ? `Policy audit found ${summary.differences} difference(s). Nothing was applied.`
+          : "Existing policy matches the selected profile. Nothing was applied.";
+      }
+    } catch (error) {
+      $("#policyAuditSummary").textContent = "Invalid policy";
+      $("#policyDiffList").textContent = "";
+      if (!quiet) $("#status").textContent = `Could not audit policy: ${error.message || error}`;
+    }
+  }
+
+  async function loadPolicyFile(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      $("#policyAuditInput").value = await file.text();
+      auditPolicy(false);
+    } catch (error) {
+      $("#policyAuditSummary").textContent = "Could not read file";
+      $("#status").textContent = `Could not read policy file: ${error.message || error}`;
+    }
+  }
+
+  function clearPolicyAudit() {
+    $("#policyAuditInput").value = "";
+    $("#policyFile").value = "";
+    $("#policyDiffList").textContent = "";
+    $("#policyAuditSummary").textContent = "No policy loaded";
+    $("#status").textContent = "Policy audit cleared.";
+  }
+
+  async function copyDeployment() {
+    await navigator.clipboard.writeText($("#deploymentOutput").value);
+    $("#status").textContent = "Copied the platform deployment guide.";
   }
 
   async function refresh() {
@@ -267,6 +403,11 @@
   $("#restore").addEventListener("click", restore);
   $("#copyPolicy").addEventListener("click", copyPolicy);
   $("#downloadPolicy").addEventListener("click", downloadPolicy);
+  $("#auditPolicy").addEventListener("click", () => auditPolicy(false));
+  $("#policyFile").addEventListener("change", loadPolicyFile);
+  $("#clearPolicyAudit").addEventListener("click", clearPolicyAudit);
+  $("#deploymentPlatform").addEventListener("change", renderDeploymentGuide);
+  $("#copyDeployment").addEventListener("click", copyDeployment);
   $("#previewApply").addEventListener("click", applyPreview);
   $("#previewCancel").addEventListener("click", cancelPreview);
   $("#onboardingReview").addEventListener("click", () => startPreview("balanced"));

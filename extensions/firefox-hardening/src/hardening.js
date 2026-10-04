@@ -25,6 +25,29 @@
     })
   });
 
+  const COMPATIBILITY_DIAGNOSTICS = Object.freeze({
+    resistFingerprinting: Object.freeze({
+      severity: "medium",
+      title: "Fingerprint resistance can change site presentation",
+      detail: "Firefox may normalize timezone, fonts, canvas, window metrics, and other fingerprintable characteristics. Some sites can render differently."
+    }),
+    webNotificationsDisabled: Object.freeze({
+      severity: "medium",
+      title: "New notification prompts are denied by default",
+      detail: "Existing per-site permissions remain intact, but sites that rely on a first-run notification prompt may need an explicit site exception."
+    }),
+    peerConnectionEnabled: Object.freeze({
+      severity: "high",
+      title: "WebRTC calling and conferencing can stop working",
+      detail: "Maximum mode disables RTCPeerConnection, which can break browser-based calls, conferencing, peer-to-peer transfers, and similar apps."
+    }),
+    passwordSavingEnabled: Object.freeze({
+      severity: "medium",
+      title: "Firefox password-saving offers are disabled",
+      detail: "Existing saved logins are not deleted, but Firefox stops offering to save new passwords while this control is active."
+    })
+  });
+
   const SETTINGS = Object.freeze([
     Object.freeze({
       id: "networkPredictionEnabled",
@@ -314,6 +337,128 @@
     return `${JSON.stringify(policyFor(profileId, excludedSettingIds), null, 2)}\n`;
   }
 
+  function isPlainObject(value) {
+    return value !== null && typeof value === "object" && !Array.isArray(value);
+  }
+
+  function parsePolicyDocument(value) {
+    let parsed = value;
+    if (typeof value === "string") {
+      const text = value.trim();
+      if (!text) throw new Error("Policy input is empty.");
+      try {
+        parsed = JSON.parse(text);
+      } catch (error) {
+        throw new Error(`Policy input is not valid JSON: ${error?.message || error}`);
+      }
+    }
+    if (!isPlainObject(parsed)) throw new Error("Policy input must be a JSON object.");
+    if (!isPlainObject(parsed.policies)) throw new Error('Policy input must contain a top-level "policies" object.');
+    return clone(parsed);
+  }
+
+  function flattenLeaves(value, prefix = "", output = new Map()) {
+    if (isPlainObject(value)) {
+      const keys = Object.keys(value).sort();
+      if (!keys.length && prefix) output.set(prefix, {});
+      for (const key of keys) {
+        flattenLeaves(value[key], prefix ? `${prefix}.${key}` : key, output);
+      }
+      return output;
+    }
+    output.set(prefix, clone(value));
+    return output;
+  }
+
+  function policyDiff(profileId, importedPolicy, excludedSettingIds = []) {
+    const expected = policyFor(profileId, excludedSettingIds);
+    const imported = parsePolicyDocument(importedPolicy);
+    const expectedLeaves = flattenLeaves(expected);
+    const importedLeaves = flattenLeaves({ policies: imported.policies });
+    const paths = [...new Set([...expectedLeaves.keys(), ...importedLeaves.keys()])].sort();
+    return paths.map((path) => {
+      const expectedPresent = expectedLeaves.has(path);
+      const importedPresent = importedLeaves.has(path);
+      const expectedValue = expectedPresent ? clone(expectedLeaves.get(path)) : undefined;
+      const importedValue = importedPresent ? clone(importedLeaves.get(path)) : undefined;
+      let status = "match";
+      if (expectedPresent && !importedPresent) status = "missing";
+      else if (!expectedPresent && importedPresent) status = "extra";
+      else if (!deepEqual(expectedValue, importedValue)) status = "different";
+      return { path, status, expected: expectedValue, imported: importedValue };
+    });
+  }
+
+  function summarizePolicyDiff(entries) {
+    const summary = { match: 0, different: 0, missing: 0, extra: 0, total: 0 };
+    for (const entry of Array.isArray(entries) ? entries : []) {
+      if (Object.prototype.hasOwnProperty.call(summary, entry.status)) summary[entry.status] += 1;
+      summary.total += 1;
+    }
+    summary.differences = summary.different + summary.missing + summary.extra;
+    return summary;
+  }
+
+  function compatibilityDiagnostics(profileId, excludedSettingIds = []) {
+    if (!PROFILES[profileId]) throw new Error(`Unknown hardening profile: ${profileId}`);
+    const excluded = normalizeExcludedSettingIds(excludedSettingIds);
+    const diagnostics = [];
+    for (const setting of SETTINGS) {
+      if (excluded.has(setting.id) || targetFor(setting, profileId) == null) continue;
+      const diagnostic = COMPATIBILITY_DIAGNOSTICS[setting.id];
+      if (!diagnostic) continue;
+      diagnostics.push({
+        settingId: setting.id,
+        label: setting.label,
+        severity: diagnostic.severity,
+        title: diagnostic.title,
+        detail: diagnostic.detail
+      });
+    }
+    return diagnostics;
+  }
+
+  function deploymentGuide(platform, profileId, excludedSettingIds = []) {
+    if (!PROFILES[profileId]) throw new Error(`Unknown hardening profile: ${profileId}`);
+    const normalizedPlatform = String(platform || "linux").toLowerCase();
+    const targets = {
+      linux: {
+        label: "Linux",
+        primary: "/etc/firefox/policies/policies.json",
+        alternative: "<Firefox installation>/distribution/policies.json"
+      },
+      windows: {
+        label: "Windows",
+        primary: "<Firefox installation>\\distribution\\policies.json",
+        alternative: "Use the distribution directory beside firefox.exe"
+      },
+      macos: {
+        label: "macOS",
+        primary: "Firefox.app/Contents/Resources/distribution/policies.json",
+        alternative: "Inside the Firefox application bundle"
+      }
+    };
+    const target = targets[normalizedPlatform];
+    if (!target) throw new Error(`Unknown deployment platform: ${platform}`);
+    const profile = PROFILES[profileId];
+    const optOutCount = normalizeExcludedSettingIds(excludedSettingIds).size;
+    return [
+      `GoreeCloud Browser Hardening — ${target.label} Enterprise Policy deployment`,
+      `Profile: ${profile.label}${optOutCount ? ` · ${optOutCount} saved opt-out(s)` : ""}`,
+      `Target: ${target.primary}`,
+      `Alternative: ${target.alternative}`,
+      "",
+      "1. Save the generated policies.json exactly at the target path.",
+      "2. Fully close every Firefox process.",
+      "3. Start Firefox again.",
+      "4. Open about:policies and verify the expected policies appear under Active.",
+      "5. Re-open Browser Hardening and rescan live WebExtension-controlled settings.",
+      "6. To roll back the policy layer, remove or replace policies.json and fully restart Firefox.",
+      "",
+      "This guide does not write files or change system policy automatically."
+    ].join("\n");
+  }
+
   function formatValue(value) {
     if (value == null) return "—";
     if (typeof value === "boolean") return value ? "On" : "Off";
@@ -326,19 +471,25 @@
     PROFILE_ORDER,
     PROFILES,
     SETTINGS,
+    COMPATIBILITY_DIAGNOSTICS,
     applyProfile,
     buildChangePlan,
     canControl,
+    compatibilityDiagnostics,
     clearManaged,
     deepEqual,
     formatValue,
     inspectAll,
     inspectSetting,
     normalizeExcludedSettingIds,
+    parsePolicyDocument,
+    policyDiff,
     policyFor,
     resolvePath,
     score,
     serializePolicy,
+    summarizePolicyDiff,
+    deploymentGuide,
     targetFor
   });
 
