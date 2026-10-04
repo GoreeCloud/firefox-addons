@@ -192,8 +192,21 @@
     }
   }
 
+  async function loadPolicyFile(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      $("#policyAuditInput").value = await file.text();
+      auditPolicy(false);
+    } catch (error) {
+      $("#policyAuditSummary").textContent = "Could not read file";
+      $("#status").textContent = `Could not read policy file: ${error.message || error}`;
+    }
+  }
+
   function clearPolicyAudit() {
     $("#policyAuditInput").value = "";
+    $("#policyFile").value = "";
     $("#policyDiffList").textContent = "";
     $("#policyAuditSummary").textContent = "No policy loaded";
     $("#status").textContent = "Policy audit cleared.";
@@ -391,6 +404,7 @@
   $("#copyPolicy").addEventListener("click", copyPolicy);
   $("#downloadPolicy").addEventListener("click", downloadPolicy);
   $("#auditPolicy").addEventListener("click", () => auditPolicy(false));
+  $("#policyFile").addEventListener("change", loadPolicyFile);
   $("#clearPolicyAudit").addEventListener("click", clearPolicyAudit);
   $("#deploymentPlatform").addEventListener("change", renderDeploymentGuide);
   $("#copyDeployment").addEventListener("click", copyDeployment);
