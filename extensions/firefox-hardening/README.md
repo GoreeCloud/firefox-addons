@@ -1,6 +1,6 @@
-# GoreeCloud Firefox Hardening
+# GoreeCloud Browser Hardening
 
-GoreeCloud Firefox Hardening is a local-first Firefox hardening manager designed as a native alternative to maintaining a large `user.js` file by hand.
+GoreeCloud Browser Hardening is a local-first Firefox hardening manager designed as a native alternative to maintaining a large `user.js` file by hand.
 
 It is **not** a fork of arkenfox/user.js and does not copy or redistribute arkenfox preference lists. The design instead uses supported Firefox interfaces directly:
 
@@ -9,7 +9,7 @@ It is **not** a fork of arkenfox/user.js and does not copy or redistribute arken
 
 ## Source status
 
-Version 0.1.0 remains a **source candidate** and is not yet an accepted Stable or Mozilla-signed release. Real-Firefox unsigned release qualification passed on exact source revision `05c73782d9edb072fda3f6872406cb6809099011` in workflow run `37165320162`, using deterministic candidate SHA-256 `82043d51fafed43635b480f7530a5f5c2ea3ef7bd16a7f79fa2eb62ca63a1151` and Firefox 156.0. Mozilla signing, persistent-install/full-restart acceptance, and final lifecycle promotion remain separate gates.
+Version 0.1.0 remains a **source candidate** and is not yet an accepted Stable or Mozilla-signed release. The pre-rename candidate at source revision `05c73782d9edb072fda3f6872406cb6809099011` passed real-Firefox unsigned qualification in workflow run `37165320162` with SHA-256 `82043d51fafed43635b480f7530a5f5c2ea3ef7bd16a7f79fa2eb62ca63a1151`. Mozilla signing run `37165746695` then rejected the former add-on name because it contained the Firefox trademark; no signed artifact was produced. The product display name is now **GoreeCloud Browser Hardening**, so this revised packaged candidate requires fresh exact-source qualification and a new deterministic XPI digest before signing can resume. Persistent-install/full-restart acceptance and final lifecycle promotion remain separate gates.
 
 ## Current capabilities
 

@@ -47,7 +47,7 @@ shared/
 | --- | --- | --- | --- | --- |
 | GoreeCloud Advanced Tab Manager | `extensions/advanced-tab-manager/` | `advanced-tab-manager@goreecloud.com` | **Stable 0.1.13** accepted for Mozilla unlisted/self-distribution | Standalone Firefox product; remains here |
 | GoreeCloud ChatGPT Enhancer | `extensions/chatgpt-enhancer/` | `chatgpt-enhancer@goreecloud.com` | **Source candidate 0.1.2**; no accepted Stable release | Standalone Firefox product; remains here |
-| GoreeCloud Firefox Hardening | `extensions/firefox-hardening/` | `firefox-hardening@goreecloud.com` | **Source candidate 0.1.0**; no accepted Stable release | Standalone native Firefox hardening manager; remains here |
+| GoreeCloud Browser Hardening | `extensions/firefox-hardening/` | `firefox-hardening@goreecloud.com` | **Source candidate 0.1.0**; no accepted Stable release | Standalone native Firefox hardening manager; remains here |
 | GoreeCloud Privacy Shield | `extensions/privacy-shield/` | `privacy-shield@goreecloud.com` | Stable 0.2.0 accepted for Mozilla unlisted/self-distribution | Platform adapter; retained here pending explicit platform-boundary review |
 | GoreeCloud Redirector | `extensions/redirector/` | `redirector@goreecloud.com` | Canonical source | Standalone Firefox product; canonical here; isolated legacy repository retired 2026-09-18 after history/provenance preservation |
 | GoreeCloud Source Resync | `extensions/source-resync/` | `source-resync@goreecloud.com` | Canonical source | Standalone Firefox product; canonical here; former standalone repository retired 2026-09-18 after history/release preservation |
@@ -81,9 +81,9 @@ Generated packages are written to `dist/` and are build outputs rather than auth
 
 See [`docs/MOZILLA_SIGNING.md`](docs/MOZILLA_SIGNING.md). Each extension keeps an independent release state. A source merge or unsigned package must never be described as Stable solely because repository validation passes.
 
-### GoreeCloud Firefox Hardening 0.1.0
+### GoreeCloud Browser Hardening 0.1.0
 
-Firefox Hardening 0.1.0 is a source candidate, not an accepted Stable release. It introduces a native Firefox configuration-hardening model based on supported WebExtension `privacy`/`browserSettings` APIs plus explicit Firefox Enterprise `policies.json` export for startup-level controls that WebExtensions cannot own. It requests no host permissions and does not access page contents or browsing history. Stable status remains gated on Mozilla signing, persistent installation, restart acceptance, and governed target-environment validation.
+Browser Hardening 0.1.0 is a source candidate, not an accepted Stable release. It introduces a native Firefox configuration-hardening model based on supported WebExtension `privacy`/`browserSettings` APIs plus explicit Firefox Enterprise `policies.json` export for startup-level controls that WebExtensions cannot own. It requests no host permissions and does not access page contents or browsing history. The pre-rename candidate passed unsigned Firefox qualification, but AMO signing run `37165746695` rejected the former add-on display name because it contained the Firefox trademark and produced no signed XPI. The user-facing name is now GoreeCloud Browser Hardening; the revised candidate requires fresh exact-source qualification and digest binding before Mozilla signing, persistent-install/restart acceptance, and final Stable consideration.
 
 ### GoreeCloud Advanced Tab Manager 0.1.13
 

@@ -32,7 +32,7 @@ jobs:
         run: python extensions/chatgpt-enhancer/scripts/validate.py
       - name: Test ChatGPT Enhancer local core
         run: node --test extensions/chatgpt-enhancer/tests/*.test.mjs
-      - name: Test Firefox Hardening profile and policy core
+      - name: Test Browser Hardening profile and policy core
         run: node --test extensions/firefox-hardening/tests/*.test.js
       - name: Validate Advanced Tab Manager source contract
         run: python extensions/advanced-tab-manager/scripts/validate.py

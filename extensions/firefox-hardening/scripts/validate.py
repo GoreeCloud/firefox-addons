@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "manifest.json"
-EXPECTED_NAME = "GoreeCloud Firefox Hardening"
+EXPECTED_NAME = "GoreeCloud Browser Hardening"
 EXPECTED_ID = "firefox-hardening@goreecloud.com"
 EXPECTED_VERSION = "0.1.0"
 EXPECTED_PERMISSIONS = {"browserSettings", "privacy", "storage"}
@@ -49,7 +49,7 @@ def main() -> None:
     for rel in required_files:
         if not (ROOT / rel).is_file():
             fail(f"missing required file: {rel}")
-    print("Firefox Hardening source contract validated.")
+    print("Browser Hardening source contract validated.")
 
 if __name__ == "__main__":
     main()

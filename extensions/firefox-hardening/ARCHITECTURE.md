@@ -2,7 +2,7 @@
 
 ## Product boundary
 
-GoreeCloud Firefox Hardening owns browser-configuration hardening. It does not duplicate GoreeCloud Privacy Shield's request filtering, URL cleaning, cosmetic filtering, or page-level privacy controls.
+GoreeCloud Browser Hardening owns browser-configuration hardening. It does not duplicate GoreeCloud Privacy Shield's request filtering, URL cleaning, cosmetic filtering, or page-level privacy controls.
 
 ## Runtime layers
 
