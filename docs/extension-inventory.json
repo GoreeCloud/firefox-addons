@@ -24,7 +24,7 @@
     },
     {
       "slug": "firefox-hardening",
-      "name": "GoreeCloud Firefox Hardening",
+      "name": "GoreeCloud Browser Hardening",
       "directory": "extensions/firefox-hardening",
       "gecko_id": "firefox-hardening@goreecloud.com",
       "source_version": "0.1.0",
