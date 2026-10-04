@@ -123,6 +123,41 @@
     return CONTROL_LEVELS.has(levelOfControl);
   }
 
+  function normalizeExcludedSettingIds(value) {
+    if (value == null) return new Set();
+    if (!Array.isArray(value)) throw new Error("excludedSettingIds must be an array.");
+    const known = new Set(SETTINGS.map((setting) => setting.id));
+    const excluded = new Set();
+    for (const raw of value) {
+      const id = String(raw || "");
+      if (!known.has(id)) throw new Error(`Unknown hardening setting: ${id || "(empty)"}`);
+      excluded.add(id);
+    }
+    return excluded;
+  }
+
+  function buildChangePlan(rows) {
+    return (Array.isArray(rows) ? rows : []).map((row) => {
+      let status = "change";
+      if (row.target == null) status = "unchanged";
+      else if (!row.supported) status = "unsupported";
+      else if (row.compliant) status = "already-compliant";
+      else if (!canControl(row.levelOfControl)) status = "conflict";
+      return {
+        id: row.id,
+        label: row.label,
+        group: row.group,
+        description: row.description,
+        current: clone(row.value),
+        target: clone(row.target),
+        levelOfControl: row.levelOfControl,
+        status,
+        selectable: status === "change",
+        selectedByDefault: status === "change"
+      };
+    });
+  }
+
   async function inspectSetting(browserApi, setting, profileId) {
     const api = resolvePath(browserApi, setting.path);
     const target = targetFor(setting, profileId);
@@ -165,13 +200,18 @@
     return { matched, total: targeted.length, percent: Math.round((matched / targeted.length) * 100) };
   }
 
-  async function applyProfile(browserApi, profileId) {
+  async function applyProfile(browserApi, profileId, options = {}) {
     if (!PROFILES[profileId]) throw new Error(`Unknown hardening profile: ${profileId}`);
+    const excludedSettingIds = normalizeExcludedSettingIds(options.excludedSettingIds);
     const results = [];
     for (const setting of SETTINGS) {
       const target = targetFor(setting, profileId);
       if (target == null) {
         results.push({ id: setting.id, status: "unchanged" });
+        continue;
+      }
+      if (excludedSettingIds.has(setting.id)) {
+        results.push({ id: setting.id, status: "excluded" });
         continue;
       }
       const api = resolvePath(browserApi, setting.path);
@@ -282,6 +322,7 @@
     PROFILES,
     SETTINGS,
     applyProfile,
+    buildChangePlan,
     canControl,
     clearManaged,
     deepEqual,
