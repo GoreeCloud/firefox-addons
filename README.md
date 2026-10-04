@@ -23,6 +23,7 @@ The repository provides:
 extensions/
 ├── advanced-tab-manager/
 ├── chatgpt-enhancer/
+├── firefox-hardening/
 ├── privacy-shield/
 ├── redirector/
 ├── source-resync/
@@ -31,6 +32,7 @@ extensions/
 docs/
 ├── extension-inventory.json
 ├── MOZILLA_SIGNING.md
+├── NOTES.md
 └── repository-policy.md
 
 shared/
@@ -45,12 +47,13 @@ shared/
 | --- | --- | --- | --- | --- |
 | GoreeCloud Advanced Tab Manager | `extensions/advanced-tab-manager/` | `advanced-tab-manager@goreecloud.com` | **Source candidate 0.1.14**; accepted Stable remains 0.1.13 | Standalone Firefox product; remains here |
 | GoreeCloud ChatGPT Enhancer | `extensions/chatgpt-enhancer/` | `chatgpt-enhancer@goreecloud.com` | **Source candidate 0.1.3**; no accepted Stable release | Standalone Firefox product; remains here |
+| GoreeCloud Firefox Hardening | `extensions/firefox-hardening/` | `firefox-hardening@goreecloud.com` | **Source candidate 0.1.0**; no accepted Stable release | Standalone native Firefox hardening manager; remains here |
 | GoreeCloud Privacy Shield | `extensions/privacy-shield/` | `privacy-shield@goreecloud.com` | **Source candidate 0.2.1**; accepted Stable remains 0.2.0 | Platform adapter; retained here pending explicit platform-boundary review |
 | GoreeCloud Redirector | `extensions/redirector/` | `redirector@goreecloud.com` | **Canonical source 0.2.2**; accepted Stable remains 0.2.0 | Standalone Firefox product; canonical here; isolated legacy repository retired 2026-09-18 after history/provenance preservation |
 | GoreeCloud Source Resync | `extensions/source-resync/` | `source-resync@goreecloud.com` | **Canonical source 1.1.3**; no accepted Stable release recorded here | Standalone Firefox product; canonical here; former standalone repository retired 2026-09-18 after history/release preservation |
 | GoreeCloud Webspaces | `extensions/webspaces/` | `webspaces@goreecloud.com` | **Source candidate 0.1.15**; accepted Stable remains 0.1.14 | Standalone Firefox product; remains here |
 
-The current source-candidate improvement slice adds durable duplicate-cleanup protection in Advanced Tab Manager, tagged prompt snippets in ChatGPT Enhancer, local redirect backup/testing in Redirector, failed-source retry/history in Source Resync, a Lockdown site profile in Privacy Shield, and custom timed routing pauses in Webspaces. These source changes do not inherit Stable status from earlier signed releases.
+The current source-candidate improvement slice adds durable duplicate-cleanup protection in Advanced Tab Manager, tagged prompt snippets in ChatGPT Enhancer, safer review controls in Firefox Hardening, local redirect backup/testing in Redirector, failed-source retry/history in Source Resync, a Lockdown site profile in Privacy Shield, and custom timed routing pauses in Webspaces. These source changes do not inherit Stable status from earlier signed releases.
 
 Machine-readable inventory lives in [`docs/extension-inventory.json`](docs/extension-inventory.json). Inventory schema v2 records each checked-in manifest version and source lifecycle state separately from independently accepted Mozilla-signed Stable versions, preventing a newer source candidate from silently inheriting older release status.
 
@@ -80,11 +83,15 @@ Generated packages are written to `dist/` and are build outputs rather than auth
 
 See [`docs/MOZILLA_SIGNING.md`](docs/MOZILLA_SIGNING.md). Each extension keeps an independent release state. A source merge or unsigned package must never be described as Stable solely because repository validation passes.
 
+### GoreeCloud Firefox Hardening 0.1.0
+
+Firefox Hardening 0.1.0 is a source candidate, not an accepted Stable release. It introduces a native Firefox configuration-hardening model based on supported WebExtension `privacy`/`browserSettings` APIs plus explicit Firefox Enterprise `policies.json` export for startup-level controls that WebExtensions cannot own. It requests no host permissions and does not access page contents or browsing history. Stable status remains gated on Mozilla signing, persistent installation, restart acceptance, and governed target-environment validation.
+
 ### GoreeCloud Advanced Tab Manager 0.1.13
 
 Advanced Tab Manager 0.1.13 is the current Stable release for Mozilla unlisted/self-distribution. The accepted runtime revision is `89f93d9fcfd77adbdf9296e0d823a6fe8861b1fe`; deterministic unsigned XPI SHA-256 is `837777e35d4eddd1554f488ddb27e5f43dd6ba12b02e2463374fd33b55c39aa5`; Mozilla-signed XPI SHA-256 is `6e77c071d32457d197f841059132adb453350a5df2a847229d39f01d98de510c`.
 
-Governed signing/restart run `36431225028` established the signed candidate. Final Stable signing/restart run `36436396986` then recovered the same Mozilla-signed XPI, re-verified payload parity, persistent installation, native Firefox icon identity before and after a full restart, and post-restart release-critical behavior against canonical Stable metadata. GLAZE UI V1.6 consumer acceptance for this exact runtime is authoritative in `GoreeCloud/glaze-ui` at registry merge `937d2a31e2ff55ec1c9e4c6688899389a9323642`. Final machine evidence derives `stablePromoted: true` and `glazeConsumerAccepted: true`; 0.1.12 remains rollback provenance.
+Governed signing/restart run `36431225028` established the signed candidate. Final Stable signing/restart run `36436396986` then recovered the same Mozilla-signed XPI, re-verified payload parity, persistent installation, native Firefox icon identity before and after a full restart, and post-restart release-critical behavior against canonical Stable metadata. Glaze V1.6 consumer acceptance for this exact runtime remains preserved in `GoreeCloud/glaze` at registry merge `937d2a31e2ff55ec1c9e4c6688899389a9323642`. Final machine evidence derives `stablePromoted: true` and `glazeConsumerAccepted: true`; 0.1.12 remains rollback provenance.
 
 ### GoreeCloud Download Manager Extension 0.2.12
 

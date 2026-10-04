@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>GoreeCloud Firefox Hardening</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="page-shell">
+  <main class="dashboard">
+    <header class="page-header">
+      <div class="brand-row wide-brand">
+        <img src="icons/firefox-hardening.svg" alt="">
+        <div>
+          <p class="eyebrow">GoreeCloud</p>
+          <h1>Firefox Hardening</h1>
+          <p>Native Firefox settings, transparent control ownership, and Enterprise Policy export — without a <code>user.js</code>.</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="rescan" class="secondary" type="button"><span aria-hidden="true">↻</span> Rescan</button>
+        <button id="restore" class="secondary" type="button"><span aria-hidden="true">↶</span> Restore extension changes</button>
+      </div>
+    </header>
+
+    <section class="hero-grid">
+      <article class="panel score-panel">
+        <p class="eyebrow">Hardening score</p>
+        <div class="large-score"><strong id="score">—</strong><span>%</span></div>
+        <p id="scoreSummary" class="muted">Scanning Firefox…</p>
+      </article>
+      <article class="panel">
+        <p class="eyebrow">Architecture</p>
+        <h2>Two native layers</h2>
+        <p>WebExtension controls apply Firefox-exposed settings immediately and reversibly. Policy export covers startup and enterprise controls that extensions cannot own.</p>
+      </article>
+      <article class="panel">
+        <p class="eyebrow">Privacy boundary</p>
+        <h2>Zero page access</h2>
+        <p>No host permissions, content scripts, request interception, remote configuration, or telemetry. This extension only reads and changes supported browser settings.</p>
+      </article>
+    </section>
+
+    <section class="panel" aria-labelledby="profilesHeading">
+      <div class="section-heading dashboard-heading">
+        <div>
+          <p class="eyebrow">Quick apply</p>
+          <h2 id="profilesHeading">Hardening profiles</h2>
+        </div>
+        <span id="selectedBadge" class="badge">Balanced</span>
+      </div>
+      <div class="profile-cards">
+        <button data-profile="balanced" type="button">
+          <span class="profile-icon" aria-hidden="true">◒</span>
+          <span><b>Balanced</b><small>Strong baseline, low breakage</small></span>
+        </button>
+        <button data-profile="strict" type="button">
+          <span class="profile-icon" aria-hidden="true">◆</span>
+          <span><b>Strict</b><small>Anti-fingerprinting + fewer prompts</small></span>
+        </button>
+        <button data-profile="maximum" class="danger-zone" type="button">
+          <span class="profile-icon" aria-hidden="true">⬢</span>
+          <span><b>Maximum</b><small>Disruptive privacy-first controls</small></span>
+        </button>
+      </div>
+      <p id="profileDescription" class="muted"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="settingsHeading">
+      <div class="section-heading dashboard-heading">
+        <div>
+          <p class="eyebrow">Live Firefox state</p>
+          <h2 id="settingsHeading">Managed settings</h2>
+        </div>
+        <span id="controlSummary" class="muted"></span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Setting</th><th>Current</th><th>Target</th><th>Control</th><th>Status</th></tr></thead>
+          <tbody id="settingsBody"></tbody>
+        </table>
+      </div>
+      <p class="muted small-text">If Firefox reports a setting as locked or controlled by another extension, GoreeCloud Firefox Hardening leaves it alone and reports the conflict.</p>
+    </section>
+
+    <section class="panel" aria-labelledby="policyHeading">
+      <div class="section-heading dashboard-heading">
+        <div>
+          <p class="eyebrow">Extended native hardening</p>
+          <h2 id="policyHeading">Firefox Enterprise Policy</h2>
+        </div>
+        <div class="button-row">
+          <button id="copyPolicy" class="secondary" type="button"><span aria-hidden="true">⧉</span> Copy</button>
+          <button id="downloadPolicy" class="primary" type="button"><span aria-hidden="true">↓</span> Save policies.json</button>
+        </div>
+      </div>
+      <p>Firefox does not expose every browser preference to WebExtensions. The generated <code>policies.json</code> uses Firefox's native enterprise policy engine for additional startup-level controls. Review before deployment; policy files take effect after Firefox restarts.</p>
+      <textarea id="policyOutput" rows="18" spellcheck="false" aria-label="Generated policies.json"></textarea>
+      <details class="install-help">
+        <summary>Installation locations</summary>
+        <p><b>Linux:</b> <code>/etc/firefox/policies/policies.json</code> or the Firefox installation's <code>distribution/policies.json</code>.</p>
+        <p><b>Windows:</b> place <code>policies.json</code> in a <code>distribution</code> directory beside the Firefox executable.</p>
+        <p><b>macOS:</b> <code>Firefox.app/Contents/Resources/distribution/policies.json</code>.</p>
+      </details>
+    </section>
+
+    <div id="status" class="status-line page-status" role="status"></div>
+  </main>
+  <script src="src/hardening.js"></script>
+  <script src="src/dashboard.js"></script>
+</body>
+</html>

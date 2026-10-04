@@ -32,6 +32,8 @@ jobs:
         run: python extensions/chatgpt-enhancer/scripts/validate.py
       - name: Test ChatGPT Enhancer local core
         run: node --test extensions/chatgpt-enhancer/tests/*.test.mjs
+      - name: Test Firefox Hardening profile and policy core
+        run: node --test extensions/firefox-hardening/tests/*.test.js
       - name: Validate Advanced Tab Manager source contract
         run: python extensions/advanced-tab-manager/scripts/validate.py
       - name: Validate Advanced Tab Manager target acceptance source contract
@@ -79,6 +81,7 @@ jobs:
         run: |
           python shared/scripts/package_extension.py advanced-tab-manager
           python shared/scripts/package_extension.py chatgpt-enhancer
+          python shared/scripts/package_extension.py firefox-hardening
           python shared/scripts/package_extension.py redirector
           python shared/scripts/package_extension.py source-resync
           python shared/scripts/package_extension.py privacy-shield
