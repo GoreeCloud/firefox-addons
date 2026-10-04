@@ -134,6 +134,18 @@
       </details>
     </section>
 
+    <section class="panel" aria-labelledby="compatibilityHeading">
+      <div class="section-heading dashboard-heading">
+        <div>
+          <p class="eyebrow">Breakage awareness</p>
+          <h2 id="compatibilityHeading">Compatibility diagnostics</h2>
+        </div>
+        <span id="compatibilityBadge" class="badge">Scanning profile</span>
+      </div>
+      <p>Profile-aware warnings explain controls that can change site behavior. Diagnostics are derived locally from the selected profile and saved opt-outs.</p>
+      <div id="compatibilityList" class="diagnostic-list" aria-live="polite"></div>
+    </section>
+
     <div id="status" class="status-line page-status" role="status"></div>
   </main>
   <script src="src/hardening.js"></script>
