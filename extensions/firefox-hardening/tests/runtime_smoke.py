@@ -19,7 +19,7 @@ from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 
 EXPECTED_ADDON_ID = "firefox-hardening@goreecloud.com"
-EXPECTED_VERSION = "0.1.0"
+EXPECTED_VERSION = "0.1.1"
 FIXED_EXTENSION_UUID = "7fe4782b-b376-4f78-93a7-8af6c942dbe9"
 
 
