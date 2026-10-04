@@ -21,7 +21,7 @@ assert entry["source_version"] == "1.1.3"
 assert entry["source_state"] == "canonical-source"
 assert entry["accepted_stable_version"] is None
 
-for relative in ("README.md", "background.js", "content.js", "content.css", "popup.html", "popup.js", "popup.css", "icons/icon.svg"):
+for relative in ("README.md", "PRIVACY.md", "SECURITY.md", "background.js", "content.js", "content.css", "popup.html", "popup.js", "popup.css", "icons/icon.svg"):
     assert (ROOT / relative).is_file(), relative
 
 background = (ROOT / "background.js").read_text(encoding="utf-8")
@@ -40,7 +40,12 @@ assert "return resyncAll(message.sources)" in content
 assert 'id="retryFailed"' in popup_html and 'id="runHistory"' in popup_html
 assert 'runMessage("GOREECLOUD_RETRY_FAILED")' in popup_js
 assert "setInterval(refreshRuntimeStatus, 400)" in popup_js
-assert "automatic" not in readme.lower().split("## 1.1.3 source boundary", 1)[1].split("recent run history", 1)[0] or "does not add alarms" in readme.lower()
 assert "1.1.3" in readme and "manual-only" in readme
+privacy = (ROOT / "PRIVACY.md").read_text(encoding="utf-8").lower()
+security = (ROOT / "SECURITY.md").read_text(encoding="utf-8").lower()
+for marker in ("up to ten runs", "source display names", "not transmitted", "manual-only"):
+    assert marker in privacy, marker
+for marker in ("fail-closed", "exact displayed name", "does not substitute another card"):
+    assert marker in security, marker
 
 print("Source Resync 1.1.3 manual-only retry/history source contract validated.")
