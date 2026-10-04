@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify a Mozilla-signed Firefox Hardening XPI against the deterministic candidate."""
+"""Verify a Mozilla-signed Browser Hardening XPI against the deterministic candidate."""
 
 from __future__ import annotations
 
