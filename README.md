@@ -15,7 +15,7 @@ The repository provides:
 - shared Firefox/WebExtension validation and deterministic packaging tooling;
 - common Mozilla signing and release-gate guidance;
 - consistent privacy, security, compatibility, and provenance records;
-- reusable Glaze UI, Wardveil Security, and Privacy Shield patterns where appropriate.
+- reusable GoreeCloud UI design patterns and, where applicable, integrations with GoreeShield privacy and Wardveil security capabilities.
 
 ## Canonical layout
 
