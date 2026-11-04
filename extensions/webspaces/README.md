@@ -9,7 +9,11 @@
 
 ## 0.1.15 source candidate
 
-0.1.15 adds a user-selected timed routing pause from 1 through 720 minutes in both the popup and manager. The duration is validated in the routing core and reuses the existing transient routing-pause model; it does not change Firefox contextual-identity ownership, routing precedence, persisted portability format, or extension permissions. Accepted Stable remains 0.1.14 until the exact 0.1.15 candidate completes the applicable release gates.
+0.1.15 adds a user-selected timed routing pause from 1 through 720 minutes in both the popup and manager. The duration is validated in the routing core and reuses the existing transient routing-pause model.
+
+**OAuth container continuity (additional source change):** when a secure authorization-code URL has a validated HTTPS callback origin matching the initiating tab or an accessible opener tab, Webspaces keeps the authorization, consent pages, and callback in that application's Firefox cookie store instead of routing the external provider to Standard or a built-in provider container. The exception is per-tab, ephemeral, and expires after 12 minutes (with a short callback grace period). It does not expose or persist OAuth codes, state, PKCE verifiers or cookie contents, does not share stores, and does not override explicit user assignments, exceptions, or routing pauses. When Firefox supplies no attributable opener or prior URL, Webspaces does not guess a container, so the user may still need to create the consent tab in the correct container. An actual Firefox OAuth round-trip remains a release acceptance requirement; mocked tests are not sufficient to promote Stable.
+
+This candidate preserves contextual-identity ownership, the persisted portability format, and extension permissions. Accepted Stable remains 0.1.14 until the exact 0.1.15 candidate completes the applicable release gates.
 
 GoreeCloud Webspaces is a Firefox extension for isolated browsing environments, deterministic website routing, and multi-account separation. Firefox contextual identities are the browser isolation mechanism; GoreeCloud Webspaces is the product, management surface, routing authority, and user-facing abstraction.
 

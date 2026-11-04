@@ -8,6 +8,10 @@ Provider logos used by built-in Webspaces are packaged local assets. The UI does
 
 The manager may count currently open tabs associated with GoreeCloud-managed contextual identities. Those counts are local status and are not persisted as browsing history by this implementation.
 
+## Temporary OAuth container continuity
+
+For a verified browser OAuth handoff, Webspaces may temporarily keep the authorization and callback pages in the initiating tab's Firefox cookie store to avoid breaking stateful authentication. It stores only short-lived callback-origin/path and cookie-store metadata in memory; authorization codes, tokens, state strings, PKCE verifiers and cookies are not persisted, copied or transmitted. Normal isolated provider/Standard routing resumes after expiration. Explicit user assignments take priority.
+
 ## Per-Webspace browser-state separation
 
 Every GoreeCloud-managed Webspace is required to use its own Firefox contextual identity and unique `cookieStoreId`. Two Webspaces are not permitted to intentionally share the same Firefox cookie store. Standard, GoreeCloud, Google, Microsoft, Meta, Proton, custom persistent Webspaces, and temporary Webspaces therefore maintain distinct cookie stores.

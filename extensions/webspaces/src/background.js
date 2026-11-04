@@ -22,8 +22,10 @@ import { exportPortableConfig, validatePortableConfig } from "./portability.js";
 import { analyzeRouting, evaluateRouting, hostnameFromUrl } from "./routing.js";
 import { loadConfig, saveConfig } from "./storage.js";
 import { migrateTab } from "./tab-migration.js";
+import { createOAuthNavigationGuard } from "./oauth-routing.js";
 
 const transitionTabs = new Map();
+const oauthRouting = createOAuthNavigationGuard();
 const TRANSITION_TTL_MS = 10000;
 const TEMPORARY_GRACE_MS = 5000;
 
@@ -196,6 +198,18 @@ async function explicitOpen(webspace, url = "about:blank", sourceTab = null) {
 async function handleBeforeNavigate(details) {
   if (details.frameId !== 0 || isTransitioning(details.tabId)) return;
   const current = await readyConfig();
+  // OAuth consent and callback must share the initiating application's cookie
+  // store. Only verified authorization flows bypass ordinary provider routing.
+  if (oauthRouting.shouldInspect(details.tabId, details.url)) {
+    const handled = await oauthRouting.handle({
+      browserApi: browser,
+      tabId: details.tabId,
+      url: details.url,
+      config: current,
+      onTransition: markTransition
+    });
+    if (handled) return;
+  }
   const decision = evaluateRouting(details.url, current);
   if (decision.action !== "webspace" || !decision.webspaceId) return;
 
@@ -794,6 +808,7 @@ if (browser.menus) {
 
 browser.tabs.onRemoved.addListener((tabId) => {
   transitionTabs.delete(tabId);
+  oauthRouting.forget(tabId);
   scheduleTemporaryCleanup();
 });
 
