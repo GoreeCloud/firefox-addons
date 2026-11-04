@@ -3,6 +3,7 @@
 ## Implemented in 0.1.15 source candidate
 
 - **Custom timed routing pause:** users can pause automatic routing for a validated custom duration from 1 through 720 minutes in both the popup and manager.
+- **OAuth container continuity (new source change):** verified authorization-code flows with callbacks bound to an originating Firefox tab remain in that tab's cookie store across provider consent and callback redirects, avoiding Standard/provider fallback mid-authentication. Explicit user rules still take precedence; no credentials or URLs are stored persistently. Firefox end-to-end validation is required before Stable promotion.
 - The custom duration reuses the existing transient routing-pause authority and does not change Webspace identity ownership, routing precedence, portability format, or Firefox permissions.
 - 0.1.15 is source-candidate work only. Accepted Stable remains 0.1.14 until the exact candidate completes the applicable release gates.
 

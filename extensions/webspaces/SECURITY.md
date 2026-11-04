@@ -22,6 +22,10 @@ The manager includes **Isolation Health**, which compares the GoreeCloud-managed
 
 This isolation applies only to browser state Firefox actually partitions by contextual identity. Cookies are explicitly separated by Firefox contextual identities, and supported site storage such as localStorage, IndexedDB, and cache state may be partitioned through Firefox OriginAttributes. Browser-global history, bookmarks, saved passwords, network identity, and operating-system state are outside this guarantee unless separately implemented and verified.
 
+## OAuth handoff security
+
+The source candidate can temporarily preserve the initiating tab's Firefox cookie store across a verified third-party authorization-code flow. It requires an HTTPS authorization URL with code-response parameters and an HTTPS callback origin matching the actual opener or prior tab URL. It does not read or copy cookies, authorization codes, PKCE verifiers, or OAuth state; only the callback origin/path, cookie-store ID and a short expiration are kept in volatile memory. Explicit site rules and deliberate routing pauses remain authoritative. A missing or mismatched opener fails closed to normal site routing. The per-tab exception expires and is cleared on tab removal or extension restart. This design is meant for OAuth round-trip continuity, not cross-container session sharing.
+
 ## Routing safety
 
 - Explicit user exceptions and assignments retain higher precedence than the Standard fallback.
